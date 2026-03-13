@@ -8,38 +8,30 @@
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 10px; color: #333; }
         .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h1, h2, h3 { text-align: center; color: #2c3e50; }
-        
         .table-responsive { width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; }
-        
         .input-table { width: 100%; border-collapse: collapse; min-width: 300px; }
         .input-table th, .input-table td { padding: 8px 5px; text-align: center; vertical-align: middle; }
         .input-table th { font-size: 14px; color: #666; }
         .input-table input { width: 100%; box-sizing: border-box; padding: 10px; font-size: 16px; text-align: right; border-radius: 5px; border: 1px solid #ccc; }
         .score-input { background-color: #fffacd; border: 2px solid #e1c699 !important; }
         .chip-input { background-color: #e0f7fa; border: 2px solid #80deea !important; }
-        
         .btn { display: block; width: 100%; padding: 12px; margin-top: 5px; background-color: #27ae60; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
         .btn:hover { background-color: #219150; }
+        .btn-sync { background-color: #3498db; margin-top: 10px; font-size: 14px; padding: 10px; }
         .btn-cancel { background-color: #95a5a6; margin-top: 10px; }
         .btn-edit { background-color: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
         .btn-delete { background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-left: 5px; }
-        .btn-reset { background-color: #7f8c8d; color: white; margin-top: 40px; font-size: 14px; }
-        
+        .btn-reset { background-color: #7f8c8d; color: white; margin-top: 40px; font-size: 14px; display: none; /* 同期版では不要なので隠す */ }
         .result-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 320px; }
         .result-table th, .result-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
         .result-table th { background-color: #ecf0f1; }
         .plus { color: #2980b9; font-weight: bold; }
         .minus { color: #c0392b; font-weight: bold; }
-        
         .history-card { background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
         .history-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        
-        /* ▼ 画面上部への固定（sticky）を解除して、普通のブロックに変更しました ▼ */
         .input-area { background: white; padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px; }
-        
         .date-picker { text-align: center; margin-bottom: 15px; background: #e8f4f8; padding: 10px; border-radius: 5px; border: 1px dashed #3498db; }
         .date-picker input { padding: 5px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; }
-        
         #current-sum-display { text-align: right; font-weight: bold; font-size: 16px; margin-bottom: 10px; min-height: 24px; padding-right: 5px;}
     </style>
 </head>
@@ -51,7 +43,8 @@
 
             <div class="date-picker">
                 <label for="play-date" style="font-weight: bold; color: #2980b9;">📅 対局日: </label>
-                <input type="date" id="play-date">
+                <input type="date" id="play-date" onchange="loadFromCloud()">
+                <button class="btn btn-sync" onclick="loadFromCloud()">🔄 クラウドから最新データを読み込む</button>
             </div>
 
             <h3 id="form-title">📝 新規入力</h3>
@@ -80,7 +73,7 @@
         <h3 style="margin-top: 30px;">📖 入力履歴</h3>
         <div id="history-area"></div>
 
-        <button class="btn btn-reset" onclick="clearAllData()">⚠️ 全データをリセットする（最初からやり直す）</button>
+        <button class="btn btn-reset" onclick="clearAllData()">⚠️ 全データをリセット</button>
     </div>
 
     <script>
@@ -107,6 +100,9 @@
             renderInputForm();
             loadFromLocalStorage();
             updateUI();
+            
+            // ▼ 起動時に自動でクラウドから最新データを引っ張ってくる ▼
+            loadFromCloud();
         };
 
         function saveToLocalStorage() { localStorage.setItem('mahjong_records', JSON.stringify(records)); }
@@ -115,13 +111,30 @@
             if (savedData) records = JSON.parse(savedData);
         }
 
-        function clearAllData() {
-            if (confirm("本当に全ての記録を削除しますか？\n（この操作は取り消せません）")) {
-                records = [];
-                localStorage.removeItem('mahjong_records');
-                updateUI();
-                alert("データをリセットしました。");
-            }
+        // ▼ クラウドからデータを読み込む新機能 ▼
+        function loadFromCloud() {
+            let selectedDate = document.getElementById('play-date').value;
+            if (!selectedDate) return;
+
+            document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中... 最新の成績を取得しています</p>";
+
+            fetch(GAS_URL + "?date=" + selectedDate)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.error) {
+                        console.error(data.error);
+                        alert("データ取得エラー: " + data.error);
+                        updateUI();
+                        return;
+                    }
+                    records = data; // スプレッドシートのデータを正とする（上書き）
+                    saveToLocalStorage();
+                    updateUI();
+                })
+                .catch(err => {
+                    console.error("通信エラー:", err);
+                    updateUI(); // エラー時はローカルデータで表示
+                });
         }
 
         function calculateCurrentSum() {
@@ -129,22 +142,14 @@
             let count = 0;
             players.forEach(p => {
                 let val = document.getElementById('score_' + p.id).value;
-                if (val !== "") {
-                    sum += parseInt(val, 10);
-                    count++;
-                }
+                if (val !== "") { sum += parseInt(val, 10); count++; }
             });
 
             let display = document.getElementById('current-sum-display');
-            if (sum === 0 && count === 0) {
-                display.innerHTML = "";
-            } else if (count === 3 && sum === 1050) {
-                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} (三麻OK!)</span>`;
-            } else if (count === 4 && sum === 1400) {
-                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} (四麻OK!)</span>`;
-            } else {
-                display.innerHTML = `<span style="color: #e74c3c;">⚠️ 得点合計: ${sum} (あと ${count >= 4 ? 1400 - sum : 1050 - sum})</span>`;
-            }
+            if (sum === 0 && count === 0) display.innerHTML = "";
+            else if (count === 3 && sum === 1050) display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} (三麻OK!)</span>`;
+            else if (count === 4 && sum === 1400) display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} (四麻OK!)</span>`;
+            else display.innerHTML = `<span style="color: #e74c3c;">⚠️ 得点合計: ${sum} (あと ${count >= 4 ? 1400 - sum : 1050 - sum})</span>`;
         }
 
         function renderInputForm() {
@@ -169,11 +174,9 @@
             let totalChip = 0;
 
             let recordData = {
-                id: editingId ? editingId : Date.now(),
+                id: Date.now(),
                 timestamp: new Date().toLocaleString(),
-                rawScores: {},
-                chips: {},
-                points: {}
+                rawScores: {}, chips: {}, points: {}
             };
             
             players.forEach(p => {
@@ -189,10 +192,7 @@
                 if (chipVal !== "" && parseInt(chipVal, 10) !== 0) {
                     recordData.chips[p.id] = parseInt(chipVal, 10);
                     hasChip = true;
-                }
-                if (chipVal != "") {
-                    let p = parseInt(chipVal, 10);
-                    totalChip += p;
+                    totalChip += parseInt(chipVal, 10);
                 }
             });
 
@@ -216,21 +216,10 @@
                     recordData.points[activeScores[3].id] = (activeScores[3].score - 400) / 10 - 10;
                 }
             }
-            if (hasChip) {
-                if (totalChip !== 0) return alert("チップの合計枚数が0になるように入力してください！");
-            }
+            if (hasChip && totalChip !== 0) return alert("チップの合計枚数が0になるように入力してください！");
 
-            if (editingId) {
-                let index = records.findIndex(r => r.id === editingId);
-                records[index] = recordData;
-                editingId = null;
-                document.getElementById('form-title').innerText = "📝 新規入力";
-                document.getElementById('save-btn').innerText = "この内容を記録する";
-                document.getElementById('save-btn').style.backgroundColor = "#27ae60";
-                document.getElementById('cancel-btn').style.display = "none";
-            } else {
-                records.push(recordData);
-            }
+            // クラウド同期版では、ローカルの修正機能は非推奨になるため、常に新規追加として扱う
+            records.push(recordData);
 
             let totals = {};
             players.forEach(p => totals[p.id] = { point: 0, chip: 0 });
@@ -242,9 +231,7 @@
             });
 
             let finalPoints = {};
-            players.forEach(p => {
-                finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0);
-            });
+            players.forEach(p => { finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0); });
 
             let selectedDate = document.getElementById('play-date').value || new Date().toISOString().split('T')[0];
 
@@ -257,18 +244,11 @@
                 dyna_score: recordData.points['dyna'] || "", dyna_chip: recordData.chips['dyna'] || "",
                 tokuda_score: recordData.points['tokuda'] || "", tokuda_chip: recordData.chips['tokuda'] || "",
                 tasuku_score: recordData.points['tasuku'] || "", tasuku_chip: recordData.chips['tasuku'] || "",
-                total_takai: finalPoints['takai'],
-                total_yamaguchi: finalPoints['yamaguchi'],
-                total_yamashita: finalPoints['yamashita'],
-                total_dyna: finalPoints['dyna'],
-                total_tokuda: finalPoints['tokuda'],
-                total_tasuku: finalPoints['tasuku']
+                total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'],
+                total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku']
             };
 
-            players.forEach(p => {
-                document.getElementById('score_' + p.id).value = "";
-                document.getElementById('chip_' + p.id).value = "";
-            });
+            players.forEach(p => { document.getElementById('score_' + p.id).value = ""; document.getElementById('chip_' + p.id).value = ""; });
             document.getElementById('current-sum-display').innerHTML = ""; 
 
             let payload = "data=" + encodeURIComponent(JSON.stringify(postData));
@@ -278,63 +258,22 @@
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: payload
             })
-                .then(response => response.text())
-                .then(text => {
-                    if (text.includes("GAS_ERROR")) {
-                        alert("⚠️ スプレッドシート側でエラーが発生しました:\n" + text);
-                    } else {
-                        console.log("スプレッドシートへの記録完了！");
-                    }
-                })
-                .catch(err => console.error("通信エラー:", err));
+            .then(response => response.text())
+            .then(text => {
+                if (text.includes("GAS_ERROR")) {
+                    alert("⚠️ エラーが発生しました:\n" + text);
+                } else {
+                    console.log("記録完了！");
+                    // 記録に成功したら、もう一度クラウドから最新状態を読み込み直して画面を完璧に合わせる
+                    setTimeout(loadFromCloud, 1000); 
+                }
+            })
+            .catch(err => console.error("通信エラー:", err));
 
             saveToLocalStorage();
             updateUI();
             
-            // ▼ 記録した直後に、少しだけ下にスクロールして結果を見やすくする ▼
-            setTimeout(() => {
-                window.scrollBy({ top: 300, behavior: 'smooth' });
-            }, 100);
-        }
-
-        function editRecord(id) {
-            let record = records.find(r => r.id === id);
-            if (!record) return;
-
-            editingId = id;
-            document.getElementById('form-title').innerHTML = "<span style='color:#f39c12;'>✏️ データ修正中</span>";
-            document.getElementById('save-btn').innerText = "修正内容を上書き保存";
-            document.getElementById('save-btn').style.backgroundColor = "#f39c12";
-            document.getElementById('cancel-btn').style.display = "block";
-
-            players.forEach(p => {
-                document.getElementById('score_' + p.id).value = record.rawScores[p.id] !== undefined ? record.rawScores[p.id] : "";
-                document.getElementById('chip_' + p.id).value = record.chips[p.id] !== undefined ? record.chips[p.id] : "";
-            });
-            calculateCurrentSum(); 
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // 修正時は一番上に戻る
-        }
-
-        function cancelEdit() {
-            editingId = null;
-            document.getElementById('form-title').innerText = "📝 新規入力";
-            document.getElementById('save-btn').innerText = "この内容を記録する";
-            document.getElementById('save-btn').style.backgroundColor = "#27ae60";
-            document.getElementById('cancel-btn').style.display = "none";
-            players.forEach(p => {
-                document.getElementById('score_' + p.id).value = "";
-                document.getElementById('chip_' + p.id).value = "";
-            });
-            document.getElementById('current-sum-display').innerHTML = ""; 
-        }
-
-        function deleteRecord(id) {
-            if (confirm("この記録を本当に削除しますか？")) {
-                records = records.filter(r => r.id !== id);
-                if (editingId === id) cancelEdit();
-                saveToLocalStorage();
-                updateUI();
-            }
+            setTimeout(() => { window.scrollBy({ top: 300, behavior: 'smooth' }); }, 100);
         }
 
         function updateUI() {
@@ -347,7 +286,7 @@
             records.forEach(rec => {
                 let title = "";
                 let details = "";
-                let hasS = Object.keys(rec.rawScores).length > 0;
+                let hasS = Object.keys(rec.points).length > 0 || (rec.rawScores && Object.keys(rec.rawScores).length > 0);
                 let hasC = Object.keys(rec.chips).length > 0;
 
                 if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
@@ -369,18 +308,19 @@
                         let sign = ch > 0 ? '+' : '';
                         text.push(`チップ${sign}${ch}枚`);
                     }
-
                     if (text.length > 0) { details += `<div>${p.name}: ${text.join(" / ")}</div>`; }
                 });
+
+                // クラウドから取得したデータは、アプリ上で編集・削除させない（スプレッドシートが正本のため）
+                let actionBadge = String(rec.id).startsWith('cloud_') 
+                    ? `<span style="font-size:12px; color:#27ae60;">☁️ 同期済</span>` 
+                    : `<span style="font-size:12px; color:#e74c3c;">⏳ 送信中...</span>`;
 
                 historyHtml += `
                         <div class="history-card">
                             <div class="history-header">
                                 <span>${title} <span style="font-size:10px; color:#999;">(${rec.timestamp})</span></span>
-                                <div>
-                                    <button class="btn-edit" onclick="editRecord(${rec.id})">修正</button>
-                                    <button class="btn-delete" onclick="deleteRecord(${rec.id})">削除</button>
-                                </div>
+                                <div>${actionBadge}</div>
                             </div>
                             ${details}
                         </div>
