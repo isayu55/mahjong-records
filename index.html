@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    
     <title>雀士の集い - 成績管理アプリ</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -27,7 +29,7 @@
         .btn:hover { background-color: #219150; }
         .btn-sync { background-color: #3498db; }
         .btn-analysis { background-color: #9b59b6; }
-        .btn-trivia { background-color: #f39c12; color: #fff; } /* 豆知識ボタン用 */
+        .btn-trivia { background-color: #f39c12; color: #fff; }
         .btn-trivia:hover { background-color: #e67e22; }
         .btn-cancel { background-color: #95a5a6; font-size: 16px; padding: 10px; margin-bottom: 20px;}
         .btn-edit { background-color: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
@@ -50,7 +52,6 @@
         .ai-report { background: #fff3cd; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; border-left: 5px solid #f1c40f; line-height: 1.6; }
         .season-select { width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 2px solid #3498db; background-color: #f4f9f9; color: #2c3e50; font-weight: bold; margin-bottom: 15px; cursor: pointer; outline: none;}
         
-        /* 豆知識・役占いページ用のデザイン */
         .trivia-box { background: #e8f4f8; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .yaku-box { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px dashed #f1c40f; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .yaku-name { font-size: 28px; font-weight: bold; color: #e74c3c; margin: 10px 0; letter-spacing: 2px;}
@@ -62,7 +63,14 @@
 
     <div class="container">
         
-        <div id="menu-view" class="view-section active-view">
+        <div id="login-view" class="view-section active-view" style="text-align: center; padding-top: 40px; padding-bottom: 40px;">
+            <h1>🀄 雀士の集い</h1>
+            <p style="color: #666; margin-bottom: 30px;">メンバー専用の成績管理アプリです。<br>合言葉を入力してください。</p>
+            <input type="password" id="secret-word-input" placeholder="合言葉を入力" style="padding: 12px; font-size: 18px; border-radius: 5px; border: 1px solid #ccc; width: 80%; max-width: 300px; margin-bottom: 20px; text-align: center;">
+            <button class="btn" style="width: 80%; max-width: 300px; margin: 0 auto;" onclick="checkPassword()">🚪 入室する</button>
+        </div>
+
+        <div id="menu-view" class="view-section">
             <h1>🀄 雀士の集い</h1>
             <p style="text-align:center; color: #666; margin-bottom: 30px;">メニューを選択してください</p>
             
@@ -107,7 +115,6 @@
             <h3 style="margin-top: 30px;">📖 入力履歴</h3>
             <div id="history-area"></div>
         </div>
-
 
         <div id="data-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
@@ -175,6 +182,10 @@
     </div>
 
     <script>
+        // ==========================================
+        // ▼ 設定（合言葉など） ▼
+        // ==========================================
+        const SECRET_WORD = "つどい"; // ★ここを好きな合言葉に変更できます！
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxgQbnvRIqRMI5Y2mukb1qzYtJECMTAO3dFLU-XcMvO2WwMN6GOti_J7diAbnHYuAzO0Q/exec";
         const players = [
             { id: 'takai', name: '高井' }, { id: 'yamaguchi', name: '山口' }, { id: 'yamashita', name: '山下' },
@@ -225,6 +236,12 @@
         let radarChartObj = null; 
 
         window.onload = function () {
+            // パスワードチェック（一度入力していればスキップ）
+            if (localStorage.getItem('mahjong_auth') === 'ok') {
+                document.getElementById('login-view').classList.remove('active-view');
+                document.getElementById('menu-view').classList.add('active-view');
+            }
+
             let today = new Date();
             let yyyy = today.getFullYear();
             let mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -232,8 +249,20 @@
             document.getElementById('play-date').value = `${yyyy}-${mm}-${dd}`;
             
             renderInputForm();
-            initTriviaView(); // 豆知識ページの初期化
+            initTriviaView(); 
         };
+
+        // ▼ パスワード認証機能 ▼
+        function checkPassword() {
+            let input = document.getElementById('secret-word-input').value;
+            if (input === SECRET_WORD) {
+                localStorage.setItem('mahjong_auth', 'ok');
+                document.getElementById('login-view').classList.remove('active-view');
+                document.getElementById('menu-view').classList.add('active-view');
+            } else {
+                alert("合言葉が違います！");
+            }
+        }
 
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
@@ -246,10 +275,9 @@
         }
 
         // ==========================================
-        // ▼ 新機能：豆知識＆ラッキー役占い機能 ▼
+        // ▼ 豆知識＆ラッキー役占い機能 ▼
         // ==========================================
         function initTriviaView() {
-            // プレイヤー選択肢の生成
             let select = document.getElementById('lucky-player-select');
             players.forEach(p => {
                 let option = document.createElement('option');
@@ -257,7 +285,6 @@
                 option.text = p.name;
                 select.appendChild(option);
             });
-            // 最初の豆知識を表示
             showRandomTrivia();
         }
 
@@ -275,7 +302,6 @@
                 return;
             }
 
-            // 「今日の日付」と「プレイヤーID」からシード（数値）を作る
             let todayStr = new Date().toDateString();
             let seedStr = todayStr + "_" + pId;
             let hash = 0;
@@ -283,7 +309,6 @@
                 hash += seedStr.charCodeAt(i);
             }
             
-            // シードを使って役を決定（今日は何回選んでも同じ役が出る）
             let yakuIndex = hash % yakuList.length;
             let luckyYaku = yakuList[yakuIndex];
 
@@ -295,7 +320,6 @@
             `;
             area.style.display = "block";
             
-            // フワッと表示させるアニメーション
             area.style.animation = "none";
             setTimeout(() => { area.style.animation = "fadeIn 0.5s ease-in-out"; }, 10);
         }
