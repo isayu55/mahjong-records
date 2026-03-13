@@ -5,193 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>雀士の集い - 成績管理アプリ</title>
     <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 10px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h1, h2, h3 {
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        .input-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-
-            .input-table th, .input-table td {
-                padding: 8px 5px;
-                text-align: center;
-                vertical-align: middle;
-            }
-
-            .input-table th {
-                font-size: 14px;
-                color: #666;
-            }
-
-            .input-table input {
-                width: 100%;
-                box-sizing: border-box;
-                padding: 10px;
-                font-size: 16px;
-                text-align: right;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-            }
-
-        .score-input {
-            background-color: #fffacd;
-            border: 2px solid #e1c699 !important;
-        }
-
-        .chip-input {
-            background-color: #e0f7fa;
-            border: 2px solid #80deea !important;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            background-color: #27ae60;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-            .btn:hover {
-                background-color: #219150;
-            }
-
-        .btn-cancel {
-            background-color: #95a5a6;
-            margin-top: 10px;
-        }
-
-        .btn-edit {
-            background-color: #f39c12;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .btn-delete {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-
-        .btn-reset {
-            background-color: #7f8c8d;
-            color: white;
-            margin-top: 40px;
-            font-size: 14px;
-        }
-
-        .result-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-            .result-table th, .result-table td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: center;
-            }
-
-            .result-table th {
-                background-color: #ecf0f1;
-            }
-
-        .plus {
-            color: #2980b9;
-            font-weight: bold;
-        }
-
-        .minus {
-            color: #c0392b;
-            font-weight: bold;
-        }
-
-        .history-card {
-            background: #fafafa;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
-        .sticky-header {
-            position: sticky;
-            top: 0;
-            background: white;
-            padding-bottom: 10px;
-            z-index: 100;
-            border-bottom: 2px solid #eee;
-        }
-        /* 日付選択用のデザイン */
-        .date-picker {
-            text-align: center;
-            margin-bottom: 15px;
-            background: #e8f4f8;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px dashed #3498db;
-        }
-
-            .date-picker input {
-                padding: 5px;
-                font-size: 16px;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-                font-weight: bold;
-            }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2, h3 { text-align: center; color: #2c3e50; }
+        
+        /* スマホ対応：表がはみ出したら横スクロールできるようにする */
+        .table-responsive { width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; }
+        
+        .input-table { width: 100%; border-collapse: collapse; min-width: 300px; }
+        .input-table th, .input-table td { padding: 8px 5px; text-align: center; vertical-align: middle; }
+        .input-table th { font-size: 14px; color: #666; }
+        .input-table input { width: 100%; box-sizing: border-box; padding: 10px; font-size: 16px; text-align: right; border-radius: 5px; border: 1px solid #ccc; }
+        .score-input { background-color: #fffacd; border: 2px solid #e1c699 !important; }
+        .chip-input { background-color: #e0f7fa; border: 2px solid #80deea !important; }
+        
+        .btn { display: block; width: 100%; padding: 12px; margin-top: 5px; background-color: #27ae60; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background-color: #219150; }
+        .btn-cancel { background-color: #95a5a6; margin-top: 10px; }
+        .btn-edit { background-color: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
+        .btn-delete { background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-left: 5px; }
+        .btn-reset { background-color: #7f8c8d; color: white; margin-top: 40px; font-size: 14px; }
+        
+        .result-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 320px; }
+        .result-table th, .result-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        .result-table th { background-color: #ecf0f1; }
+        .plus { color: #2980b9; font-weight: bold; }
+        .minus { color: #c0392b; font-weight: bold; }
+        
+        .history-card { background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
+        .history-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .sticky-header { position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 100; border-bottom: 2px solid #eee; }
+        
+        .date-picker { text-align: center; margin-bottom: 15px; background: #e8f4f8; padding: 10px; border-radius: 5px; border: 1px dashed #3498db; }
+        .date-picker input { padding: 5px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; }
+        
+        /* リアルタイム合計表示用のデザイン */
+        #current-sum-display { text-align: right; font-weight: bold; font-size: 16px; margin-bottom: 10px; min-height: 24px; padding-right: 5px;}
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="sticky-header">
-            <h1>🀄 雀士の集い (三麻)</h1>
+            <h1>🀄 雀士の集い</h1>
 
             <div class="date-picker">
                 <label for="play-date" style="font-weight: bold; color: #2980b9;">📅 対局日: </label>
@@ -199,20 +55,27 @@
             </div>
 
             <h3 id="form-title">📝 新規入力</h3>
-            <table class="input-table">
-                <tr>
-                    <th style="width: 25%;">名前</th>
-                    <th style="width: 40%;">得点 (例: 310)</th>
-                    <th style="width: 35%;">チップ (枚)</th>
-                </tr>
-                <tbody id="input-tbody"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="input-table">
+                    <tr>
+                        <th style="width: 25%;">名前</th>
+                        <th style="width: 40%;">得点 (例: 310)</th>
+                        <th style="width: 35%;">チップ (枚)</th>
+                    </tr>
+                    <tbody id="input-tbody"></tbody>
+                </table>
+            </div>
+            
+            <div id="current-sum-display"></div>
+
             <button class="btn" id="save-btn" onclick="saveRecord()">この内容を記録する</button>
             <button class="btn btn-cancel" id="cancel-btn" style="display:none;" onclick="cancelEdit()">修正をキャンセル</button>
         </div>
 
         <h3 style="margin-top: 30px;">🏆 現在の総合結果</h3>
-        <table class="result-table" id="total-table"></table>
+        <div class="table-responsive">
+            <table class="result-table" id="total-table"></table>
+        </div>
 
         <h3 style="margin-top: 30px;">📖 入力履歴</h3>
         <div id="history-area"></div>
@@ -235,7 +98,6 @@
         let editingId = null;
 
         window.onload = function () {
-            // アプリ起動時に今日の日付を自動セット
             let today = new Date();
             let yyyy = today.getFullYear();
             let mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -262,13 +124,38 @@
             }
         }
 
+        // ▼ リアルタイム合計点の計算機能 ▼
+        function calculateCurrentSum() {
+            let sum = 0;
+            let count = 0;
+            players.forEach(p => {
+                let val = document.getElementById('score_' + p.id).value;
+                if (val !== "") {
+                    sum += parseInt(val, 10);
+                    count++;
+                }
+            });
+
+            let display = document.getElementById('current-sum-display');
+            if (sum === 0 && count === 0) {
+                display.innerHTML = "";
+            } else if (count === 3 && sum === 1050) {
+                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} (三麻OK!)</span>`;
+            } else if (count === 4 && sum === 1400) {
+                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} (四麻OK!)</span>`;
+            } else {
+                display.innerHTML = `<span style="color: #e74c3c;">⚠️ 得点合計: ${sum} (あと ${count >= 4 ? 1400 - sum : 1050 - sum})</span>`;
+            }
+        }
+
         function renderInputForm() {
             let html = "";
             players.forEach(p => {
+                // 入力するたびに calculateCurrentSum() を呼び出すように変更
                 html += `
                         <tr>
                             <td style="font-weight:bold;">${p.name}</td>
-                            <td><input type="number" id="score_${p.id}" class="score-input" placeholder="未入力"></td>
+                            <td><input type="number" id="score_${p.id}" class="score-input" placeholder="未入力" oninput="calculateCurrentSum()"></td>
                             <td><input type="number" id="chip_${p.id}" class="chip-input" placeholder="未入力"></td>
                         </tr>
                     `;
@@ -281,6 +168,7 @@
             let totalScore = 0;
             let hasScore = false;
             let hasChip = false;
+            let totalChip = 0;
 
             let recordData = {
                 id: editingId ? editingId : Date.now(),
@@ -289,7 +177,7 @@
                 chips: {},
                 points: {}
             };
-            let totalChip = 0;
+            
             players.forEach(p => {
                 let scoreVal = document.getElementById('score_' + p.id).value;
                 let chipVal = document.getElementById('chip_' + p.id).value;
@@ -313,25 +201,25 @@
             if (!hasScore && !hasChip) return alert("得点かチップのどちらかを入力してください！");
 
             if (hasScore) {
-                if (activeScores.length !== 3 && activeScores.length != 4) return alert("得点を入力する場合は、必ず3人もしくは4人分入力してください！");
-                if (activeScores.length == 3) {
+                if (activeScores.length !== 3 && activeScores.length !== 4) return alert("得点を入力する場合は、必ず3人もしくは4人分入力してください！");
+                if (activeScores.length === 3) {
                     if (totalScore !== 1050) return alert(`点数の合計が合いません！\n現在の合計: ${totalScore} (正解は1050)`);
                     activeScores.sort((a, b) => b.score - a.score);
                     recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25;
                     recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0;
                     recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
                 }
-                if (activeScores.length == 4) {
+                if (activeScores.length === 4) {
                     if (totalScore !== 1400) return alert(`点数の合計が合いません！\n現在の合計: ${totalScore} (正解は1400)`);
                     activeScores.sort((a, b) => b.score - a.score);
                     recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 30;
                     recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0;
-                    recordData.points[activeScores[2].id] = (activeScores[1].score - 400) / 10 + 0;
-                    recordData.points[activeScores[3].id] = (activeScores[2].score - 400) / 10 - 10;
+                    recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 + 0;
+                    recordData.points[activeScores[3].id] = (activeScores[3].score - 400) / 10 - 10;
                 }
             }
             if (hasChip) {
-                if (totalChip != 0) return alert("チップの合計枚数が0になるように入力してください！");
+                if (totalChip !== 0) return alert("チップの合計枚数が0になるように入力してください！");
             }
 
             if (editingId) {
@@ -346,7 +234,6 @@
                 records.push(recordData);
             }
 
-            // === 総合得点を計算してGASに送る準備 ===
             let totals = {};
             players.forEach(p => totals[p.id] = { point: 0, chip: 0 });
             records.forEach(rec => {
@@ -358,24 +245,20 @@
 
             let finalPoints = {};
             players.forEach(p => {
-                finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0); // 最終ポイント
+                finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0);
             });
 
-            // 画面で選ばれている日付を取得
             let selectedDate = document.getElementById('play-date').value || new Date().toISOString().split('T')[0];
 
             let postData = {
-                date: selectedDate, // 選んだ日付を送信
+                date: selectedDate,
                 timestamp: recordData.timestamp,
-
                 takai_score: recordData.points['takai'] || "", takai_chip: recordData.chips['takai'] || "",
                 yamaguchi_score: recordData.points['yamaguchi'] || "", yamaguchi_chip: recordData.chips['yamaguchi'] || "",
                 yamashita_score: recordData.points['yamashita'] || "", yamashita_chip: recordData.chips['yamashita'] || "",
                 dyna_score: recordData.points['dyna'] || "", dyna_chip: recordData.chips['dyna'] || "",
                 tokuda_score: recordData.points['tokuda'] || "", tokuda_chip: recordData.chips['tokuda'] || "",
                 tasuku_score: recordData.points['tasuku'] || "", tasuku_chip: recordData.chips['tasuku'] || "",
-
-                // 累計シート用の最新総合得点
                 total_takai: finalPoints['takai'],
                 total_yamaguchi: finalPoints['yamaguchi'],
                 total_yamashita: finalPoints['yamashita'],
@@ -388,8 +271,8 @@
                 document.getElementById('score_' + p.id).value = "";
                 document.getElementById('chip_' + p.id).value = "";
             });
+            document.getElementById('current-sum-display').innerHTML = ""; // 記録後はカウンターをリセット
 
-            // === 完璧版通信処理 ===
             let payload = "data=" + encodeURIComponent(JSON.stringify(postData));
 
             fetch(GAS_URL, {
@@ -425,6 +308,7 @@
                 document.getElementById('score_' + p.id).value = record.rawScores[p.id] !== undefined ? record.rawScores[p.id] : "";
                 document.getElementById('chip_' + p.id).value = record.chips[p.id] !== undefined ? record.chips[p.id] : "";
             });
+            calculateCurrentSum(); // 修正時もカウンターを更新
             window.scrollTo(0, 0);
         }
 
@@ -438,6 +322,7 @@
                 document.getElementById('score_' + p.id).value = "";
                 document.getElementById('chip_' + p.id).value = "";
             });
+            document.getElementById('current-sum-display').innerHTML = ""; // キャンセル時もリセット
         }
 
         function deleteRecord(id) {
