@@ -9,7 +9,6 @@
         .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h1, h2, h3 { text-align: center; color: #2c3e50; }
         
-        /* スマホ対応：表がはみ出したら横スクロールできるようにする */
         .table-responsive { width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; }
         
         .input-table { width: 100%; border-collapse: collapse; min-width: 300px; }
@@ -34,19 +33,20 @@
         
         .history-card { background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
         .history-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .sticky-header { position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 100; border-bottom: 2px solid #eee; }
+        
+        /* ▼ 画面上部への固定（sticky）を解除して、普通のブロックに変更しました ▼ */
+        .input-area { background: white; padding-bottom: 20px; border-bottom: 2px dashed #ccc; margin-bottom: 20px; }
         
         .date-picker { text-align: center; margin-bottom: 15px; background: #e8f4f8; padding: 10px; border-radius: 5px; border: 1px dashed #3498db; }
         .date-picker input { padding: 5px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; }
         
-        /* リアルタイム合計表示用のデザイン */
         #current-sum-display { text-align: right; font-weight: bold; font-size: 16px; margin-bottom: 10px; min-height: 24px; padding-right: 5px;}
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="sticky-header">
+        <div class="input-area">
             <h1>🀄 雀士の集い</h1>
 
             <div class="date-picker">
@@ -72,7 +72,7 @@
             <button class="btn btn-cancel" id="cancel-btn" style="display:none;" onclick="cancelEdit()">修正をキャンセル</button>
         </div>
 
-        <h3 style="margin-top: 30px;">🏆 現在の総合結果</h3>
+        <h3>🏆 現在の総合結果</h3>
         <div class="table-responsive">
             <table class="result-table" id="total-table"></table>
         </div>
@@ -124,7 +124,6 @@
             }
         }
 
-        // ▼ リアルタイム合計点の計算機能 ▼
         function calculateCurrentSum() {
             let sum = 0;
             let count = 0;
@@ -151,7 +150,6 @@
         function renderInputForm() {
             let html = "";
             players.forEach(p => {
-                // 入力するたびに calculateCurrentSum() を呼び出すように変更
                 html += `
                         <tr>
                             <td style="font-weight:bold;">${p.name}</td>
@@ -271,7 +269,7 @@
                 document.getElementById('score_' + p.id).value = "";
                 document.getElementById('chip_' + p.id).value = "";
             });
-            document.getElementById('current-sum-display').innerHTML = ""; // 記録後はカウンターをリセット
+            document.getElementById('current-sum-display').innerHTML = ""; 
 
             let payload = "data=" + encodeURIComponent(JSON.stringify(postData));
 
@@ -292,6 +290,11 @@
 
             saveToLocalStorage();
             updateUI();
+            
+            // ▼ 記録した直後に、少しだけ下にスクロールして結果を見やすくする ▼
+            setTimeout(() => {
+                window.scrollBy({ top: 300, behavior: 'smooth' });
+            }, 100);
         }
 
         function editRecord(id) {
@@ -308,8 +311,8 @@
                 document.getElementById('score_' + p.id).value = record.rawScores[p.id] !== undefined ? record.rawScores[p.id] : "";
                 document.getElementById('chip_' + p.id).value = record.chips[p.id] !== undefined ? record.chips[p.id] : "";
             });
-            calculateCurrentSum(); // 修正時もカウンターを更新
-            window.scrollTo(0, 0);
+            calculateCurrentSum(); 
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // 修正時は一番上に戻る
         }
 
         function cancelEdit() {
@@ -322,7 +325,7 @@
                 document.getElementById('score_' + p.id).value = "";
                 document.getElementById('chip_' + p.id).value = "";
             });
-            document.getElementById('current-sum-display').innerHTML = ""; // キャンセル時もリセット
+            document.getElementById('current-sum-display').innerHTML = ""; 
         }
 
         function deleteRecord(id) {
