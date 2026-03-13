@@ -46,6 +46,9 @@
         .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; margin-bottom: 30px;}
         .chart-title { text-align: center; font-size: 16px; font-weight: bold; color: #2c3e50; margin-bottom: -10px; }
         .ai-report { background: #fff3cd; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; border-left: 5px solid #f1c40f; line-height: 1.6; }
+        
+        /* シーズン選択用のプルダウンデザイン */
+        .season-select { width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 2px solid #3498db; background-color: #f4f9f9; color: #2c3e50; font-weight: bold; margin-bottom: 15px; cursor: pointer; outline: none;}
     </style>
 </head>
 <body>
@@ -57,7 +60,7 @@
             <p style="text-align:center; color: #666; margin-bottom: 30px;">メニューを選択してください</p>
             
             <button class="btn" onclick="switchView('input-view')">📝 今日の成績を入力する</button>
-            <button class="btn btn-sync" onclick="switchView('data-view')" style="margin-top: 20px;">📅 全シーズンの履歴を見る</button>
+            <button class="btn btn-sync" onclick="switchView('data-view')" style="margin-top: 20px;">📅 シーズン・日別の成績を見る</button>
             <button class="btn btn-analysis" onclick="switchView('hanchan-view')" style="margin-top: 20px;">📊 AI分析ダッシュボード</button>
         </div>
 
@@ -98,17 +101,28 @@
 
         <div id="data-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
-            <h2>📅 全シーズンの履歴</h2>
-            <p style="text-align:center; font-size:12px; color:#666;">※S1から最新までの全累計ポイント推移です</p>
+            <h2>📅 シーズンごとの成績</h2>
+            
             <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData()">🔄 最新のデータを読み込む</button>
+            
+            <select id="season-selector" class="season-select" onchange="renderRuikeiTableAndChart()">
+                <option value="S5">🟢 S5 (今シーズン)</option>
+                <option value="S4">⚪ S4</option>
+                <option value="S3">⚪ S3</option>
+                <option value="S2">⚪ S2</option>
+                <option value="S1">⚪ S1</option>
+                <option value="ALL">🔥 全シーズン（S1〜S5累積）</option>
+            </select>
+
             <div class="chart-container"><canvas id="ruikei-chart"></canvas></div>
-            <h3 style="margin-top: 20px;">📊 全シーズン成績表</h3>
+            <h3 style="margin-top: 20px;">📊 成績表</h3>
             <div id="ruikei-area"></div>
         </div>
         
         <div id="hanchan-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📊 AI分析ダッシュボード</h2>
+            <p style="text-align:center; font-size:12px; color:#666;">※S4+S5の半荘データを元に計算されています</p>
             <button class="btn btn-analysis" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadHanchanData()">🔄 最新のデータを読み込む</button>
             
             <div id="ai-commentary" class="ai-report">
@@ -139,6 +153,8 @@
 
         let records = [];
         let editingId = null;
+        let cachedRuikeiData = []; // スプシから取得した生データを保持
+        
         let ruikeiChart = null;
         let hanchanChart = null;
         let rankChart = null; 
@@ -245,12 +261,9 @@
                 }
             }
 
-            // === 🤖 進化したAIレポート生成（全員の個別評価） ===
             let validStats = pStats.filter(s => s.matches > 0);
             if (validStats.length > 0) {
                 let aiText = "<strong style='font-size:16px;'>🤖 AIアドバイザーによるプレイヤー分析レポート</strong><br><br>";
-                
-                // 全体のハイライト
                 let bestTop = [...validStats].sort((a,b) => (b.r1/b.matches) - (a.r1/a.matches))[0];
                 aiText += `🗡️ <strong>攻撃の要：</strong> トップ率No.1は「${players[pStats.indexOf(bestTop)].name}」さん（${(bestTop.r1/bestTop.matches*100).toFixed(1)}%）！破壊力があり最も警戒すべき相手です。<br>`;
                 
@@ -265,29 +278,22 @@
                     let topRate = s.r1 / s.matches;
                     let lastRate = s.r3 / s.matches;
                     let avg = s.total / s.matches;
-                    let maxScore = s.scores.length > 0 ? Math.max(...s.scores) : 0;
                     
                     let styleTitle = "";
                     let styleDesc = "";
                     
                     if (topRate >= 0.35 && lastRate >= 0.30) {
-                        styleTitle = "超攻撃・爆発型 🌋";
-                        styleDesc = "トップかラスかのスリリングな麻雀が特徴。ツボにはまった時の破壊力は随一です！";
+                        styleTitle = "超攻撃・爆発型 🌋"; styleDesc = "トップかラスかのスリリングな麻雀が特徴。ツボにはまった時の破壊力は随一です！";
                     } else if (topRate >= 0.35 && lastRate <= 0.25) {
-                        styleTitle = "パーフェクト無双型 👑";
-                        styleDesc = "トップを量産しつつラスも引かない最強のステータス。他を圧倒する実力を発揮中！";
+                        styleTitle = "パーフェクト無双型 👑"; styleDesc = "トップを量産しつつラスも引かない最強のステータス。他を圧倒する実力を発揮中！";
                     } else if (topRate >= 0.30 && lastRate <= 0.30) {
-                        styleTitle = "バランス・攻撃寄り型 ⚔️";
-                        styleDesc = "攻めと守りのバランスが良く、安定して上位に食い込める隙のないスタイルです。";
+                        styleTitle = "バランス・攻撃寄り型 ⚔️"; styleDesc = "攻めと守りのバランスが良く、安定して上位に食い込める隙のないスタイルです。";
                     } else if (lastRate <= 0.25) {
-                        styleTitle = "鉄壁の守備・安定型 🛡️";
-                        styleDesc = "絶対にラスを引かない手堅さが最大の武器。着実にポイントを積み重ねます。";
+                        styleTitle = "鉄壁の守備・安定型 🛡️"; styleDesc = "絶対にラスを引かない手堅さが最大の武器。着実にポイントを積み重ねます。";
                     } else if (topRate <= 0.25 && lastRate >= 0.35) {
-                        styleTitle = "大穴・逆襲待ち型 🌪️";
-                        styleDesc = "苦しい展開が続いていますが、潜在的な爆発力は十分。大逆転劇に期待がかかります。";
+                        styleTitle = "大穴・逆襲待ち型 🌪️"; styleDesc = "苦しい展開が続いていますが、潜在的な爆発力は十分。大逆転劇に期待がかかります。";
                     } else {
-                        styleTitle = "堅実・オールラウンダー型 ⚖️";
-                        styleDesc = "柔軟な対応が得意なバランス派。派手さはなくても最終的に結果を残す仕事人です。";
+                        styleTitle = "堅実・オールラウンダー型 ⚖️"; styleDesc = "柔軟な対応が得意なバランス派。派手さはなくても最終的に結果を残す仕事人です。";
                     }
 
                     aiText += `
@@ -301,7 +307,6 @@
                 document.getElementById('ai-commentary').innerHTML = aiText;
             }
 
-            // === 🕸️ レーダーチャート ===
             const ctxRadar = document.getElementById('radar-chart').getContext('2d');
             if (radarChartObj) radarChartObj.destroy();
             let radarDatasets = [];
@@ -327,7 +332,6 @@
                 options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { position: 'bottom' } } }
             });
 
-            // === 📈 推移グラフ＆順位グラフ ===
             const ctx = document.getElementById('hanchan-chart').getContext('2d');
             if (hanchanChart) hanchanChart.destroy();
             let datasets = [];
@@ -362,7 +366,6 @@
                 }
             });
 
-            // === 📊 テーブルの生成 ===
             let tbl = '<div class="table-responsive"><table class="ruikei-table">';
             tbl += `<tr><th></th>${pNames.map(n => `<th>${n}</th>`).join('')}</tr>`;
 
@@ -403,41 +406,74 @@
         }
 
         // ==========================================
-        // ▼ 累計データ＆全シーズングラフ機能 ▼
+        // ▼ 累計データ＆シーズン切り替え機能 ▼
         // ==========================================
         function loadRuikeiData() {
-            document.getElementById('ruikei-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートから全シーズンのデータを取得中...</p>";
+            document.getElementById('ruikei-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
             fetch(GAS_URL + "?action=getRuikei")
                 .then(response => response.json())
                 .then(data => {
                     if(data.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー: ${data.error}</p>`; return; }
-                    renderRuikeiTableAndChart(data);
+                    cachedRuikeiData = data; // データを保持
+                    renderRuikeiTableAndChart(); // 描画
                 })
                 .catch(err => { console.error("通信エラー:", err); document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">通信エラーが発生しました。</p>`; });
         }
 
-        function renderRuikeiTableAndChart(data) {
+        function renderRuikeiTableAndChart() {
+            if (!cachedRuikeiData || cachedRuikeiData.length === 0) return;
+            
+            let season = document.getElementById('season-selector').value;
+            let data = cachedRuikeiData;
+            
+            // 70行目(index 69) を共通のヘッダーとして使用
+            let headerRow = data[69] || ["日付", "高井", "山口", "山下", "ダイナ", "徳田", "たすく"];
+            
+            // ユーザー指定のシーズン行範囲（インデックスは行番号 - 1）
+            const ranges = {
+                'S1': { start: 1, end: 7 },    // 2行目〜8行目
+                'S2': { start: 10, end: 22 },  // 11行目〜23行目
+                'S3': { start: 27, end: 40 },  // 28行目〜41行目
+                'S4': { start: 46, end: 59 },  // 47行目〜60行目
+                'S5': { start: 70, end: 85 }   // 71行目〜86行目(四捨五入まで含む)
+            };
+
+            let targetRows = [];
+            if (season === 'ALL') {
+                // 全シーズンの場合は全てを対象にする
+                data.forEach((row, i) => targetRows.push(row));
+            } else {
+                // 選ばれたシーズンの範囲だけを抽出
+                let r = ranges[season];
+                for(let i = r.start; i <= r.end; i++) {
+                    if(data[i]) targetRows.push(data[i]);
+                }
+            }
+
             let html = '<div class="table-responsive"><table class="ruikei-table">';
+            html += '<tr>'; 
+            headerRow.forEach(cell => html += `<th>${cell}</th>`); 
+            html += '</tr>';
+
             let labels = []; 
             let chartData = [[], [], [], [], [], []]; 
             let runningTotals = [0, 0, 0, 0, 0, 0]; 
 
-            // K列(0番目)を上から下まで全部チェック
-            data.forEach((row, rowIndex) => {
+            targetRows.forEach((row) => {
+                if(!row || !row[0]) return;
                 let colK = String(row[0]).trim();
-                if (!colK) return; 
-
-                // 日付（2025-02-02など）かどうかの判定
-                let isDate = /^20\d{2}[-/]\d{1,2}[-/]\d{1,2}/.test(colK) || !isNaN(Date.parse(colK));
+                
+                let isDate = /^20\d{2}[-/]\d{1,2}[-/]\d{1,2}/.test(colK) || (!isNaN(Date.parse(colK)) && colK.length >= 8);
                 let isSum = colK === "計" || colK.includes("合計");
                 let isMoney = colK.includes("金額");
                 let isRound = colK.includes("四捨五入");
 
-                if (isDate && colK.length >= 8) {
+                if (isDate) {
                     labels.push(colK);
                     for(let i=0; i<6; i++) {
                         let val = parseFloat(String(row[i+1]).replace(/,/g, '')) || 0;
-                        runningTotals[i] += val; // 全シーズン通して加算し続ける
+                        // 個別シーズンの場合は0から累計、ALLの場合は全シーズン通して累計
+                        runningTotals[i] += val; 
                         chartData[i].push(runningTotals[i]);
                     }
                     html += '<tr>';
@@ -457,15 +493,12 @@
                     html += `<tr style="background-color: ${bgColor}; font-weight: bold;">`;
                     row.forEach(cell => html += `<td>${cell}</td>`); 
                     html += '</tr>';
-                } else {
-                    html += `<tr style="background-color: #ecf0f1; font-weight: bold;">`;
-                    row.forEach(cell => html += `<td>${cell}</td>`); 
-                    html += '</tr>';
                 }
             });
             html += '</table></div>';
             document.getElementById('ruikei-area').innerHTML = html;
 
+            // グラフ描画
             const ctx = document.getElementById('ruikei-chart').getContext('2d');
             if (ruikeiChart) ruikeiChart.destroy();
             const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#34495e'];
