@@ -49,7 +49,6 @@
         .yaku-han { display: inline-block; background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
         .yaku-desc { font-size: 15px; color: #444; line-height: 1.6; background: #fafafa; padding: 10px; border-radius: 5px; }
         
-        /* クイズ用CSS */
         .tile-img { width: 35px; height: auto; margin: 2px; border-radius: 3px; box-shadow: 1px 2px 3px rgba(0,0,0,0.3); vertical-align: middle; }
         .ans-btn { display: inline-block; width: 50px; height: 50px; font-size: 22px; font-weight: bold; margin: 5px; border-radius: 50%; border: 2px solid #3498db; background: #fff; color: #3498db; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .ans-btn.selected { background: #3498db; color: #fff; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
@@ -204,29 +203,29 @@
         ];
 
         const machi19 = [
-    { q: [2, 3, 4, 5, 6, 9, 9], a: [1, 4, 7] }, { q: [2, 3, 4, 5, 6, 7, 8], a: [2, 5, 8] }, { q: [2, 3, 4, 5, 5, 6, 7], a: [2, 5, 8] },
-    { q: [2, 3, 4, 4, 4, 9, 9], a: [1, 4, 9] }, { q: [2, 3, 3, 3, 4, 5, 6], a: [1, 2, 4, 7] }, { q: [3, 3, 3, 4, 4, 5, 6], a: [2, 4, 5, 7] },
-    { q: [3, 3, 3, 4, 5, 5, 6], a: [4, 5, 7] }, { q: [3, 3, 3, 4, 5, 6, 7], a: [2, 4, 5, 7, 8] }, { q: [3, 3, 3, 4, 5, 6, 8], a: [7, 8] },
-    { q: [3, 3, 3, 5, 5, 6, 7], a: [4, 5, 8] }, { q: [3, 3, 3, 5, 6, 7, 8], a: [4, 5, 8] }, { q: [3, 3, 3, 4, 4, 5, 5], a: [3, 4, 5, 6] },
-    { q: [3, 3, 4, 4, 4, 5, 5], a: [3, 4, 5] }, { q: [3, 3, 3, 4, 5, 5, 5], a: [2, 3, 4, 5, 6] }, { q: [3, 3, 3, 4, 4, 4, 5], a: [3, 4, 5, 6] },
-    { q: [3, 3, 3, 5, 7, 7, 7], a: [4, 5, 6] }, { q: [3, 3, 4, 5, 5, 5, 5], a: [3, 4, 6] }, { q: [3, 3, 4, 4, 4, 4, 5], a: [2, 3, 5, 6] },
-    { q: [3, 4, 4, 4, 4, 5, 6], a: [2, 3, 5, 6] }
-];
-        
+            { q: [2, 3, 4, 5, 6, 9, 9], a: [1, 4, 7] }, { q: [2, 3, 4, 5, 6, 7, 8], a: [2, 5, 8] }, { q: [2, 3, 4, 5, 5, 6, 7], a: [2, 5, 8] },
+            { q: [2, 3, 4, 4, 4, 9, 9], a: [1, 4, 9] }, { q: [2, 3, 3, 3, 4, 5, 6], a: [1, 2, 4, 7] }, { q: [3, 3, 3, 4, 4, 5, 6], a: [2, 4, 5, 7] },
+            { q: [3, 3, 3, 4, 5, 5, 6], a: [4, 5, 7] }, { q: [3, 3, 3, 4, 5, 6, 7], a: [2, 4, 5, 7, 8] }, { q: [3, 3, 3, 4, 5, 6, 8], a: [7, 8] },
+            { q: [3, 3, 3, 5, 5, 6, 7], a: [4, 5, 8] }, { q: [3, 3, 3, 5, 6, 7, 8], a: [4, 5, 8] }, { q: [3, 3, 3, 4, 4, 5, 5], a: [3, 4, 5, 6] },
+            { q: [3, 3, 4, 4, 4, 5, 5], a: [3, 4, 5] }, { q: [3, 3, 3, 4, 5, 5, 5], a: [2, 3, 4, 5, 6] }, { q: [3, 3, 3, 4, 4, 4, 5], a: [3, 4, 5, 6] },
+            { q: [3, 3, 3, 5, 7, 7, 7], a: [4, 5, 6] }, { q: [3, 3, 4, 5, 5, 5, 5], a: [3, 4, 6] }, { q: [3, 3, 4, 4, 4, 4, 5], a: [2, 3, 5, 6] },
+            { q: [3, 4, 4, 4, 4, 5, 6], a: [2, 3, 5, 6] }
+        ];
+
         let quizQuestions = [];
         let currentQIndex = 0;
         let selectedAns = [];
         let quizStartTime = 0;
         let penaltyTime = 0;
 
-        const yakuList = [ { name: "立直 (リーチ)", han: "1翻", desc: "門前でテンパイを宣言する役。" }, { name: "断幺九 (タンヤオ)", han: "1翻", desc: "2〜8の数牌だけで作る役。" }, { name: "平和 (ピンフ)", han: "1翻", desc: "順子4つと役牌以外の雀頭で作る役。" }, { name: "役牌 (ヤクハイ)", han: "1翻", desc: "三元牌や自風・場風を3枚集めるだけ。" }, { name: "対々和 (トイトイ)", han: "2翻", desc: "同じ牌を3枚ずつ4組作る役。" }, { name: "混一色 (ホンイツ)", han: "3翻", desc: "1種類の数牌と字牌だけで作る役。" }, { name: "清一色 (チンイツ)", han: "6翻", desc: "1種類の数牌のみで作る美しき役。" }, { name: "七対子 (チートイツ)", han: "2翻", desc: "対子を7組作る特殊な役。" }, { name: "三色同順 (サンショク)", han: "2翻", desc: "萬子・筒子・索子で同じ並びの順子を作る。" }, { name: "一気通貫 (イッツー)", han: "2翻", desc: "同種の数牌で123、456、789を揃える。" }, { name: "混全帯幺九 (チャンタ)", han: "2翻", desc: "全ての面子と雀頭に1,9,字牌を含める。" }, { name: "四暗刻 (スーアンコウ)", han: "役満", desc: "門前で暗刻を4つ作る役。" }, { name: "国士無双 (コクシムソウ)", han: "役満", desc: "1,9,字牌の全13種類を揃える。" }, { name: "大三元 (ダイサンゲン)", han: "役満", desc: "白・發・中の3種類を全て刻子にする。" } ];
-        const triviaList = [ "索子の柄は竹だと思われがちですが、実はお金を通した「紐の束」を表しています。", "筒子の柄は、昔の中国の「穴あき銭」そのものを表しています。", "萬子は、そのままお金の単位である「万」を表しています。", "一索の鳥は、元々はただの紐の結び目でしたが、遊び心で雀や孔雀が描かれるようになりました。", "「發」には元々文字が書かれておらず、緑色に塗られただけの無地の牌だったと言われています。", "点棒にある黒や赤のギザギザ模様は、盲目の人でも触って点数がわかるように工夫された名残です。", "日本発祥のローカルルール「リーチ」。実は本場中国の公式麻雀には存在しません。", "昔の麻雀牌は、牛骨などと竹を背中合わせにして作られていました。", "サイコロの1の裏は6ですが、中国のサイコロは1と4が赤く塗られていることが多いです。", "「麻雀」という名前の由来は、牌をかき混ぜる音が「麻雀（スズメ）」の鳴き声に似ているからです。", "「白」は元々、予備のツルツルの牌をそのまま役牌として使い始めたのが始まりです。", "世界で一番最初に作られた全自動麻雀卓は、日本のメーカーが開発したものです。" ];
+        const yakuList = [{ name: "立直 (リーチ)", han: "1翻", desc: "門前でテンパイを宣言する役。" }, { name: "断幺九 (タンヤオ)", han: "1翻", desc: "2〜8の数牌だけで作る役。" }, { name: "平和 (ピンフ)", han: "1翻", desc: "順子4つと役牌以外の雀頭で作る役。" }, { name: "役牌 (ヤクハイ)", han: "1翻", desc: "三元牌や自風・場風を3枚集めるだけ。" }, { name: "対々和 (トイトイ)", han: "2翻", desc: "同じ牌を3枚ずつ4組作る役。" }, { name: "混一色 (ホンイツ)", han: "3翻", desc: "1種類の数牌と字牌だけで作る役。" }, { name: "清一色 (チンイツ)", han: "6翻", desc: "1種類の数牌のみで作る美しき役。" }, { name: "七対子 (チートイツ)", han: "2翻", desc: "対子を7組作る特殊な役。" }, { name: "三色同順 (サンショク)", han: "2翻", desc: "萬子・筒子・索子で同じ並びの順子を作る。" }, { name: "一気通貫 (イッツー)", han: "2翻", desc: "同種の数牌で123、456、789を揃える。" }, { name: "混全帯幺九 (チャンタ)", han: "2翻", desc: "全ての面子と雀頭に1,9,字牌を含める。" }, { name: "四暗刻 (スーアンコウ)", han: "役満", desc: "門前で暗刻を4つ作る役。" }, { name: "国士無双 (コクシムソウ)", han: "役満", desc: "1,9,字牌の全13種類を揃える。" }, { name: "大三元 (ダイサンゲン)", han: "役満", desc: "白・發・中の3種類を全て刻子にする。" }];
+        const triviaList = ["索子の柄は竹だと思われがちですが、実はお金を通した「紐の束」を表しています。", "筒子の柄は、昔の中国の「穴あき銭」そのものを表しています。", "萬子は、そのままお金の単位である「万」を表しています。", "一索の鳥は、元々はただの紐の結び目でしたが、遊び心で雀や孔雀が描かれるようになりました。", "「發」には元々文字が書かれておらず、緑色に塗られただけの無地の牌だったと言われています。", "点棒にある黒や赤のギザギザ模様は、盲目の人でも触って点数がわかるように工夫された名残です。", "日本発祥のローカルルール「リーチ」。実は本場中国の公式麻雀には存在しません。", "昔の麻雀牌は、牛骨などと竹を背中合わせにして作られていました。", "サイコロの1の裏は6ですが、中国のサイコロは1と4が赤く塗られていることが多いです。", "「麻雀」という名前の由来は、牌をかき混ぜる音が「麻雀（スズメ）」の鳴き声に似ているからです。", "「白」は元々、予備のツルツルの牌をそのまま役牌として使い始めたのが始まりです。", "世界で一番最初に作られた全自動麻雀卓は、日本のメーカーが開発したものです。"];
 
-        let records = []; 
+        let records = [];
         let cachedRuikeiData = [];
-        let ruikeiChart = null; 
-        let hanchanChart = null; 
-        let rankChart = null; 
+        let ruikeiChart = null;
+        let hanchanChart = null;
+        let rankChart = null;
         let radarChartObj = null;
 
         // ページ読み込み完了時の処理
@@ -235,9 +234,8 @@
             const urlKey = urlParams.get('key');
             let isAuth = false;
 
-            // URLに合言葉が含まれていれば保存
             if (urlKey) {
-                try { localStorage.setItem('mahjong_auth', urlKey); } catch(e){}
+                try { localStorage.setItem('mahjong_auth', urlKey); } catch (e) { }
                 isAuth = true;
                 window.history.replaceState(null, null, window.location.pathname);
             } else {
@@ -245,10 +243,9 @@
                     if (localStorage.getItem('mahjong_auth')) {
                         isAuth = true;
                     }
-                } catch(e){}
+                } catch (e) { }
             }
 
-            // 認証済みならメニュー画面へ
             if (isAuth) {
                 document.getElementById('login-view').classList.remove('active-view');
                 document.getElementById('menu-view').classList.add('active-view');
@@ -262,31 +259,29 @@
 
             renderInputForm();
             initTriviaView();
-            initQuizView(); 
+            initQuizView();
         };
 
-        // ログインボタン処理
         function checkPassword() {
             let input = document.getElementById('secret-word-input').value;
-            if (input) { 
-                try { localStorage.setItem('mahjong_auth', input); } catch(e){}
-                document.getElementById('login-view').classList.remove('active-view'); 
-                document.getElementById('menu-view').classList.add('active-view'); 
-            } else { 
-                alert("合言葉を入力してください！"); 
+            if (input) {
+                try { localStorage.setItem('mahjong_auth', input); } catch (e) { }
+                document.getElementById('login-view').classList.remove('active-view');
+                document.getElementById('menu-view').classList.add('active-view');
+            } else {
+                alert("合言葉を入力してください！");
             }
         }
 
-        // 画面切り替え
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
             document.getElementById(viewId).classList.add('active-view');
             window.scrollTo(0, 0);
-            
+
             if (viewId === 'input-view') loadFromCloud();
             else if (viewId === 'data-view') loadRuikeiData();
             else if (viewId === 'hanchan-view') loadHanchanData();
-            else if (viewId === 'quiz-view') loadQuizRanking(); 
+            else if (viewId === 'quiz-view') loadQuizRanking();
         }
 
         // ==========================================
@@ -301,16 +296,17 @@
             });
             let kb = document.getElementById('quiz-keyboard');
             let kbHtml = "";
-            for(let i=1; i<=9; i++){
+            for (let i = 1; i <= 9; i++) {
                 kbHtml += `<button class="ans-btn" id="ans-btn-${i}" onclick="toggleAns(${i})">${i}</button>`;
-                if(i===5) kbHtml += `<br>`;
+                if (i === 5) kbHtml += `<br>`;
             }
             kb.innerHTML = kbHtml;
         }
 
+        // 💡 修正ポイント：URLの末尾に現在の時間(&t=...)をつけて、強制的に最新データを取ってくるようにしました！
         function loadQuizRanking() {
             document.getElementById('quiz-ranking-area').innerHTML = "<p style='text-align:center; color:#999;'>☁️ 最新ランキングを同期中...</p>";
-            fetch(GAS_URL + "?action=getQuizRanking")
+            fetch(GAS_URL + "?action=getQuizRanking&t=" + new Date().getTime())
                 .then(res => res.json())
                 .then(data => {
                     let html = "";
@@ -335,21 +331,20 @@
 
         function startQuiz() {
             let pName = document.getElementById('quiz-player-select').value;
-            if(!pName) { alert("挑戦するプレイヤーを選択してください！"); return; }
-            
+            if (!pName) { alert("挑戦するプレイヤーを選択してください！"); return; }
+
             quizQuestions = [...machi19].sort(() => Math.random() - 0.5).slice(0, 10);
-            currentQIndex = 0; 
+            currentQIndex = 0;
             penaltyTime = 0;
-            
+
             document.getElementById('quiz-intro').style.display = 'none';
             document.getElementById('quiz-result-area').style.display = 'none';
             document.getElementById('quiz-play-area').style.display = 'block';
-            
+
             quizStartTime = Date.now();
             renderQuestion();
         }
 
-        // 安全対策用ダミー関数（エラー防止）
         function stopQuiz() { }
 
         function renderQuestion() {
@@ -357,37 +352,37 @@
             updateKeyboard();
             document.getElementById('quiz-feedback').innerText = "";
             document.getElementById('quiz-progress').innerText = `${currentQIndex + 1} / 10問`;
-            
+
             let q = quizQuestions[currentQIndex].q;
             let html = "";
-            q.forEach(num => { 
-                html += `<img src="${num}p.png" class="tile-img" alt="${num}筒" onerror="this.onerror=null;this.src='https://via.placeholder.com/35x45?text=${num}';">`; 
+            q.forEach(num => {
+                html += `<img src="${num}p.png" class="tile-img" alt="${num}筒" onerror="this.onerror=null;this.src='https://via.placeholder.com/35x45?text=${num}';">`;
             });
             document.getElementById('quiz-tiles-area').innerHTML = html;
         }
 
         function toggleAns(num) {
             let idx = selectedAns.indexOf(num);
-            if(idx === -1) selectedAns.push(num); else selectedAns.splice(idx, 1);
+            if (idx === -1) selectedAns.push(num); else selectedAns.splice(idx, 1);
             updateKeyboard();
         }
 
         function updateKeyboard() {
-            for(let i=1; i<=9; i++){
+            for (let i = 1; i <= 9; i++) {
                 let btn = document.getElementById(`ans-btn-${i}`);
-                if(selectedAns.includes(i)) btn.classList.add('selected'); else btn.classList.remove('selected');
+                if (selectedAns.includes(i)) btn.classList.add('selected'); else btn.classList.remove('selected');
             }
         }
 
         function submitAnswer() {
-            if(selectedAns.length === 0) return;
-            
+            if (selectedAns.length === 0) return;
+
             let correctArr = quizQuestions[currentQIndex].a.slice().sort();
             let userArr = selectedAns.slice().sort();
-            
-            if(JSON.stringify(correctArr) === JSON.stringify(userArr)) {
+
+            if (JSON.stringify(correctArr) === JSON.stringify(userArr)) {
                 currentQIndex++;
-                if(currentQIndex >= quizQuestions.length) finishQuiz();
+                if (currentQIndex >= quizQuestions.length) finishQuiz();
                 else renderQuestion();
             } else {
                 penaltyTime += 5;
@@ -399,12 +394,12 @@
         function finishQuiz() {
             let finalTime = (Date.now() - quizStartTime) / 1000 + penaltyTime;
             let pName = document.getElementById('quiz-player-select').value;
-            
+
             document.getElementById('quiz-play-area').style.display = 'none';
             document.getElementById('quiz-result-area').style.display = 'block';
             document.getElementById('quiz-final-time').innerText = finalTime.toFixed(1);
             document.getElementById('quiz-penalty-text').innerText = penaltyTime > 0 ? `(うちペナルティ ${penaltyTime}秒)` : "✨ノーミス・パーフェクト！✨";
-            
+
             let saveStatus = document.getElementById('quiz-saving-status');
             saveStatus.innerText = "☁️ 記録をクラウドに送信中...";
             saveStatus.style.color = "#f39c12";
@@ -416,26 +411,26 @@
                 secret: localStorage.getItem('mahjong_auth')
             };
 
-            fetch(GAS_URL, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
-                body: "data=" + encodeURIComponent(JSON.stringify(postData)) 
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: "data=" + encodeURIComponent(JSON.stringify(postData))
             })
-            .then(res => res.text())
-            .then(text => {
-                if(text.includes("GAS_ERROR")) {
-                    saveStatus.innerText = "⚠️ エラー：記録の送信に失敗しました";
+                .then(res => res.text())
+                .then(text => {
+                    if (text.includes("GAS_ERROR")) {
+                        saveStatus.innerText = "⚠️ エラー：記録の送信に失敗しました";
+                        saveStatus.style.color = "red";
+                    } else {
+                        saveStatus.innerText = "✅ 記録を保存しました！";
+                        saveStatus.style.color = "#27ae60";
+                        loadQuizRanking();
+                    }
+                })
+                .catch(err => {
+                    saveStatus.innerText = "⚠️ 通信エラーが発生しました";
                     saveStatus.style.color = "red";
-                } else {
-                    saveStatus.innerText = "✅ 記録を保存しました！";
-                    saveStatus.style.color = "#27ae60";
-                    loadQuizRanking(); 
-                }
-            })
-            .catch(err => {
-                saveStatus.innerText = "⚠️ 通信エラーが発生しました";
-                saveStatus.style.color = "red";
-            });
+                });
         }
 
         function resetQuiz() {
@@ -462,10 +457,11 @@
             area.style.display = "block"; area.style.animation = "none"; setTimeout(() => { area.style.animation = "fadeIn 0.5s ease-in-out"; }, 10);
         }
 
+        // 💡 修正ポイント：他のデータ取得部分もすべてキャッシュバスター(&t=...)を追加し、確実に最新になるようにしました！
         function loadHanchanData() {
             document.getElementById('hanchan-table-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
             document.getElementById('ai-commentary').innerHTML = "<p style='text-align:center;'>☁️ 分析レポートを作成中...</p>";
-            fetch(GAS_URL + "?action=getHanchans").then(res => res.json()).then(data => {
+            fetch(GAS_URL + "?action=getHanchans&t=" + new Date().getTime()).then(res => res.json()).then(data => {
                 if (data.error) { document.getElementById('hanchan-table-area').innerHTML = `<p style="color:red;">エラー: ${data.error}</p>`; return; }
                 renderHanchanTableAndChart(data);
             }).catch(err => { document.getElementById('hanchan-table-area').innerHTML = `<p style="color:red;">通信エラーが発生しました。</p>`; });
@@ -533,9 +529,10 @@
             tbl += '</table></div>'; document.getElementById('hanchan-table-area').innerHTML = tbl;
         }
 
+        // 💡 修正ポイント：ここにもキャッシュバスター(&t=...)を追加
         function loadRuikeiData() {
             document.getElementById('ruikei-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
-            fetch(GAS_URL + "?action=getRuikei").then(res => res.json()).then(data => { if (data.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー</p>`; return; } cachedRuikeiData = data; renderRuikeiTableAndChart(); });
+            fetch(GAS_URL + "?action=getRuikei&t=" + new Date().getTime()).then(res => res.json()).then(data => { if (data.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー</p>`; return; } cachedRuikeiData = data; renderRuikeiTableAndChart(); });
         }
 
         function renderRuikeiTableAndChart() {
@@ -565,10 +562,12 @@
         // ==========================================
         // ▼ 成績入力＆送信 ▼
         // ==========================================
+        
+        // 💡 修正ポイント：ここにもキャッシュバスター(&t=...)を追加
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
-            fetch(GAS_URL + "?date=" + selectedDate).then(res => res.json()).then(data => { records = data.error ? [] : data; updateUI(); });
+            fetch(GAS_URL + "?date=" + selectedDate + "&t=" + new Date().getTime()).then(res => res.json()).then(data => { records = data.error ? [] : data; updateUI(); });
         }
 
         function calculateCurrentSum() {
