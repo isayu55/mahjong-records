@@ -500,14 +500,18 @@
         let radarChartObj = null;
 
         window.onload = function () {
+            // ▼ 追加：URLのパラメータ（?key=〇〇）を取得する
             const urlParams = new URLSearchParams(window.location.search);
             const urlKey = urlParams.get('key');
+
             // URLのキーが合言葉と一致したら、認証OKとして保存する
             if (urlKey === SECRET_WORD) {
                 localStorage.setItem('mahjong_auth', 'ok');
                 // URLから「?key=...」を消して、普通のURLに戻す（見た目をスッキリさせるため）
                 window.history.replaceState(null, null, window.location.pathname);
             }
+            // ▲ 追加ここまで
+
             // パスワードチェック（一度入力していればスキップ）
             if (localStorage.getItem('mahjong_auth') === 'ok') {
                 document.getElementById('login-view').classList.remove('active-view');
@@ -1044,8 +1048,8 @@
                 tokuda_score: recordData.points['tokuda'] !== undefined ? recordData.points['tokuda'] : "", tokuda_chip: recordData.chips['tokuda'] || "",
                 tasuku_score: recordData.points['tasuku'] !== undefined ? recordData.points['tasuku'] : "", tasuku_chip: recordData.chips['tasuku'] || "",
                 total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'],
-                total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku']
-                secret: SECRET_WORD // ★これを追加！
+                total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'],
+                secret: SECRET_WORD // ★これを追加しました！
             };
 
             players.forEach(p => { document.getElementById('score_' + p.id).value = ""; document.getElementById('chip_' + p.id).value = ""; });
