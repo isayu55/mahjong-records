@@ -48,6 +48,12 @@
         .yaku-name { font-size: 28px; font-weight: bold; color: #e74c3c; margin: 10px 0; letter-spacing: 2px; }
         .yaku-han { display: inline-block; background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
         .yaku-desc { font-size: 15px; color: #444; line-height: 1.6; background: #fafafa; padding: 10px; border-radius: 5px; }
+        
+        /* ▼ 追加：クイズ用CSS ▼ */
+        .tile { display: inline-block; width: 30px; height: 42px; background: #fff; border: 1px solid #777; border-radius: 3px; margin: 2px; text-align: center; line-height: 42px; font-size: 20px; font-weight: bold; color: #c0392b; box-shadow: 1px 2px 2px rgba(0,0,0,0.2); }
+        .ans-btn { display: inline-block; width: 50px; height: 50px; font-size: 22px; font-weight: bold; margin: 5px; border-radius: 50%; border: 2px solid #3498db; background: #fff; color: #3498db; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .ans-btn.selected { background: #3498db; color: #fff; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .rank-card { background: #fff; border-left: 5px solid #f1c40f; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 5px; display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
@@ -69,9 +75,54 @@
             <button class="btn btn-sync" onclick="switchView('data-view')" style="margin-top: 20px;">📅 シーズン・日別の成績を見る</button>
             <button class="btn btn-analysis" onclick="switchView('hanchan-view')" style="margin-top: 20px;">📊 AI分析ダッシュボード</button>
             <button class="btn btn-trivia" onclick="switchView('trivia-view')" style="margin-top: 20px;">💡 豆知識＆今日のラッキー役</button>
+            <button class="btn" onclick="switchView('quiz-view')" style="margin-top: 20px; background-color: #e74c3c;">🧩 多面張タイムアタック</button>
         </div>
 
+        <div id="quiz-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view'); stopQuiz();">🏠 メニューに戻る</button>
+            <h2>🧩 7枚待ちタイムアタック</h2>
+            
+            <div id="quiz-intro">
+                <p style="text-align:center; font-size:14px; color:#666; line-height:1.6;">雀龍.comの「7枚待ち 全19パターン」に準拠した多面張クイズです！<br>全19問正解までのタイムを競います。<br>（※間違えると+5秒のペナルティ）</p>
+                
+                <select id="quiz-player-select" class="season-select" style="margin-top: 20px;">
+                    <option value="">👤 挑戦するプレイヤーを選択...</option>
+                </select>
+                <button class="btn" style="background-color:#e74c3c; margin-top: 5px;" onclick="startQuiz()">⏱️ クイズスタート！</button>
 
+                <h3 style="margin-top: 40px; color:#f39c12;">🏆 トップ3 ベストタイム</h3>
+                <div id="quiz-ranking-area"></div>
+                <button class="btn btn-sync" style="font-size: 14px; padding: 8px; margin-top: 15px;" onclick="clearRanking()">🗑️ ランキングをリセット</button>
+            </div>
+
+            <div id="quiz-play-area" style="display:none; text-align:center;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #ddd; padding-bottom:10px; margin-bottom:20px;">
+                    <div style="font-size:32px; font-weight:bold; color:#e74c3c; font-family:monospace;" id="quiz-timer">0.0</div>
+                    <div style="font-size:16px; font-weight:bold; color:#3498db;" id="quiz-progress">1 / 19問</div>
+                </div>
+                
+                <div id="quiz-tiles-area" style="margin-bottom: 30px; background:#fafafa; padding:20px 10px; border-radius:8px; border:2px dashed #ccc;">
+                    </div>
+
+                <p style="font-weight:bold; color:#2c3e50; margin-bottom:15px;">待ち牌を<span style="color:#e74c3c;">すべて</span>選んでください</p>
+                <div id="quiz-keyboard" style="max-width:300px; margin:0 auto;">
+                    </div>
+
+                <button class="btn" style="margin-top: 25px; font-size: 22px; padding: 15px;" onclick="submitAnswer()">解答する</button>
+                <p id="quiz-feedback" style="color:#e74c3c; font-weight:bold; height:20px; margin-top:15px;"></p>
+            </div>
+
+            <div id="quiz-result-area" style="display:none; text-align:center;">
+                <h2 style="color:#e74c3c; font-size:32px;">🎉 CLEAR! 🎉</h2>
+                <div style="background:#e8f4f8; padding:20px; border-radius:10px; margin:20px 0;">
+                    <p style="font-size:18px; font-weight:bold; margin:0;">クリアタイム</p>
+                    <p style="font-size:48px; font-weight:bold; color:#2980b9; margin:10px 0;"><span id="quiz-final-time"></span><span style="font-size:24px;"> 秒</span></p>
+                    <p id="quiz-penalty-text" style="font-size:14px; color:#e74c3c; font-weight:bold; margin:0;"></p>
+                </div>
+                <button class="btn" style="background-color:#e74c3c;" onclick="resetQuiz()">もう一度挑戦する</button>
+                <button class="btn btn-cancel" style="margin-top: 10px;" onclick="switchView('menu-view')">メニューに戻る</button>
+            </div>
+        </div>
         <div id="input-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📝 成績入力</h2>
@@ -96,7 +147,6 @@
             <div id="current-sum-display"></div>
 
             <button class="btn" id="save-btn" onclick="saveRecord()">この内容を記録する</button>
-            <button class="btn btn-cancel" id="cancel-btn" style="display:none;" onclick="cancelEdit()">修正をキャンセル</button>
 
             <h3 style="margin-top: 40px;">🏆 現在の総合結果</h3>
             <div class="table-responsive">
@@ -155,7 +205,7 @@
             <h2>🀄 ラッキー役＆豆知識</h2>
 
             <div class="chart-title" style="margin-top: 30px;">🔮 今日のあなたにおすすめの役</div>
-            <p style="text-align:center; font-size:13px; color:#666;">プレイヤーを選ぶと、今日狙うべき役を占います！<br>（※日替わりで変化します）</p>
+            <p style="text-align:center; font-size:13px; color:#666;">プレイヤーを選ぶと、今日狙うべき役を占います！</p>
 
             <select id="lucky-player-select" class="season-select" onchange="showLuckyYaku()">
                 <option value="">👤 あなたの名前を選択してください...</option>
@@ -173,17 +223,43 @@
     </div>
 
     <script>
-        // ==========================================
-        // ▼ 設定 ▼
-        // ★ 注意: HTMLのコード上から「tsudoi」というパスワードの正解を完全に消し去りました！
-        // ==========================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxgQbnvRIqRMI5Y2mukb1qzYtJECMTAO3dFLU-XcMvO2WwMN6GOti_J7diAbnHYuAzO0Q/exec";
         const players = [
             { id: 'takai', name: '高井' }, { id: 'yamaguchi', name: '山口' }, { id: 'yamashita', name: '山下' },
             { id: 'dyna', name: 'ダイナ' }, { id: 'tokuda', name: '徳田' }, { id: 'tasuku', name: 'たすく' }
         ];
 
-        // ▼ 役データ ▼
+        // ▼ クイズ用データ（雀龍.com 7枚待ち19パターン準拠）▼
+        const machi19 = [
+            { q: [2,2,2,3,4,5,6], a: [1,4,7] },
+            { q: [2,3,4,5,6,7,8], a: [2,5,8] },
+            { q: [2,3,4,4,4,5,6], a: [1,4,7] },
+            { q: [1,1,1,2,3,4,5], a: [2,5] },
+            { q: [2,2,2,3,3,3,4], a: [1,4] },
+            { q: [2,2,2,3,4,4,4], a: [2,3,4] },
+            { q: [1,2,3,4,5,5,5], a: [3,6] },
+            { q: [2,2,2,3,4,5,5], a: [1,4,5] },
+            { q: [1,1,1,2,2,2,3], a: [3] },
+            { q: [1,1,1,2,2,3,3], a: [1,2,3] },
+            { q: [1,1,1,2,3,3,3], a: [1,2,3] },
+            { q: [2,3,3,3,3,4,5], a: [1,2,4,5] },
+            { q: [2,2,2,2,3,4,5], a: [3,6] },
+            { q: [2,3,4,5,5,5,5], a: [1,4] },
+            { q: [1,2,3,3,3,3,4], a: [1,2,4,5] },
+            { q: [2,2,3,4,4,4,4], a: [1,2,4] },
+            { q: [3,3,3,4,5,6,7], a: [2,5,8] },
+            { q: [3,4,5,6,6,6,7], a: [4,7,8] },
+            { q: [2,3,3,3,4,4,4], a: [2,3,4,5] }
+        ];
+        const kanji = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+        
+        let quizQuestions = [];
+        let currentQIndex = 0;
+        let selectedAns = [];
+        let quizStartTime = 0;
+        let penaltyTime = 0;
+        let timerInterval;
+
         const yakuList = [
             { name: "立直 (リーチ)", han: "1翻", desc: "門前でテンパイを宣言する役。まずはここから！裏ドラの期待感も高まります。" },
             { name: "断幺九 (タンヤオ)", han: "1翻", desc: "2〜8の数牌だけで作る役。鳴きもOKで使い勝手抜群！スピーディーに局を回せます。" },
@@ -201,7 +277,6 @@
             { name: "大三元 (ダイサンゲン)", han: "役満", desc: "白・發・中の3種類を全て刻子にする役。鳴いてもOKなのが恐ろしい、破壊力抜群の役満！" }
         ];
 
-        // ▼ 豆知識データ ▼
         const triviaList = [
             "索子(ソーズ)の柄は竹だと思われがちですが、実はお金（穴あき銭）を通した「紐の束」を表しています。",
             "筒子(ピンズ)の柄は、昔の中国の「穴あき銭」そのものを表しています。",
@@ -217,27 +292,17 @@
             "世界で一番最初に作られた全自動麻雀卓は、日本のメーカーが開発したものです。"
         ];
 
-        let records = [];
-        let editingId = null;
-        let cachedRuikeiData = [];
-
-        let ruikeiChart = null;
-        let hanchanChart = null;
-        let rankChart = null;
-        let radarChartObj = null;
+        let records = []; let cachedRuikeiData = [];
+        let ruikeiChart = null; let hanchanChart = null; let rankChart = null; let radarChartObj = null;
 
         window.onload = function () {
-            // ▼ 修正：URLから取得した合言葉（正しいかはまだ分からない）をとりあえず保存する
             const urlParams = new URLSearchParams(window.location.search);
             const urlKey = urlParams.get('key');
-
             if (urlKey) {
                 localStorage.setItem('mahjong_auth', urlKey);
                 window.history.replaceState(null, null, window.location.pathname);
             }
 
-            // 何らかのパスワードが入っていれば、一旦メニュー画面に入れてあげる
-            // （もし間違った合言葉だったら、後で記録するときにGASに弾き出されます）
             if (localStorage.getItem('mahjong_auth')) {
                 document.getElementById('login-view').classList.remove('active-view');
                 document.getElementById('menu-view').classList.add('active-view');
@@ -251,37 +316,168 @@
 
             renderInputForm();
             initTriviaView();
+            initQuizView(); // クイズの初期化
         };
 
-        // ▼ パスワード認証機能（HTMLでは正解チェックをしない） ▼
         function checkPassword() {
             let input = document.getElementById('secret-word-input').value;
             if (input) {
-                // 入力された文字をとりあえず保存して通す
                 localStorage.setItem('mahjong_auth', input);
                 document.getElementById('login-view').classList.remove('active-view');
                 document.getElementById('menu-view').classList.add('active-view');
-            } else {
-                alert("合言葉を入力してください！");
-            }
+            } else { alert("合言葉を入力してください！"); }
         }
 
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
             document.getElementById(viewId).classList.add('active-view');
             window.scrollTo(0, 0);
-
             if (viewId === 'input-view') loadFromCloud();
             else if (viewId === 'data-view') loadRuikeiData();
             else if (viewId === 'hanchan-view') loadHanchanData();
         }
 
+        // ==========================================
+        // ▼ 7枚待ち クイズ処理 ▼
+        // ==========================================
+        function initQuizView() {
+            let select = document.getElementById('quiz-player-select');
+            players.forEach(p => {
+                let option = document.createElement('option');
+                option.value = p.name; option.text = p.name;
+                select.appendChild(option);
+            });
+            let kb = document.getElementById('quiz-keyboard');
+            let kbHtml = "";
+            for(let i=1; i<=9; i++){
+                kbHtml += `<button class="ans-btn" id="ans-btn-${i}" onclick="toggleAns(${i})">${i}</button>`;
+                if(i===5) kbHtml += `<br>`;
+            }
+            kb.innerHTML = kbHtml;
+            showRanking();
+        }
+
+        function showRanking() {
+            let ranking = JSON.parse(localStorage.getItem('machiRanking')) || [];
+            ranking.sort((a, b) => a.time - b.time);
+            let html = "";
+            const medals = ["🥇", "🥈", "🥉"];
+            for (let i = 0; i < 3; i++) {
+                if (ranking[i]) {
+                    html += `<div class="rank-card"><span>${medals[i]} ${ranking[i].name}</span><span style="color:#e74c3c;">${ranking[i].time.toFixed(1)} 秒</span></div>`;
+                } else {
+                    html += `<div class="rank-card" style="color:#999;"><span>${medals[i]} ---</span><span>--.- 秒</span></div>`;
+                }
+            }
+            document.getElementById('quiz-ranking-area').innerHTML = html;
+        }
+
+        function clearRanking() {
+            if(confirm("ランキングの記録をすべて削除しますか？")) {
+                localStorage.removeItem('machiRanking');
+                showRanking();
+            }
+        }
+
+        function startQuiz() {
+            let pName = document.getElementById('quiz-player-select').value;
+            if(!pName) { alert("挑戦するプレイヤーを選択してください！"); return; }
+            
+            // 19問をランダムにシャッフル
+            quizQuestions = [...machi19].sort(() => Math.random() - 0.5);
+            currentQIndex = 0;
+            penaltyTime = 0;
+            
+            document.getElementById('quiz-intro').style.display = 'none';
+            document.getElementById('quiz-result-area').style.display = 'none';
+            document.getElementById('quiz-play-area').style.display = 'block';
+            
+            quizStartTime = Date.now();
+            timerInterval = setInterval(() => {
+                let elapsed = (Date.now() - quizStartTime) / 1000 + penaltyTime;
+                document.getElementById('quiz-timer').innerText = elapsed.toFixed(1);
+            }, 100);
+            
+            renderQuestion();
+        }
+
+        function stopQuiz() { clearInterval(timerInterval); }
+
+        function renderQuestion() {
+            selectedAns = [];
+            updateKeyboard();
+            document.getElementById('quiz-feedback').innerText = "";
+            document.getElementById('quiz-progress').innerText = `${currentQIndex + 1} / 19問`;
+            
+            let q = quizQuestions[currentQIndex].q;
+            let html = "";
+            q.forEach(num => { html += `<div class="tile">${kanji[num]}</div>`; });
+            document.getElementById('quiz-tiles-area').innerHTML = html;
+        }
+
+        function toggleAns(num) {
+            let idx = selectedAns.indexOf(num);
+            if(idx === -1) selectedAns.push(num);
+            else selectedAns.splice(idx, 1);
+            updateKeyboard();
+        }
+
+        function updateKeyboard() {
+            for(let i=1; i<=9; i++){
+                let btn = document.getElementById(`ans-btn-${i}`);
+                if(selectedAns.includes(i)) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            }
+        }
+
+        function submitAnswer() {
+            if(selectedAns.length === 0) return;
+            
+            let correctArr = quizQuestions[currentQIndex].a.slice().sort();
+            let userArr = selectedAns.slice().sort();
+            
+            if(JSON.stringify(correctArr) === JSON.stringify(userArr)) {
+                // 正解！
+                currentQIndex++;
+                if(currentQIndex >= quizQuestions.length) finishQuiz();
+                else renderQuestion();
+            } else {
+                // 不正解...
+                penaltyTime += 5;
+                document.getElementById('quiz-feedback').innerText = "❌ ブブー！ ペナルティ +5秒";
+                setTimeout(() => { document.getElementById('quiz-feedback').innerText = ""; }, 1000);
+            }
+        }
+
+        function finishQuiz() {
+            stopQuiz();
+            let finalTime = (Date.now() - quizStartTime) / 1000 + penaltyTime;
+            let pName = document.getElementById('quiz-player-select').value;
+            
+            document.getElementById('quiz-play-area').style.display = 'none';
+            document.getElementById('quiz-result-area').style.display = 'block';
+            document.getElementById('quiz-final-time').innerText = finalTime.toFixed(1);
+            document.getElementById('quiz-penalty-text').innerText = penaltyTime > 0 ? `(うちペナルティ ${penaltyTime}秒)` : "✨ノーミス・パーフェクト！✨";
+            
+            let ranking = JSON.parse(localStorage.getItem('machiRanking')) || [];
+            ranking.push({ name: pName, time: finalTime });
+            localStorage.setItem('machiRanking', JSON.stringify(ranking));
+            showRanking();
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-result-area').style.display = 'none';
+            document.getElementById('quiz-intro').style.display = 'block';
+        }
+
+        // ==========================================
+        // ▼ 豆知識＆その他処理 ▼
+        // ==========================================
         function initTriviaView() {
             let select = document.getElementById('lucky-player-select');
             players.forEach(p => {
                 let option = document.createElement('option');
-                option.value = p.id;
-                option.text = p.name;
+                option.value = p.id; option.text = p.name;
                 select.appendChild(option);
             });
             showRandomTrivia();
@@ -296,16 +492,12 @@
             let pId = document.getElementById('lucky-player-select').value;
             let area = document.getElementById('lucky-yaku-area');
             if (!pId) { area.style.display = "none"; return; }
-            let todayStr = new Date().toDateString();
-            let seedStr = todayStr + "_" + pId;
-            let hash = 0;
+            let todayStr = new Date().toDateString(); let seedStr = todayStr + "_" + pId; let hash = 0;
             for (let i = 0; i < seedStr.length; i++) { hash += seedStr.charCodeAt(i); }
-            let yakuIndex = hash % yakuList.length;
-            let luckyYaku = yakuList[yakuIndex];
+            let yakuIndex = hash % yakuList.length; let luckyYaku = yakuList[yakuIndex];
             area.innerHTML = `<div style="font-size:13px; color:#666; margin-bottom:5px;">本日のあなたに麻雀の神様が告げる役は…</div><div class="yaku-han">${luckyYaku.han}</div><div class="yaku-name">${luckyYaku.name}</div><div class="yaku-desc">${luckyYaku.desc}</div>`;
             area.style.display = "block";
-            area.style.animation = "none";
-            setTimeout(() => { area.style.animation = "fadeIn 0.5s ease-in-out"; }, 10);
+            area.style.animation = "none"; setTimeout(() => { area.style.animation = "fadeIn 0.5s ease-in-out"; }, 10);
         }
 
         function loadHanchanData() {
@@ -509,7 +701,6 @@
                 tasuku_score: recordData.points['tasuku'] !== undefined ? recordData.points['tasuku'] : "", tasuku_chip: recordData.chips['tasuku'] || "",
                 total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'],
                 total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'],
-                // ▼ 修正：保存してある合言葉を送信する（正解は知らなくても、そのまま投げる）
                 secret: localStorage.getItem('mahjong_auth') 
             };
 
@@ -519,11 +710,9 @@
             fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: "data=" + encodeURIComponent(JSON.stringify(postData)) })
                 .then(response => response.text())
                 .then(text => {
-                    // ▼ 修正：GASから「間違ってる！」と怒られたら追い出す
                     if (text.includes("認証に失敗しました")) {
                         alert("⛔ 合言葉が間違っています！\n権限がないため、ログイン画面に戻ります。");
-                        localStorage.removeItem('mahjong_auth'); // スマホの記憶を消す
-                        location.reload(); // ページを更新してログイン画面へ
+                        localStorage.removeItem('mahjong_auth'); location.reload();
                     } else if (text.includes("GAS_ERROR")) {
                         alert("⚠️ エラーが発生しました:\n" + text);
                     } else {
