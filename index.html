@@ -49,6 +49,7 @@
         .yaku-han { display: inline-block; background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
         .yaku-desc { font-size: 15px; color: #444; line-height: 1.6; background: #fafafa; padding: 10px; border-radius: 5px; }
         
+        /* クイズ用CSS */
         .tile-img { width: 35px; height: auto; margin: 2px; border-radius: 3px; box-shadow: 1px 2px 3px rgba(0,0,0,0.3); vertical-align: middle; }
         .ans-btn { display: inline-block; width: 50px; height: 50px; font-size: 22px; font-weight: bold; margin: 5px; border-radius: 50%; border: 2px solid #3498db; background: #fff; color: #3498db; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .ans-btn.selected { background: #3498db; color: #fff; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
@@ -78,7 +79,7 @@
         </div>
 
         <div id="quiz-view" class="view-section">
-            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
+            <button class="btn btn-cancel" onclick="switchView('menu-view'); stopQuiz();">🏠 メニューに戻る</button>
             <h2>🧩 7枚待ちタイムアタック（筒子）</h2>
             
             <div id="quiz-intro">
@@ -196,7 +197,7 @@
     </div>
 
     <script>
-        const GAS_URL = https://script.google.com/macros/s/AKfycbxyZ3loLBCqCAHNM3zHWL2gRu6cNy6L2xUSHdZUF48_MROKBzTio-vLXhhmUGVH63-c-g/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxgQbnvRIqRMI5Y2mukb1qzYtJECMTAO3dFLU-XcMvO2WwMN6GOti_J7diAbnHYuAzO0Q/exec";
         const players = [
             { id: 'takai', name: '高井' }, { id: 'yamaguchi', name: '山口' }, { id: 'yamashita', name: '山下' },
             { id: 'dyna', name: 'ダイナ' }, { id: 'tokuda', name: '徳田' }, { id: 'tasuku', name: 'たすく' }
@@ -221,18 +222,34 @@
         const yakuList = [ { name: "立直 (リーチ)", han: "1翻", desc: "門前でテンパイを宣言する役。" }, { name: "断幺九 (タンヤオ)", han: "1翻", desc: "2〜8の数牌だけで作る役。" }, { name: "平和 (ピンフ)", han: "1翻", desc: "順子4つと役牌以外の雀頭で作る役。" }, { name: "役牌 (ヤクハイ)", han: "1翻", desc: "三元牌や自風・場風を3枚集めるだけ。" }, { name: "対々和 (トイトイ)", han: "2翻", desc: "同じ牌を3枚ずつ4組作る役。" }, { name: "混一色 (ホンイツ)", han: "3翻", desc: "1種類の数牌と字牌だけで作る役。" }, { name: "清一色 (チンイツ)", han: "6翻", desc: "1種類の数牌のみで作る美しき役。" }, { name: "七対子 (チートイツ)", han: "2翻", desc: "対子を7組作る特殊な役。" }, { name: "三色同順 (サンショク)", han: "2翻", desc: "萬子・筒子・索子で同じ並びの順子を作る。" }, { name: "一気通貫 (イッツー)", han: "2翻", desc: "同種の数牌で123、456、789を揃える。" }, { name: "混全帯幺九 (チャンタ)", han: "2翻", desc: "全ての面子と雀頭に1,9,字牌を含める。" }, { name: "四暗刻 (スーアンコウ)", han: "役満", desc: "門前で暗刻を4つ作る役。" }, { name: "国士無双 (コクシムソウ)", han: "役満", desc: "1,9,字牌の全13種類を揃える。" }, { name: "大三元 (ダイサンゲン)", han: "役満", desc: "白・發・中の3種類を全て刻子にする。" } ];
         const triviaList = [ "索子の柄は竹だと思われがちですが、実はお金を通した「紐の束」を表しています。", "筒子の柄は、昔の中国の「穴あき銭」そのものを表しています。", "萬子は、そのままお金の単位である「万」を表しています。", "一索の鳥は、元々はただの紐の結び目でしたが、遊び心で雀や孔雀が描かれるようになりました。", "「發」には元々文字が書かれておらず、緑色に塗られただけの無地の牌だったと言われています。", "点棒にある黒や赤のギザギザ模様は、盲目の人でも触って点数がわかるように工夫された名残です。", "日本発祥のローカルルール「リーチ」。実は本場中国の公式麻雀には存在しません。", "昔の麻雀牌は、牛骨などと竹を背中合わせにして作られていました。", "サイコロの1の裏は6ですが、中国のサイコロは1と4が赤く塗られていることが多いです。", "「麻雀」という名前の由来は、牌をかき混ぜる音が「麻雀（スズメ）」の鳴き声に似ているからです。", "「白」は元々、予備のツルツルの牌をそのまま役牌として使い始めたのが始まりです。", "世界で一番最初に作られた全自動麻雀卓は、日本のメーカーが開発したものです。" ];
 
-        let records = []; let cachedRuikeiData = [];
-        let ruikeiChart = null; let hanchanChart = null; let rankChart = null; let radarChartObj = null;
+        let records = []; 
+        let cachedRuikeiData = [];
+        let ruikeiChart = null; 
+        let hanchanChart = null; 
+        let rankChart = null; 
+        let radarChartObj = null;
 
+        // ページ読み込み完了時の処理
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const urlKey = urlParams.get('key');
+            let isAuth = false;
+
+            // URLに合言葉が含まれていれば保存
             if (urlKey) {
-                localStorage.setItem('mahjong_auth', urlKey);
+                try { localStorage.setItem('mahjong_auth', urlKey); } catch(e){}
+                isAuth = true;
                 window.history.replaceState(null, null, window.location.pathname);
+            } else {
+                try {
+                    if (localStorage.getItem('mahjong_auth')) {
+                        isAuth = true;
+                    }
+                } catch(e){}
             }
 
-            if (localStorage.getItem('mahjong_auth')) {
+            // 認証済みならメニュー画面へ
+            if (isAuth) {
                 document.getElementById('login-view').classList.remove('active-view');
                 document.getElementById('menu-view').classList.add('active-view');
             }
@@ -248,22 +265,33 @@
             initQuizView(); 
         };
 
+        // ログインボタン処理
         function checkPassword() {
             let input = document.getElementById('secret-word-input').value;
-            if (input) { localStorage.setItem('mahjong_auth', input); document.getElementById('login-view').classList.remove('active-view'); document.getElementById('menu-view').classList.add('active-view'); } 
-            else { alert("合言葉を入力してください！"); }
+            if (input) { 
+                try { localStorage.setItem('mahjong_auth', input); } catch(e){}
+                document.getElementById('login-view').classList.remove('active-view'); 
+                document.getElementById('menu-view').classList.add('active-view'); 
+            } else { 
+                alert("合言葉を入力してください！"); 
+            }
         }
 
+        // 画面切り替え
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
             document.getElementById(viewId).classList.add('active-view');
             window.scrollTo(0, 0);
+            
             if (viewId === 'input-view') loadFromCloud();
             else if (viewId === 'data-view') loadRuikeiData();
             else if (viewId === 'hanchan-view') loadHanchanData();
             else if (viewId === 'quiz-view') loadQuizRanking(); 
         }
 
+        // ==========================================
+        // ▼ 7枚待ち クイズ処理 ▼
+        // ==========================================
         function initQuizView() {
             let select = document.getElementById('quiz-player-select');
             players.forEach(p => {
@@ -309,9 +337,9 @@
             let pName = document.getElementById('quiz-player-select').value;
             if(!pName) { alert("挑戦するプレイヤーを選択してください！"); return; }
             
-            // ▼ ランダムにシャッフルして「最初の10問だけ」を抽出
             quizQuestions = [...machi19].sort(() => Math.random() - 0.5).slice(0, 10);
-            currentQIndex = 0; penaltyTime = 0;
+            currentQIndex = 0; 
+            penaltyTime = 0;
             
             document.getElementById('quiz-intro').style.display = 'none';
             document.getElementById('quiz-result-area').style.display = 'none';
@@ -320,6 +348,9 @@
             quizStartTime = Date.now();
             renderQuestion();
         }
+
+        // 安全対策用ダミー関数（エラー防止）
+        function stopQuiz() { }
 
         function renderQuestion() {
             selectedAns = [];
@@ -412,6 +443,9 @@
             document.getElementById('quiz-intro').style.display = 'block';
         }
 
+        // ==========================================
+        // ▼ 豆知識＆分析関連 ▼
+        // ==========================================
         function initTriviaView() {
             let select = document.getElementById('lucky-player-select');
             players.forEach(p => { let option = document.createElement('option'); option.value = p.id; option.text = p.name; select.appendChild(option); });
@@ -528,6 +562,9 @@
             ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: players.map((p, i) => ({ label: p.name, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
         }
 
+        // ==========================================
+        // ▼ 成績入力＆送信 ▼
+        // ==========================================
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
