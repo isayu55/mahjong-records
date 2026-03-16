@@ -71,10 +71,27 @@
             <p style="text-align:center; color: #666; margin-bottom: 30px;">メニューを選択してください</p>
 
             <button class="btn" onclick="switchView('input-view')">📝 今日の成績を入力する</button>
+            <button class="btn btn-sync" onclick="switchView('s5-daily-view')" style="margin-top: 20px; background-color: #e67e22;">📅 今シーズンの日別成績（S5分析）</button>
             <button class="btn btn-sync" onclick="switchView('data-view')" style="margin-top: 20px;">📅 シーズン・日別の成績を見る</button>
             <button class="btn btn-analysis" onclick="switchView('hanchan-view')" style="margin-top: 20px;">📊 AI分析ダッシュボード</button>
             <button class="btn btn-trivia" onclick="switchView('trivia-view')" style="margin-top: 20px;">💡 豆知識＆今日のラッキー役</button>
             <button class="btn" onclick="switchView('quiz-view')" style="margin-top: 20px; background-color: #e74c3c;">🧩 多面張タイムアタック</button>
+        </div>
+
+        <div id="s5-daily-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
+            <h2>📅 日別成績（S5分析）</h2>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e8f4f8; padding:10px; border-radius:5px;">
+                <button class="btn" style="width:auto; padding:10px 20px; margin:0;" onclick="changeDailyDate(-1)">← 前の対局</button>
+                <div id="daily-date-display" style="font-size:20px; font-weight:bold; color:#2980b9;">読み込み中...</div>
+                <button class="btn" style="width:auto; padding:10px 20px; margin:0;" onclick="changeDailyDate(1)">次の対局 →</button>
+            </div>
+            
+            <div id="daily-summary-area" style="margin-bottom:20px;"></div>
+            
+            <h3 style="margin-top: 20px;">📊 その日の対局履歴</h3>
+            <div id="daily-games-area"></div>
         </div>
 
         <div id="quiz-view" class="view-section">
@@ -251,6 +268,10 @@
         let rankChart = null;
         let radarChartObj = null;
 
+        // ▼ S5分析データ保持用 ▼
+        let s5DailyData = []; 
+        let currentDailyIndex = 0;
+
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const urlKey = urlParams.get('key');
@@ -304,6 +325,100 @@
             else if (viewId === 'data-view') loadRuikeiData();
             else if (viewId === 'hanchan-view') loadHanchanData();
             else if (viewId === 'quiz-view') loadQuizRanking();
+            else if (viewId === 's5-daily-view') loadS5DailyData(); // 日別成績の読み込み
+        }
+
+        // ==========================================
+        // ▼ S5 日別成績ビューの処理 ▼
+        // ==========================================
+        function loadS5DailyData() {
+            document.getElementById('daily-date-display').innerText = "☁️ 読込中...";
+            fetch(GAS_URL + "?action=getS5Analysis&t=" + new Date().getTime())
+                .then(res => res.json())
+                .then(data => {
+                    parseS5Data(data);
+                    if (s5DailyData.length > 0) {
+                        currentDailyIndex = s5DailyData.length - 1; // 最新の日付を表示
+                        renderDailyView();
+                    } else {
+                        document.getElementById('daily-date-display').innerText = "データなし";
+                        document.getElementById('daily-summary-area').innerHTML = "";
+                        document.getElementById('daily-games-area').innerHTML = "";
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('daily-date-display').innerText = "エラー";
+                    console.error(err);
+                });
+        }
+
+        function parseS5Data(data) {
+            s5DailyData = [];
+            let currentDayObj = null;
+            
+            for (let i = 1; i < data.length; i++) {
+                let row = data[i];
+                let dateVal = row[0];
+                let matchNum = row[1];
+                
+                if (!dateVal || dateVal === "" || isNaN(matchNum) || matchNum === "") continue;
+                
+                let dateStr = String(dateVal).split('T')[0]; // 日付の整形
+                
+                if (!currentDayObj || currentDayObj.date !== dateStr) {
+                    currentDayObj = { date: dateStr, games: [], totals: [0,0,0,0,0,0] };
+                    s5DailyData.push(currentDayObj);
+                }
+                
+                let scores = [];
+                for (let p = 0; p < 6; p++) {
+                    let s = parseFloat(row[2 + p]);
+                    if (isNaN(s)) s = 0;
+                    scores.push(s);
+                    currentDayObj.totals[p] += s;
+                }
+                currentDayObj.games.push({ matchNum: matchNum, scores: scores });
+            }
+        }
+
+        function renderDailyView() {
+            if (s5DailyData.length === 0) return;
+            let dayData = s5DailyData[currentDailyIndex];
+            document.getElementById('daily-date-display').innerText = dayData.date;
+            
+            // 合計の表示
+            let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>日計</th></tr>';
+            players.forEach((p, idx) => {
+                let tot = dayData.totals[idx];
+                if (tot !== 0) {
+                    let col = tot > 0 ? 'plus' : (tot < 0 ? 'minus' : '');
+                    summaryHtml += `<tr><td style="font-weight:bold;">${p.name}</td><td class="${col}" style="font-size:18px;">${tot > 0 ? '+' : ''}${tot.toFixed(1)}</td></tr>`;
+                }
+            });
+            summaryHtml += '</table></div>';
+            document.getElementById('daily-summary-area').innerHTML = summaryHtml;
+            
+            // 各ゲームの表示
+            let gamesHtml = "";
+            dayData.games.forEach(g => {
+                let details = "";
+                players.forEach((p, idx) => {
+                    let s = g.scores[idx];
+                    if (s !== 0) {
+                        let col = s > 0 ? 'plus' : (s < 0 ? 'minus' : '');
+                        details += `<div>${p.name}: <span class="${col}">${s > 0 ? '+' : ''}${s.toFixed(1)}</span></div>`;
+                    }
+                });
+                gamesHtml += `<div class="history-card"><div class="history-header"><span>第${g.matchNum}戦</span></div>${details}</div>`;
+            });
+            document.getElementById('daily-games-area').innerHTML = gamesHtml;
+        }
+
+        function changeDailyDate(dir) {
+            currentDailyIndex += dir;
+            if (currentDailyIndex < 0) currentDailyIndex = 0;
+            if (currentDailyIndex >= s5DailyData.length) currentDailyIndex = s5DailyData.length - 1;
+            renderDailyView();
         }
 
         // ==========================================
@@ -459,6 +574,9 @@
             document.getElementById('quiz-intro').style.display = 'block';
         }
 
+        // ==========================================
+        // ▼ 豆知識＆分析関連 ▼
+        // ==========================================
         function initTriviaView() {
             let select = document.getElementById('lucky-player-select');
             players.forEach(p => { let option = document.createElement('option'); option.value = p.id; option.text = p.name; select.appendChild(option); });
@@ -584,7 +702,6 @@
             fetch(GAS_URL + "?date=" + selectedDate + "&t=" + new Date().getTime()).then(res => res.json()).then(data => { records = data.error ? [] : data; updateUI(); });
         }
 
-        // 💡 修正：点数入力のリアルタイム判定（×100表示）と三麻・四麻の切り替え
         function calculateCurrentSum() {
             let sum = 0; let count = 0; 
             players.forEach(p => { 
@@ -595,16 +712,20 @@
             let display = document.getElementById('current-sum-display');
             let mode = document.querySelector('input[name="game-mode"]:checked').value;
             let targetSum = (mode === "3") ? 1050 : 1000;
-            let expectedCount = parseInt(mode, 10);
+            
+            // 三麻で4人入力の場合は目標1400点（3人なら1050点）
+            if (mode === "3" && count === 4 && sum >= 1200) targetSum = 1400;
 
             if (sum === 0 && count === 0) {
                 display.innerHTML = "📝 得点を入力してください";
-            } else if (sum === targetSum && count === expectedCount) {
-                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum * 100} 点 <br> (${expectedCount}人プレイ 記録OK!)</span>`;
+            } else if (sum === targetSum && ((mode === "3" && (count === 3 || count === 4)) || (mode === "4" && count === 4))) {
+                let modeText = mode === "3" ? "三麻" : "四麻";
+                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum * 100} 点 <br> (${modeText} ${count}人プレイ 記録OK!)</span>`;
             } else {
                 let diff = targetSum - sum;
                 let diffText = diff > 0 ? `あと <strong>${diff * 100}</strong> 点足りません` : `<strong>${-diff * 100}</strong> 点オーバーしています`;
-                display.innerHTML = `<span style="color: #e74c3c;">⚠️ 現在の合計: ${sum * 100} 点</span><br><span style="font-size:13px; color:#666;">（${diffText} / ${expectedCount}人の場合）</span>`;
+                let modeText = mode === "3" ? (targetSum === 1400 ? "三麻4人想定" : "三麻想定") : "四麻想定";
+                display.innerHTML = `<span style="color: #e74c3c;">⚠️ 現在の合計: ${sum * 100} 点</span><br><span style="font-size:13px; color:#666;">（${diffText} / ${modeText}）</span>`;
             }
         }
 
@@ -612,14 +733,11 @@
             document.getElementById('input-tbody').innerHTML = players.map(p => `<tr><td style="font-weight:bold;">${p.name}</td><td><input type="number" id="score_${p.id}" class="score-input" placeholder="未入力" oninput="calculateCurrentSum()"></td><td><input type="number" id="chip_${p.id}" class="chip-input" placeholder="未入力"></td></tr>`).join(''); calculateCurrentSum();
         }
 
-        // 💡 修正：四麻用のポイント計算（25000点返し、+20/+10/-10/-20）の追加
         function saveRecord() {
             let activeScores = []; let totalScore = 0; let hasScore = false; let hasChip = false; let totalChip = 0;
             let recordData = { id: Date.now(), timestamp: new Date().toLocaleString(), rawScores: {}, chips: {}, points: {} };
             
             let mode = document.querySelector('input[name="game-mode"]:checked').value;
-            let targetSum = (mode === "3") ? 1050 : 1000;
-            let expectedCount = parseInt(mode, 10);
 
             players.forEach(p => {
                 let scoreVal = document.getElementById('score_' + p.id).value; let chipVal = document.getElementById('chip_' + p.id).value;
@@ -630,17 +748,40 @@
             if (!hasScore && !hasChip) return alert("得点かチップを入力してください！");
             
             if (hasScore) {
-                if (activeScores.length !== expectedCount) return alert(`${expectedCount}人分入力してください！`);
-                if (totalScore !== targetSum) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: ${targetSum * 100}点)`);
-                
-                activeScores.sort((a, b) => b.score - a.score); 
-                
                 if (mode === "3") {
-                    recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25; 
-                    recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
-                    recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
+                    if (activeScores.length !== 3 && activeScores.length !== 4) return alert("三麻は3人もしくは4人分入力してください！");
+                    if (activeScores.length === 3) {
+                        if (totalScore !== 1050) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 105,000点)`);
+                        activeScores.sort((a, b) => b.score - a.score); 
+                        recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25; 
+                        recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
+                        recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
+                    } else if (activeScores.length === 4) {
+                        if (totalScore === 1400) {
+                            activeScores.sort((a, b) => b.score - a.score);
+                            recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 30; 
+                            recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
+                            recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 + 0; 
+                            recordData.points[activeScores[3].id] = (activeScores[3].score - 400) / 10 - 10;
+                        } else if (totalScore === 1050) {
+                            let players3 = activeScores.filter(a => a.score > 0);
+                            if (players3.length === 3) {
+                                players3.sort((a, b) => b.score - a.score);
+                                recordData.points[players3[0].id] = (players3[0].score - 400) / 10 + 25; 
+                                recordData.points[players3[1].id] = (players3[1].score - 400) / 10 + 0; 
+                                recordData.points[players3[2].id] = (players3[2].score - 400) / 10 - 10;
+                            } else {
+                                return alert("三麻4人入力で合計105,000点の場合、1人は0点(抜け番)である必要があります。");
+                            }
+                        } else {
+                            return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 105,000点 または 140,000点)`);
+                        }
+                    }
                 } else if (mode === "4") {
-                    // 四麻計算: 返し点 25000、ウマ +20/+10/-10/-20
+                    if (activeScores.length !== 4) return alert("四麻は4人分入力してください！");
+                    if (totalScore !== 1000) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 100,000点)`);
+                    
+                    activeScores.sort((a, b) => b.score - a.score); 
                     recordData.points[activeScores[0].id] = (activeScores[0].score - 250) / 10 + 20; 
                     recordData.points[activeScores[1].id] = (activeScores[1].score - 250) / 10 + 10; 
                     recordData.points[activeScores[2].id] = (activeScores[2].score - 250) / 10 - 10; 
