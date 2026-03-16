@@ -71,27 +71,10 @@
             <p style="text-align:center; color: #666; margin-bottom: 30px;">メニューを選択してください</p>
 
             <button class="btn" onclick="switchView('input-view')">📝 今日の成績を入力する</button>
-            <button class="btn btn-sync" onclick="switchView('s5-daily-view')" style="margin-top: 20px; background-color: #e67e22;">📅 今シーズンの日別成績（S5分析）</button>
-            <button class="btn btn-sync" onclick="switchView('data-view')" style="margin-top: 20px;">📅 シーズン・日別の成績を見る</button>
+            <button class="btn btn-sync" onclick="switchView('data-view')" style="margin-top: 20px;">📅 シーズン成績 ＆ 日別詳細を見る</button>
             <button class="btn btn-analysis" onclick="switchView('hanchan-view')" style="margin-top: 20px;">📊 AI分析ダッシュボード</button>
             <button class="btn btn-trivia" onclick="switchView('trivia-view')" style="margin-top: 20px;">💡 豆知識＆今日のラッキー役</button>
             <button class="btn" onclick="switchView('quiz-view')" style="margin-top: 20px; background-color: #e74c3c;">🧩 多面張タイムアタック</button>
-        </div>
-
-        <div id="s5-daily-view" class="view-section">
-            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
-            <h2>📅 日別成績（S5分析）</h2>
-            
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e8f4f8; padding:10px; border-radius:5px;">
-                <button class="btn" style="width:auto; padding:10px 20px; margin:0;" onclick="changeDailyDate(-1)">← 前の対局</button>
-                <div id="daily-date-display" style="font-size:20px; font-weight:bold; color:#2980b9;">読み込み中...</div>
-                <button class="btn" style="width:auto; padding:10px 20px; margin:0;" onclick="changeDailyDate(1)">次の対局 →</button>
-            </div>
-            
-            <div id="daily-summary-area" style="margin-bottom:20px;"></div>
-            
-            <h3 style="margin-top: 20px;">📊 その日の対局履歴</h3>
-            <div id="daily-games-area"></div>
         </div>
 
         <div id="quiz-view" class="view-section">
@@ -180,7 +163,7 @@
         <div id="data-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📅 シーズンごとの成績</h2>
-            <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData()">🔄 最新のデータを読み込む</button>
+            <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData(); loadS5DailyData();">🔄 最新のデータを読み込む</button>
             <select id="season-selector" class="season-select" onchange="renderRuikeiTableAndChart()">
                 <option value="S5">🟢 S5 (今シーズン - 2026年)</option>
                 <option value="S4">⚪ S4 (2025年)</option>
@@ -191,7 +174,21 @@
             </select>
             <div class="chart-container"><canvas id="ruikei-chart"></canvas></div>
             <h3 style="margin-top: 20px;">📊 成績表</h3>
-            <div id="ruikei-area"></div>
+            <div id="ruikei-area" style="margin-bottom: 40px;"></div>
+
+            <hr style="border: 1px dashed #ccc; margin: 30px 0;">
+
+            <h2>📅 日別詳細成績（S5）</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e8f4f8; padding:10px; border-radius:5px;">
+                <button class="btn" style="width:auto; padding:10px 20px; margin:0;" onclick="changeDailyDate(-1)">← 前の対局</button>
+                <div id="daily-date-display" style="font-size:20px; font-weight:bold; color:#2980b9;">読み込み中...</div>
+                <button class="btn" style="width:auto; padding:10px 20px; margin:0;" onclick="changeDailyDate(1)">次の対局 →</button>
+            </div>
+            
+            <div id="daily-summary-area" style="margin-bottom:20px;"></div>
+            
+            <h3 style="margin-top: 20px;">📊 その日の対局履歴</h3>
+            <div id="daily-games-area"></div>
         </div>
 
         <div id="hanchan-view" class="view-section">
@@ -322,14 +319,17 @@
             window.scrollTo(0, 0);
 
             if (viewId === 'input-view') loadFromCloud();
-            else if (viewId === 'data-view') loadRuikeiData();
+            else if (viewId === 'data-view') {
+                // シーズン＆日別詳細を開いた時は両方読み込む
+                loadRuikeiData(); 
+                loadS5DailyData(); 
+            }
             else if (viewId === 'hanchan-view') loadHanchanData();
             else if (viewId === 'quiz-view') loadQuizRanking();
-            else if (viewId === 's5-daily-view') loadS5DailyData(); // 日別成績の読み込み
         }
 
         // ==========================================
-        // ▼ S5 日別成績ビューの処理 ▼
+        // ▼ 日別成績（S5分析＆チップ逆算）処理 ▼
         // ==========================================
         function loadS5DailyData() {
             document.getElementById('daily-date-display').innerText = "☁️ 読込中...";
@@ -386,13 +386,49 @@
             let dayData = s5DailyData[currentDailyIndex];
             document.getElementById('daily-date-display').innerText = dayData.date;
             
-            // 合計の表示
-            let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>日計</th></tr>';
+            // ▼ 累計データ（K〜Q列）から、この日付の「最終日計」を探す ▼
+            let finalScores = null;
+            if (cachedRuikeiData && cachedRuikeiData.length > 0) {
+                // "2026-03-16" などを "3/16" 形式に変換
+                let m = dayData.date.match(/(\d{4})-(\d{2})-(\d{2})/);
+                let d1 = m ? `${parseInt(m[2],10)}/${parseInt(m[3],10)}` : "";
+                
+                // 下から遡って該当する日付を探す
+                for (let i = cachedRuikeiData.length - 1; i >= 0; i--) {
+                    let colK = String(cachedRuikeiData[i][0]).trim();
+                    if (colK === dayData.date || colK === d1 || colK.replace(/-/g,"/") === dayData.date.replace(/-/g,"/")) {
+                        finalScores = cachedRuikeiData[i];
+                        break;
+                    }
+                }
+            }
+
+            // ▼ 合計とチップ逆算の表示 ▼
+            let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>半荘分</th><th>チップ分</th><th>最終日計</th></tr>';
             players.forEach((p, idx) => {
-                let tot = dayData.totals[idx];
-                if (tot !== 0) {
-                    let col = tot > 0 ? 'plus' : (tot < 0 ? 'minus' : '');
-                    summaryHtml += `<tr><td style="font-weight:bold;">${p.name}</td><td class="${col}" style="font-size:18px;">${tot > 0 ? '+' : ''}${tot.toFixed(1)}</td></tr>`;
+                let hanchanTot = dayData.totals[idx];
+                let finalPt = hanchanTot; // 累計が見つからなかった時の仮の数値
+                
+                // 累計データが見つかれば、それを最終日計にする
+                if (finalScores) {
+                    let val = parseFloat(String(finalScores[idx + 1]).replace(/,/g, ''));
+                    if (!isNaN(val)) finalPt = val;
+                }
+                
+                // 最終日計 - 半荘スコア ＝ チップスコア（逆算）
+                let chipPt = finalPt - hanchanTot; 
+                
+                if (hanchanTot !== 0 || finalPt !== 0) {
+                    let hCol = hanchanTot > 0 ? 'plus' : (hanchanTot < 0 ? 'minus' : '');
+                    let cCol = chipPt > 0 ? 'plus' : (chipPt < 0 ? 'minus' : '');
+                    let fCol = finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '');
+                    
+                    summaryHtml += `<tr>
+                        <td style="font-weight:bold;">${p.name}</td>
+                        <td class="${hCol}">${hanchanTot > 0 ? '+' : ''}${hanchanTot.toFixed(1)}</td>
+                        <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
+                        <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
+                    </tr>`;
                 }
             });
             summaryHtml += '</table></div>';
@@ -666,7 +702,14 @@
 
         function loadRuikeiData() {
             document.getElementById('ruikei-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
-            fetch(GAS_URL + "?action=getRuikei&t=" + new Date().getTime()).then(res => res.json()).then(data => { if (data.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー</p>`; return; } cachedRuikeiData = data; renderRuikeiTableAndChart(); });
+            fetch(GAS_URL + "?action=getRuikei&t=" + new Date().getTime()).then(res => res.json()).then(data => { 
+                if (data.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー</p>`; return; } 
+                cachedRuikeiData = data; 
+                renderRuikeiTableAndChart(); 
+                
+                // 💡 追加：累計データが読み込まれたら、日別詳細のチップ逆算も再描画する
+                if (s5DailyData.length > 0) renderDailyView(); 
+            });
         }
 
         function renderRuikeiTableAndChart() {
@@ -694,8 +737,9 @@
         }
 
         // ==========================================
-        // ▼ 成績入力＆送信（修正部分） ▼
+        // ▼ 成績入力＆送信 ▼
         // ==========================================
+        
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
@@ -713,7 +757,6 @@
             let mode = document.querySelector('input[name="game-mode"]:checked').value;
             let targetSum = (mode === "3") ? 1050 : 1000;
             
-            // 三麻で4人入力の場合は目標1400点（3人なら1050点）
             if (mode === "3" && count === 4 && sum >= 1200) targetSum = 1400;
 
             if (sum === 0 && count === 0) {
