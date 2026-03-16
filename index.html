@@ -134,13 +134,25 @@
                 <input type="date" id="play-date" onchange="loadFromCloud()">
                 <button class="btn btn-sync" style="font-size: 14px; padding: 8px; margin-top: 10px;" onclick="loadFromCloud()">🔄 クラウドと同期</button>
             </div>
+            
+            <div style="text-align: center; margin-bottom: 15px; background: #e8f4f8; padding: 10px; border-radius: 5px;">
+                <label style="font-weight:bold; margin-right:20px; cursor:pointer;">
+                    <input type="radio" name="game-mode" value="3" checked onchange="calculateCurrentSum()"> 🀄 三麻
+                </label>
+                <label style="font-weight:bold; cursor:pointer;">
+                    <input type="radio" name="game-mode" value="4" onchange="calculateCurrentSum()"> 🀄 四麻
+                </label>
+            </div>
+
             <div class="table-responsive">
                 <table class="input-table" style="border:none;">
                     <tr><th style="width: 25%;">名前</th><th style="width: 40%;">得点 (例: 310)</th><th style="width: 35%;">チップ (枚)</th></tr>
                     <tbody id="input-tbody"></tbody>
                 </table>
             </div>
+            
             <div id="current-sum-display"></div>
+            
             <button class="btn" id="save-btn" onclick="saveRecord()">この内容を記録する</button>
             <h3 style="margin-top: 40px;">🏆 現在の総合結果</h3>
             <div class="table-responsive"><table class="result-table" id="total-table"></table></div>
@@ -202,7 +214,6 @@
             { id: 'dyna', name: 'ダイナ' }, { id: 'tokuda', name: '徳田' }, { id: 'tasuku', name: 'たすく' }
         ];
 
-        // 雀龍.com 19パターンベース
         const machi19 = [
             { q: [2, 3, 4, 5, 6, 9, 9], a: [1, 4, 7] }, { q: [2, 3, 4, 5, 6, 7, 8], a: [2, 5, 8] }, { q: [2, 3, 4, 5, 5, 6, 7], a: [2, 5, 8] },
             { q: [2, 3, 4, 4, 4, 9, 9], a: [1, 4, 9] }, { q: [2, 3, 3, 3, 4, 5, 6], a: [1, 2, 4, 7] }, { q: [3, 3, 3, 4, 4, 5, 6], a: [2, 4, 5, 7] },
@@ -213,17 +224,15 @@
             { q: [3, 4, 4, 4, 4, 5, 6], a: [2, 3, 5, 6] }
         ];
 
-        // 💡 19パターン × 4（通常/反転 × 筒子/索子）＝ 全76パターンのプールを作成！
         let allQuizPool = [];
         machi19.forEach(base => {
-            // 反転した問題（10から引く）を作成してソート
             let revQ = base.q.map(n => 10 - n).sort((a, b) => a - b);
             let revA = base.a.map(n => 10 - n).sort((a, b) => a - b);
             
-            allQuizPool.push({ q: base.q, a: base.a, type: 'p' }); // 筒子・通常
-            allQuizPool.push({ q: revQ,   a: revA,   type: 'p' }); // 筒子・反転
-            allQuizPool.push({ q: base.q, a: base.a, type: 's' }); // 索子・通常
-            allQuizPool.push({ q: revQ,   a: revA,   type: 's' }); // 索子・反転
+            allQuizPool.push({ q: base.q, a: base.a, type: 'p' }); 
+            allQuizPool.push({ q: revQ,   a: revA,   type: 'p' }); 
+            allQuizPool.push({ q: base.q, a: base.a, type: 's' }); 
+            allQuizPool.push({ q: revQ,   a: revA,   type: 's' }); 
         });
 
         let quizQuestions = [];
@@ -242,7 +251,6 @@
         let rankChart = null;
         let radarChartObj = null;
 
-        // ページ読み込み完了時の処理
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const urlKey = urlParams.get('key');
@@ -346,7 +354,6 @@
             let pName = document.getElementById('quiz-player-select').value;
             if (!pName) { alert("挑戦するプレイヤーを選択してください！"); return; }
 
-            // 💡 全76パターンからランダムにシャッフルして10問だけを抽出
             quizQuestions = [...allQuizPool].sort(() => Math.random() - 0.5).slice(0, 10);
             currentQIndex = 0;
             penaltyTime = 0;
@@ -367,10 +374,9 @@
             document.getElementById('quiz-feedback').innerText = "";
             document.getElementById('quiz-progress').innerText = `${currentQIndex + 1} / 10問`;
 
-            let qObj = quizQuestions[currentQIndex]; // 選ばれた問題オブジェクト
+            let qObj = quizQuestions[currentQIndex]; 
             let html = "";
             qObj.q.forEach(num => {
-                // 💡 筒子なら「2p.png」、索子なら「2s.png」のようになる
                 html += `<img src="${num}${qObj.type}.png" class="tile-img" alt="${num}${qObj.type==='p'?'筒':'索'}" onerror="this.onerror=null;this.src='https://via.placeholder.com/35x45?text=${num}';">`;
             });
             document.getElementById('quiz-tiles-area').innerHTML = html;
@@ -453,9 +459,6 @@
             document.getElementById('quiz-intro').style.display = 'block';
         }
 
-        // ==========================================
-        // ▼ 豆知識＆分析関連 ▼
-        // ==========================================
         function initTriviaView() {
             let select = document.getElementById('lucky-player-select');
             players.forEach(p => { let option = document.createElement('option'); option.value = p.id; option.text = p.name; select.appendChild(option); });
@@ -572,28 +575,52 @@
             ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: players.map((p, i) => ({ label: p.name, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
         }
 
+        // ==========================================
+        // ▼ 成績入力＆送信（修正部分） ▼
+        // ==========================================
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
             fetch(GAS_URL + "?date=" + selectedDate + "&t=" + new Date().getTime()).then(res => res.json()).then(data => { records = data.error ? [] : data; updateUI(); });
         }
 
+        // 💡 修正：点数入力のリアルタイム判定（×100表示）と三麻・四麻の切り替え
         function calculateCurrentSum() {
-            let sum = 0; let count = 0; players.forEach(p => { let val = document.getElementById('score_' + p.id).value; if (val) { sum += parseInt(val, 10); count++; } });
+            let sum = 0; let count = 0; 
+            players.forEach(p => { 
+                let val = document.getElementById('score_' + p.id).value; 
+                if (val) { sum += parseInt(val, 10); count++; } 
+            });
+            
             let display = document.getElementById('current-sum-display');
-            if (sum === 0 && count === 0) display.innerHTML = "📝 得点を入力してください";
-            else if (sum === 1050 && (count === 3 || count === 4)) display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} <br> (3人プレイ 記録OK!)</span>`;
-            else if (sum === 1400 && count === 4) display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum} <br> (4人プレイ 記録OK!)</span>`;
-            else display.innerHTML = `<span style="color: #e74c3c;">⚠️ 現在の合計: ${sum}</span><br><span style="font-size:13px; color:#666;">（3人の場合：あと <strong>${1050 - sum}</strong>点 / 4人の場合：あと <strong>${1400 - sum}</strong>点）</span>`;
+            let mode = document.querySelector('input[name="game-mode"]:checked').value;
+            let targetSum = (mode === "3") ? 1050 : 1000;
+            let expectedCount = parseInt(mode, 10);
+
+            if (sum === 0 && count === 0) {
+                display.innerHTML = "📝 得点を入力してください";
+            } else if (sum === targetSum && count === expectedCount) {
+                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum * 100} 点 <br> (${expectedCount}人プレイ 記録OK!)</span>`;
+            } else {
+                let diff = targetSum - sum;
+                let diffText = diff > 0 ? `あと <strong>${diff * 100}</strong> 点足りません` : `<strong>${-diff * 100}</strong> 点オーバーしています`;
+                display.innerHTML = `<span style="color: #e74c3c;">⚠️ 現在の合計: ${sum * 100} 点</span><br><span style="font-size:13px; color:#666;">（${diffText} / ${expectedCount}人の場合）</span>`;
+            }
         }
 
         function renderInputForm() {
             document.getElementById('input-tbody').innerHTML = players.map(p => `<tr><td style="font-weight:bold;">${p.name}</td><td><input type="number" id="score_${p.id}" class="score-input" placeholder="未入力" oninput="calculateCurrentSum()"></td><td><input type="number" id="chip_${p.id}" class="chip-input" placeholder="未入力"></td></tr>`).join(''); calculateCurrentSum();
         }
 
+        // 💡 修正：四麻用のポイント計算（25000点返し、+20/+10/-10/-20）の追加
         function saveRecord() {
             let activeScores = []; let totalScore = 0; let hasScore = false; let hasChip = false; let totalChip = 0;
             let recordData = { id: Date.now(), timestamp: new Date().toLocaleString(), rawScores: {}, chips: {}, points: {} };
+            
+            let mode = document.querySelector('input[name="game-mode"]:checked').value;
+            let targetSum = (mode === "3") ? 1050 : 1000;
+            let expectedCount = parseInt(mode, 10);
+
             players.forEach(p => {
                 let scoreVal = document.getElementById('score_' + p.id).value; let chipVal = document.getElementById('chip_' + p.id).value;
                 if (scoreVal) { let s = parseInt(scoreVal, 10); activeScores.push({ id: p.id, score: s }); totalScore += s; recordData.rawScores[p.id] = s; hasScore = true; }
@@ -601,15 +628,23 @@
             });
 
             if (!hasScore && !hasChip) return alert("得点かチップを入力してください！");
+            
             if (hasScore) {
-                if (activeScores.length !== 3 && activeScores.length !== 4) return alert("3人もしくは4人分入力してください！");
-                if (activeScores.length === 3) {
-                    if (totalScore !== 1050) return alert(`点数の合計が合いません！`);
-                    activeScores.sort((a, b) => b.score - a.score); recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25; recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
-                }
-                if (activeScores.length === 4) {
-                    if (totalScore !== 1400 && totalScore !== 1050) return alert(`点数の合計が合いません！`);
-                    if (totalScore === 1400) { activeScores.sort((a, b) => b.score - a.score); recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 30; recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 + 0; recordData.points[activeScores[3].id] = (activeScores[3].score - 400) / 10 - 10; }
+                if (activeScores.length !== expectedCount) return alert(`${expectedCount}人分入力してください！`);
+                if (totalScore !== targetSum) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: ${targetSum * 100}点)`);
+                
+                activeScores.sort((a, b) => b.score - a.score); 
+                
+                if (mode === "3") {
+                    recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25; 
+                    recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
+                    recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
+                } else if (mode === "4") {
+                    // 四麻計算: 返し点 25000、ウマ +20/+10/-10/-20
+                    recordData.points[activeScores[0].id] = (activeScores[0].score - 250) / 10 + 20; 
+                    recordData.points[activeScores[1].id] = (activeScores[1].score - 250) / 10 + 10; 
+                    recordData.points[activeScores[2].id] = (activeScores[2].score - 250) / 10 - 10; 
+                    recordData.points[activeScores[3].id] = (activeScores[3].score - 250) / 10 - 20;
                 }
             }
             if (hasChip && totalChip !== 0) return alert("チップの合計枚数が0になるようにしてください！");
