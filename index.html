@@ -79,11 +79,11 @@
 
         <div id="quiz-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view'); stopQuiz();">🏠 メニューに戻る</button>
-            <h2>🧩 7枚待ちタイムアタック（筒子）</h2>
-            
+            <h2>🧩 7枚待ちタイムアタック</h2>
+
             <div id="quiz-intro">
-                <p style="text-align:center; font-size:14px; color:#666; line-height:1.6;">ランダムに選ばれた<strong>10問</strong>が出題されます！<br>全問正解までのタイムを全員で競います。<br>間違えると+5秒のペナルティが付きます。</p>
-                
+                <p style="text-align:center; font-size:14px; color:#666; line-height:1.6;"><strong>全76パターン（筒子・索子 / 通常・反転）</strong>の中から<br>ランダムに選ばれた<strong>10問</strong>が出題されます！<br>全問正解までのタイムを競いましょう！</p>
+
                 <select id="quiz-player-select" class="season-select" style="margin-top: 20px;">
                     <option value="">👤 挑戦するプレイヤーを選択...</option>
                 </select>
@@ -101,13 +101,13 @@
                     <div style="font-size:24px; font-weight:bold; color:#e74c3c; font-family:monospace;" id="quiz-timer">⏱️ 計測中...</div>
                     <div style="font-size:16px; font-weight:bold; color:#3498db;" id="quiz-progress">1 / 10問</div>
                 </div>
-                
+
                 <div id="quiz-tiles-area" style="margin-bottom: 30px; background:#fafafa; padding:20px 10px; border-radius:8px; border:2px dashed #ccc; min-height: 60px;">
                 </div>
 
                 <p style="font-weight:bold; color:#2c3e50; margin-bottom:15px;">待ち牌を<span style="color:#e74c3c;">すべて</span>選んでください</p>
                 <div id="quiz-keyboard" style="max-width:300px; margin:0 auto;">
-                    </div>
+                </div>
 
                 <button class="btn" style="margin-top: 25px; font-size: 22px; padding: 15px;" onclick="submitAnswer()">解答する</button>
                 <p id="quiz-feedback" style="color:#e74c3c; font-weight:bold; height:20px; margin-top:15px;"></p>
@@ -202,6 +202,7 @@
             { id: 'dyna', name: 'ダイナ' }, { id: 'tokuda', name: '徳田' }, { id: 'tasuku', name: 'たすく' }
         ];
 
+        // 雀龍.com 19パターンベース
         const machi19 = [
             { q: [2, 3, 4, 5, 6, 9, 9], a: [1, 4, 7] }, { q: [2, 3, 4, 5, 6, 7, 8], a: [2, 5, 8] }, { q: [2, 3, 4, 5, 5, 6, 7], a: [2, 5, 8] },
             { q: [2, 3, 4, 4, 4, 9, 9], a: [1, 4, 9] }, { q: [2, 3, 3, 3, 4, 5, 6], a: [1, 2, 4, 7] }, { q: [3, 3, 3, 4, 4, 5, 6], a: [2, 4, 5, 7] },
@@ -211,6 +212,19 @@
             { q: [3, 3, 3, 5, 7, 7, 7], a: [4, 5, 6] }, { q: [3, 3, 4, 5, 5, 5, 5], a: [3, 4, 6] }, { q: [3, 3, 4, 4, 4, 4, 5], a: [2, 3, 5, 6] },
             { q: [3, 4, 4, 4, 4, 5, 6], a: [2, 3, 5, 6] }
         ];
+
+        // 💡 19パターン × 4（通常/反転 × 筒子/索子）＝ 全76パターンのプールを作成！
+        let allQuizPool = [];
+        machi19.forEach(base => {
+            // 反転した問題（10から引く）を作成してソート
+            let revQ = base.q.map(n => 10 - n).sort((a, b) => a - b);
+            let revA = base.a.map(n => 10 - n).sort((a, b) => a - b);
+            
+            allQuizPool.push({ q: base.q, a: base.a, type: 'p' }); // 筒子・通常
+            allQuizPool.push({ q: revQ,   a: revA,   type: 'p' }); // 筒子・反転
+            allQuizPool.push({ q: base.q, a: base.a, type: 's' }); // 索子・通常
+            allQuizPool.push({ q: revQ,   a: revA,   type: 's' }); // 索子・反転
+        });
 
         let quizQuestions = [];
         let currentQIndex = 0;
@@ -303,7 +317,6 @@
             kb.innerHTML = kbHtml;
         }
 
-        // 💡 修正ポイント：URLの末尾に現在の時間(&t=...)をつけて、強制的に最新データを取ってくるようにしました！
         function loadQuizRanking() {
             document.getElementById('quiz-ranking-area').innerHTML = "<p style='text-align:center; color:#999;'>☁️ 最新ランキングを同期中...</p>";
             fetch(GAS_URL + "?action=getQuizRanking&t=" + new Date().getTime())
@@ -333,7 +346,8 @@
             let pName = document.getElementById('quiz-player-select').value;
             if (!pName) { alert("挑戦するプレイヤーを選択してください！"); return; }
 
-            quizQuestions = [...machi19].sort(() => Math.random() - 0.5).slice(0, 10);
+            // 💡 全76パターンからランダムにシャッフルして10問だけを抽出
+            quizQuestions = [...allQuizPool].sort(() => Math.random() - 0.5).slice(0, 10);
             currentQIndex = 0;
             penaltyTime = 0;
 
@@ -353,10 +367,11 @@
             document.getElementById('quiz-feedback').innerText = "";
             document.getElementById('quiz-progress').innerText = `${currentQIndex + 1} / 10問`;
 
-            let q = quizQuestions[currentQIndex].q;
+            let qObj = quizQuestions[currentQIndex]; // 選ばれた問題オブジェクト
             let html = "";
-            q.forEach(num => {
-                html += `<img src="${num}p.png" class="tile-img" alt="${num}筒" onerror="this.onerror=null;this.src='https://via.placeholder.com/35x45?text=${num}';">`;
+            qObj.q.forEach(num => {
+                // 💡 筒子なら「2p.png」、索子なら「2s.png」のようになる
+                html += `<img src="${num}${qObj.type}.png" class="tile-img" alt="${num}${qObj.type==='p'?'筒':'索'}" onerror="this.onerror=null;this.src='https://via.placeholder.com/35x45?text=${num}';">`;
             });
             document.getElementById('quiz-tiles-area').innerHTML = html;
         }
@@ -457,7 +472,6 @@
             area.style.display = "block"; area.style.animation = "none"; setTimeout(() => { area.style.animation = "fadeIn 0.5s ease-in-out"; }, 10);
         }
 
-        // 💡 修正ポイント：他のデータ取得部分もすべてキャッシュバスター(&t=...)を追加し、確実に最新になるようにしました！
         function loadHanchanData() {
             document.getElementById('hanchan-table-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
             document.getElementById('ai-commentary').innerHTML = "<p style='text-align:center;'>☁️ 分析レポートを作成中...</p>";
@@ -529,7 +543,6 @@
             tbl += '</table></div>'; document.getElementById('hanchan-table-area').innerHTML = tbl;
         }
 
-        // 💡 修正ポイント：ここにもキャッシュバスター(&t=...)を追加
         function loadRuikeiData() {
             document.getElementById('ruikei-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
             fetch(GAS_URL + "?action=getRuikei&t=" + new Date().getTime()).then(res => res.json()).then(data => { if (data.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー</p>`; return; } cachedRuikeiData = data; renderRuikeiTableAndChart(); });
@@ -559,11 +572,6 @@
             ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: players.map((p, i) => ({ label: p.name, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
         }
 
-        // ==========================================
-        // ▼ 成績入力＆送信 ▼
-        // ==========================================
-        
-        // 💡 修正ポイント：ここにもキャッシュバスター(&t=...)を追加
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
@@ -613,7 +621,7 @@
             let postData = {
                 date: document.getElementById('play-date').value || new Date().toISOString().split('T')[0], timestamp: recordData.timestamp,
                 takai_score: recordData.points['takai'] !== undefined ? recordData.points['takai'] : "", takai_chip: recordData.chips['takai'] || "", yamaguchi_score: recordData.points['yamaguchi'] !== undefined ? recordData.points['yamaguchi'] : "", yamaguchi_chip: recordData.chips['yamaguchi'] || "", yamashita_score: recordData.points['yamashita'] !== undefined ? recordData.points['yamashita'] : "", yamashita_chip: recordData.chips['yamashita'] || "", dyna_score: recordData.points['dyna'] !== undefined ? recordData.points['dyna'] : "", dyna_chip: recordData.chips['dyna'] || "", tokuda_score: recordData.points['tokuda'] !== undefined ? recordData.points['tokuda'] : "", tokuda_chip: recordData.chips['tokuda'] || "", tasuku_score: recordData.points['tasuku'] !== undefined ? recordData.points['tasuku'] : "", tasuku_chip: recordData.chips['tasuku'] || "",
-                total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'], total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'], secret: localStorage.getItem('mahjong_auth') 
+                total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'], total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'], secret: localStorage.getItem('mahjong_auth')
             };
             players.forEach(p => { document.getElementById('score_' + p.id).value = ""; document.getElementById('chip_' + p.id).value = ""; }); calculateCurrentSum();
 
