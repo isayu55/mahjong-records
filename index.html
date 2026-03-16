@@ -179,10 +179,13 @@
             <hr style="border: 1px dashed #ccc; margin: 30px 0;">
 
             <h2>📅 日別詳細成績（S5）</h2>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#e8f4f8; padding:10px; border-radius:5px;">
-                <button class="btn" style="width:auto; padding:10px 15px; margin:5;" onclick="changeDailyDate(-1)">← 前の対局</button>
-                <div id="daily-date-display" style="font-size:40px; font-weight:bold; color:#2980b9;">読み込み中...</div>
-                <button class="btn" style="width:auto; padding:10px 15px; margin:5;" onclick="changeDailyDate(1)">次の対局 →</button>
+            <div style="margin-bottom:15px; background:#e8f4f8; padding:15px; border-radius:10px; text-align:center;">
+                <div id="daily-date-display" style="font-size:32px; font-weight:bold; color:#2980b9; margin-bottom:15px;">読み込み中...</div>
+                
+                <div style="display:flex; justify-content:center; gap:15px;">
+                    <button class="btn" style="width:140px; padding:12px 10px; margin:0; font-size:14px;" onclick="changeDailyDate(-1)">← 前の対局</button>
+                    <button class="btn" style="width:140px; padding:12px 10px; margin:0; font-size:14px;" onclick="changeDailyDate(1)">次の対局 →</button>
+                </div>
             </div>
             
             <div id="daily-summary-area" style="margin-bottom:20px;"></div>
