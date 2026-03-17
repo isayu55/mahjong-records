@@ -94,7 +94,7 @@
 
                 <div id="nani-kiru-result" style="display:none; animation: fadeIn 0.4s;">
                     <div id="nani-kiru-message" style="font-size:24px; font-weight:bold; margin-bottom:15px;"></div>
-                    <div id="nani-kiru-info" style="background:#e8f4f8; padding:15px; border-radius:10px; margin-bottom:20px;">
+                    <div id="nani-kiru-info" style="margin-bottom:20px;">
                         </div>
                     <button class="btn" style="background-color:#9b59b6;" onclick="nextNaniKiru()">次の問題へ</button>
                 </div>
@@ -336,7 +336,7 @@
             renderInputForm();
             initTriviaView();
             initQuizView();
-            loadNaniKiruData(); // ここで裏側でJSONをロードしておく
+            loadNaniKiruData(); 
         };
 
         function checkPassword() {
@@ -364,7 +364,6 @@
             else if (viewId === 'quiz-view') loadQuizRanking();
             else if (viewId === 'nani-kiru-view') {
                 if (naniKiruPool.length === 0) {
-                    // アラートを消し、画面上に読み込み中を表示
                     document.getElementById('nani-kiru-hand').innerHTML = "<p style='color:#999; font-weight:bold;'>☁️ 問題データを読み込み中...</p>";
                     setTimeout(() => {
                         if (naniKiruPool.length > 0) nextNaniKiru();
@@ -394,8 +393,11 @@
         function nextNaniKiru() {
             if (naniKiruPool.length === 0) return;
             
-            // ランダムに1問選択
             currentProblem = naniKiruPool[Math.floor(Math.random() * naniKiruPool.length)];
+            // 期待値順に並べ替えておく
+            if(currentProblem.options && currentProblem.options.length > 0) {
+                currentProblem.options.sort((a, b) => b.ev - a.ev);
+            }
             
             const handArea = document.getElementById('nani-kiru-hand');
             const resultArea = document.getElementById('nani-kiru-result');
@@ -413,41 +415,35 @@
         }
 
         function selectDiscard(num, index) {
-            // すでに解答済みなら何もしない
             if (document.getElementById('nani-kiru-result').style.display === 'block') return;
 
-            // 選択した牌を強調
             const tiles = document.querySelectorAll('.nani-kiru-tile');
             tiles.forEach((t, i) => {
                 if (i === index) t.classList.add('selected-discard');
                 else t.classList.remove('selected-discard');
             });
 
-            // 正解判定（期待値最大の打牌かどうか）
             const options = currentProblem.options;
             const userOption = options.find(o => o.discard === num);
-            const bestOption = options[0]; // 期待値順にソートされている前提
+            const bestOption = options[0]; 
 
             const messageEl = document.getElementById('nani-kiru-message');
             const infoEl = document.getElementById('nani-kiru-info');
-            infoEl.innerHTML = ""; // 初期化
+            infoEl.innerHTML = ""; 
             
             if (!userOption) {
-                // テンパイすらしない打牌
                 messageEl.innerHTML = "❌ テンパイしません...";
                 messageEl.style.color = "#e74c3c";
-                infoEl.innerHTML = `<p>正解は <strong>打${bestOption.discard}${currentProblem.type === 'p' ? '筒' : '索'}</strong> (${bestOption.total_count}枚) でした。</p>`;
+                renderWaitDetails(bestOption, true, infoEl);
             } else if (userOption.discard === bestOption.discard) {
-                // 期待値最大
                 messageEl.innerHTML = "✨ 正解！ 最善手です ✨";
                 messageEl.style.color = "#27ae60";
                 renderWaitDetails(userOption, false, infoEl);
             } else {
-                // テンパイはするが期待値が低い
                 messageEl.innerHTML = "⚠️ テンパイですが、もっといい打牌があります";
                 messageEl.style.color = "#f39c12";
-                infoEl.innerHTML = `<p>あなたの選択: <strong>打${num}${currentProblem.type === 'p' ? '筒' : '索'}</strong> (${userOption.total_count}枚)</p>`;
-                renderWaitDetails(bestOption, true, infoEl); // 最善手を表示
+                renderWaitDetails(userOption, false, infoEl); // ユーザーの選択
+                renderWaitDetails(bestOption, true, infoEl);  // 最善手
             }
 
             document.getElementById('nani-kiru-result').style.display = 'block';
@@ -456,17 +452,36 @@
         function renderWaitDetails(opt, isBestLabel = false, container) {
             let waitImgs = "";
             opt.waits.forEach(w => {
-                waitImgs += `<div style="display:inline-block; margin-right:8px;">
-                    <img src="${w.tile}${currentProblem.type}.png" style="width:25px; vertical-align:middle;">
-                    <span style="font-size:12px;">x${w.count}</span>
+                waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
+                    <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
+                    <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
                 </div>`;
             });
 
+            let prob = (opt.win_prob * 100).toFixed(1);
+            let score = Math.round(opt.avg_score).toLocaleString();
+            let ev = Math.round(opt.ev).toLocaleString();
+
             container.innerHTML += `
-                <div style="margin-top:10px;">
-                    <strong>${isBestLabel ? '最善手: ' : ''}打${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}</strong><br>
-                    待ち: ${waitImgs}<br>
-                    合計: <strong>${opt.types}種 ${opt.total_count}枚</strong>
+                <div style="margin-top:15px; text-align:left; background:#fff; padding:15px; border-radius:8px; border-left:5px solid ${isBestLabel ? '#27ae60' : '#3498db'};">
+                    <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
+                        ${isBestLabel ? '<span style="color:#27ae60;">👑 最善手:</span> ' : '👉 あなたの選択: '}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                    </div>
+                    <div style="margin-bottom:10px;">${waitImgs}</div>
+                    <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                        <tr style="background:#ecf0f1;">
+                            <th style="padding:5px; border:1px solid #bdc3c7;">待ち数</th>
+                            <th style="padding:5px; border:1px solid #bdc3c7;">和了確率</th>
+                            <th style="padding:5px; border:1px solid #bdc3c7;">平均打点</th>
+                            <th style="padding:5px; border:1px solid #bdc3c7;">期待値 (EV)</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
+                            <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
+                            <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
+                            <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
+                        </tr>
+                    </table>
                 </div>
             `;
         }
@@ -506,7 +521,7 @@
 
                 if (!dateVal || dateVal === "" || isNaN(matchNum) || matchNum === "") continue;
 
-                let dateStr = String(dateVal).split('T')[0]; // 日付の整形
+                let dateStr = String(dateVal).split('T')[0]; 
 
                 if (!currentDayObj || currentDayObj.date !== dateStr) {
                     currentDayObj = { date: dateStr, games: [], totals: [0, 0, 0, 0, 0, 0] };
