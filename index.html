@@ -88,6 +88,13 @@
             <h2>🤔 清一色 何切る？</h2>
             
             <div id="nani-kiru-play-area" style="text-align:center; margin-top: 20px;">
+                
+                <div style="background:#fff3cd; border-left:4px solid #f1c40f; padding:12px; text-align:left; margin-bottom:20px; font-size:14px; color:#333; border-radius:5px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+                    <strong style="color:#e67e22;">【状況設定】</strong><br>
+                    🀄 三麻・東1局 1巡目<br>
+                    👤 親番（持ち点35,000点）　🎲 ドラ: 西
+                </div>
+
                 <p style="font-weight:bold; color:#666;">捨てる牌をタップしてください</p>
                 <div id="nani-kiru-hand" style="margin-bottom: 30px; background:#fafafa; padding:20px 10px; border-radius:8px; border:2px dashed #ccc; min-height: 80px;">
                     </div>
@@ -291,7 +298,7 @@
             { name: "立直 (リーチ)", han: "1翻", desc: "門前でテンパイを宣言する役。" }, { name: "断幺九 (タンヤオ)", han: "1翻", desc: "2〜8の数牌だけで作る役。" }, { name: "平和 (ピンフ)", han: "1翻", desc: "順子4つと役牌以外の雀頭で作る役。" }, { name: "役牌 (ヤクハイ)", han: "1翻", desc: "三元牌や自風・場風を3枚集めるだけ。" }, { name: "対々和 (トイトイ)", han: "2翻", desc: "同じ牌を3枚ずつ4組作る役。" }, { name: "混一色 (ホンイツ)", han: "3翻", desc: "1種類の数牌と字牌だけで作る役。" }, { name: "清一色 (チンイツ)", han: "6翻", desc: "1種類の数牌のみで作る美しき役。" }, { name: "七対子 (チートイツ)", han: "2翻", desc: "対子を7組作る特殊な役。" }, { name: "三色同順 (サンショク)", han: "2翻", desc: "萬子・筒子・索子で同じ並びの順子を作る。" }, { name: "一気通貫 (イッツー)", han: "2翻", desc: "同種の数牌で123、456、789を揃える。" }, { name: "混全帯幺九 (チャンタ)", han: "2翻", desc: "全ての面子と雀頭に1,9,字牌を含める。" }, { name: "四暗刻 (スーアンコウ)", han: "役満", desc: "門前で暗刻を4つ作る役。" }, { name: "国士無双 (コクシムソウ)", han: "役満", desc: "1,9,字牌の全13種類を揃える。" }, { name: "大三元 (ダイサンゲン)", han: "役満", desc: "白・發・中の3種類を全て刻子にする。" }
         ];
         const triviaList = [
-            "索子の柄は竹だと思われがちですが、実はお金を通した「紐の束」を表しています。", "筒子の柄は、昔の中国の「穴あき銭」そのものを表しています。", "萬子は、そのままお金の単位である「万」を表しています。", "一索の鳥は、元々はただの紐の結び目でしたが、遊び心で雀や孔雀が描かれるようになりました。", "「發」には元々文字が書かれておらず、緑色に塗られただけの無地の牌だったと言われています。", "点棒にある黒や赤のギザギザ模様は、盲目の人でも触って点数がわかるように工夫された名残です。", "日本発祥のローカルルール「リーチ」。実は本場中国の公式麻雀には存在しません。", "昔の麻雀牌は、牛骨などと竹を背中合わせにして作られていました。", "サイコロの1の裏は6ですが、中国のサイコロは1と4が赤く塗られていることが多いです。", "「麻雀」という名前の由来は、牌をかき混ぜる音が「麻雀（スズメ）」の鳴き声に似ているからです。", "「白」は元々、予備のツルツルの牌をそのまま役牌として使い始めたのが始まりです。", "世界で一番最初に作られた全自動麻雀卓は、日本のメーカーが開発したものです。"
+            "索子の柄は竹だと思われがちですが、実はお金を通した「紐の束」を表しています。", "筒子の柄は、昔の中国の「穴あき銭」通そのものを表しています。", "萬子は、そのままお金の単位である「万」を表しています。", "一索の鳥は、元々はただの紐の結び目でしたが、遊び心で雀や孔雀が描かれるようになりました。", "「發」には元々文字が書かれておらず、緑色に塗られただけの無地の牌だったと言われています。", "点棒にある黒や赤のギザギザ模様は、盲目の人でも触って点数がわかるように工夫された名残です。", "日本発祥のローカルルール「リーチ」。実は本場中国の公式麻雀には存在しません。", "昔の麻雀牌は、牛骨などと竹を背中合わせにして作られていました。", "サイコロの1の裏は6ですが、中国のサイコロは1と4が赤く塗られていることが多いです。", "「麻雀」という名前の由来は、牌をかき混ぜる音が「麻雀（スズメ）」の鳴き声に似ているからです。", "「白」は元々、予備のツルツルの牌をそのまま役牌として使い始めたのが始まりです。", "世界で一番最初に作られた全自動麻雀卓は、日本のメーカーが開発したものです。"
         ];
 
         let records = [];
@@ -336,7 +343,7 @@
             renderInputForm();
             initTriviaView();
             initQuizView();
-            loadNaniKiruData(); 
+            loadNaniKiruData(); // ここで裏側でJSONをロードしておく
         };
 
         function checkPassword() {
@@ -394,7 +401,7 @@
             if (naniKiruPool.length === 0) return;
             
             currentProblem = naniKiruPool[Math.floor(Math.random() * naniKiruPool.length)];
-            // 期待値順に並べ替えておく
+            // 期待値順に並べ替えておく（Python側でもやってあるが念のため）
             if(currentProblem.options && currentProblem.options.length > 0) {
                 currentProblem.options.sort((a, b) => b.ev - a.ev);
             }
@@ -425,65 +432,76 @@
 
             const options = currentProblem.options;
             const userOption = options.find(o => o.discard === num);
-            const bestOption = options[0]; 
+            const maxEv = options.length > 0 ? options[0].ev : 0; // 同着1位の判定に使用
 
             const messageEl = document.getElementById('nani-kiru-message');
             const infoEl = document.getElementById('nani-kiru-info');
             infoEl.innerHTML = ""; 
             
+            // 💡 判定メッセージ
             if (!userOption) {
                 messageEl.innerHTML = "❌ テンパイしません...";
                 messageEl.style.color = "#e74c3c";
-                renderWaitDetails(bestOption, true, infoEl);
-            } else if (userOption.discard === bestOption.discard) {
+            } else if (userOption.ev === maxEv) {
                 messageEl.innerHTML = "✨ 正解！ 最善手です ✨";
                 messageEl.style.color = "#27ae60";
-                renderWaitDetails(userOption, false, infoEl);
             } else {
                 messageEl.innerHTML = "⚠️ テンパイですが、もっといい打牌があります";
                 messageEl.style.color = "#f39c12";
-                renderWaitDetails(userOption, false, infoEl); // ユーザーの選択
-                renderWaitDetails(bestOption, true, infoEl);  // 最善手
             }
 
-            document.getElementById('nani-kiru-result').style.display = 'block';
-        }
+            // 💡 全ての打牌候補をリスト化して表示する
+            let detailsHtml = "<h4 style='text-align:left; margin-bottom:10px; color:#2c3e50;'>💡 打牌候補の比較</h4>";
+            
+            options.forEach(opt => {
+                const isUserChoice = (userOption && userOption.discard === opt.discard);
+                const isBest = (opt.ev === maxEv); // 同着1位ならすべてBest扱い
+                
+                let waitImgs = "";
+                opt.waits.forEach(w => {
+                    waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
+                        <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
+                        <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
+                    </div>`;
+                });
 
-        function renderWaitDetails(opt, isBestLabel = false, container) {
-            let waitImgs = "";
-            opt.waits.forEach(w => {
-                waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
-                    <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
-                    <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
-                </div>`;
+                let prob = (opt.win_prob * 100).toFixed(1);
+                let score = Math.round(opt.avg_score).toLocaleString();
+                let ev = Math.round(opt.ev).toLocaleString();
+
+                let borderCol = isBest ? '#27ae60' : (isUserChoice ? '#3498db' : '#bdc3c7');
+                let bgCol = isUserChoice ? '#f0f8ff' : '#fff';
+                
+                let badge = "";
+                if (isBest) badge += '<span style="color:#27ae60; font-weight:bold; font-size:13px;">👑 最善手</span> ';
+                if (isUserChoice) badge += '<span style="color:#3498db; font-weight:bold; font-size:13px;">👉 あなたの選択</span> ';
+
+                detailsHtml += `
+                    <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
+                            ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                        </div>
+                        <div style="margin-bottom:10px;">${waitImgs}</div>
+                        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                            <tr style="background:#ecf0f1;">
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
+                            </tr>
+                            <tr>
+                                <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
+                                <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
+                                <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
+                                <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
             });
 
-            let prob = (opt.win_prob * 100).toFixed(1);
-            let score = Math.round(opt.avg_score).toLocaleString();
-            let ev = Math.round(opt.ev).toLocaleString();
-
-            container.innerHTML += `
-                <div style="margin-top:15px; text-align:left; background:#fff; padding:15px; border-radius:8px; border-left:5px solid ${isBestLabel ? '#27ae60' : '#3498db'};">
-                    <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
-                        ${isBestLabel ? '<span style="color:#27ae60;">👑 最善手:</span> ' : '👉 あなたの選択: '}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
-                    </div>
-                    <div style="margin-bottom:10px;">${waitImgs}</div>
-                    <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
-                        <tr style="background:#ecf0f1;">
-                            <th style="padding:5px; border:1px solid #bdc3c7;">待ち数</th>
-                            <th style="padding:5px; border:1px solid #bdc3c7;">和了確率</th>
-                            <th style="padding:5px; border:1px solid #bdc3c7;">平均打点</th>
-                            <th style="padding:5px; border:1px solid #bdc3c7;">期待値 (EV)</th>
-                        </tr>
-                        <tr>
-                            <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
-                            <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
-                            <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
-                            <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
-                        </tr>
-                    </table>
-                </div>
-            `;
+            infoEl.innerHTML = detailsHtml;
+            document.getElementById('nani-kiru-result').style.display = 'block';
         }
 
         // ==========================================
