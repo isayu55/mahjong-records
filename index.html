@@ -9,359 +9,55 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* 既存のスタイルを継承 */
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 10px;
-            color: #333;
-        }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2, h3 { text-align: center; color: #2c3e50; }
+        .view-section { display: none; }
+        .active-view { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .table-responsive { width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; }
+        .input-table, .ruikei-table { width: 100%; border-collapse: collapse; min-width: 300px; font-size: 14px; }
+        .input-table th, .input-table td, .ruikei-table th, .ruikei-table td { padding: 8px 5px; text-align: center; vertical-align: middle; border: 1px solid #ccc; }
+        .input-table th, .ruikei-table th { background-color: #ecf0f1; font-weight: bold; }
+        .input-table input { width: 100%; box-sizing: border-box; padding: 10px; font-size: 16px; text-align: right; border-radius: 5px; border: 1px solid #ccc; }
+        .score-input { background-color: #fffacd; border: 2px solid #e1c699 !important; }
+        .chip-input { background-color: #e0f7fa; border: 2px solid #80deea !important; }
+        .btn { display: block; width: 100%; padding: 15px; margin-top: 10px; background-color: #27ae60; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
+        .btn:hover { background-color: #219150; }
+        .btn-sync { background-color: #3498db; }
+        .btn-analysis { background-color: #9b59b6; }
+        .btn-trivia { background-color: #f39c12; color: #fff; }
+        .btn-trivia:hover { background-color: #e67e22; }
+        .btn-cancel { background-color: #95a5a6; font-size: 16px; padding: 10px; margin-bottom: 20px; }
+        .result-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 320px; }
+        .result-table th, .result-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        .result-table th { background-color: #ecf0f1; }
+        .plus { color: #2980b9; font-weight: bold; }
+        .minus { color: #c0392b; font-weight: bold; }
+        .history-card { background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
+        .history-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .date-picker { text-align: center; margin-bottom: 15px; background: #e8f4f8; padding: 10px; border-radius: 5px; border: 1px dashed #3498db; }
+        .date-picker input { padding: 5px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; }
+        #current-sum-display { text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; min-height: 48px; background: #fafafa; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; margin-bottom: 30px; }
+        .chart-title { text-align: center; font-size: 16px; font-weight: bold; color: #2c3e50; margin-bottom: -10px; }
+        .ai-report { background: #fff3cd; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; border-left: 5px solid #f1c40f; line-height: 1.6; }
+        .season-select { width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 2px solid #3498db; background-color: #f4f9f9; color: #2c3e50; font-weight: bold; margin-bottom: 15px; cursor: pointer; outline: none; }
+        .trivia-box { background: #e8f4f8; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .yaku-box { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px dashed #f1c40f; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .yaku-name { font-size: 28px; font-weight: bold; color: #e74c3c; margin: 10px 0; letter-spacing: 2px; }
+        .yaku-han { display: inline-block; background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+        .yaku-desc { font-size: 15px; color: #444; line-height: 1.6; background: #fafafa; padding: 10px; border-radius: 5px; }
+        
+        .tile-img { width: 35px; height: auto; margin: 2px; border-radius: 3px; box-shadow: 1px 2px 3px rgba(0,0,0,0.3); vertical-align: middle; }
+        .ans-btn { display: inline-block; width: 50px; height: 50px; font-size: 22px; font-weight: bold; margin: 5px; border-radius: 50%; border: 2px solid #3498db; background: #fff; color: #3498db; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .ans-btn.selected { background: #3498db; color: #fff; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .rank-card { background: #fff; border-left: 5px solid #f1c40f; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 5px; display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h1, h2, h3 {
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        .view-section {
-            display: none;
-        }
-
-        .active-view {
-            display: block;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            white-space: nowrap;
-            margin-bottom: 15px;
-        }
-
-        .input-table, .ruikei-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 300px;
-            font-size: 14px;
-        }
-
-            .input-table th, .input-table td, .ruikei-table th, .ruikei-table td {
-                padding: 8px 5px;
-                text-align: center;
-                vertical-align: middle;
-                border: 1px solid #ccc;
-            }
-
-            .input-table th, .ruikei-table th {
-                background-color: #ecf0f1;
-                font-weight: bold;
-            }
-
-            .input-table input {
-                width: 100%;
-                box-sizing: border-box;
-                padding: 10px;
-                font-size: 16px;
-                text-align: right;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-            }
-
-        .score-input {
-            background-color: #fffacd;
-            border: 2px solid #e1c699 !important;
-        }
-
-        .chip-input {
-            background-color: #e0f7fa;
-            border: 2px solid #80deea !important;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin-top: 10px;
-            background-color: #27ae60;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-            .btn:hover {
-                background-color: #219150;
-            }
-
-        .btn-sync {
-            background-color: #3498db;
-        }
-
-        .btn-analysis {
-            background-color: #9b59b6;
-        }
-
-        .btn-trivia {
-            background-color: #f39c12;
-            color: #fff;
-        }
-
-            .btn-trivia:hover {
-                background-color: #e67e22;
-            }
-
-        .btn-cancel {
-            background-color: #95a5a6;
-            font-size: 16px;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-
-        .result-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            min-width: 320px;
-        }
-
-            .result-table th, .result-table td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: center;
-            }
-
-            .result-table th {
-                background-color: #ecf0f1;
-            }
-
-        .plus {
-            color: #2980b9;
-            font-weight: bold;
-        }
-
-        .minus {
-            color: #c0392b;
-            font-weight: bold;
-        }
-
-        .history-card {
-            background: #fafafa;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
-        .date-picker {
-            text-align: center;
-            margin-bottom: 15px;
-            background: #e8f4f8;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px dashed #3498db;
-        }
-
-            .date-picker input {
-                padding: 5px;
-                font-size: 16px;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-                font-weight: bold;
-            }
-
-        #current-sum-display {
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 15px;
-            min-height: 48px;
-            background: #fafafa;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 350px;
-            width: 100%;
-            margin-top: 20px;
-            margin-bottom: 30px;
-        }
-
-        .chart-title {
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: -10px;
-        }
-
-        .ai-report {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            border-left: 5px solid #f1c40f;
-            line-height: 1.6;
-        }
-
-        .season-select {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 2px solid #3498db;
-            background-color: #f4f9f9;
-            color: #2c3e50;
-            font-weight: bold;
-            margin-bottom: 15px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .trivia-box {
-            background: #e8f4f8;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 5px solid #3498db;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .yaku-box {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 2px dashed #f1c40f;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .yaku-name {
-            font-size: 28px;
-            font-weight: bold;
-            color: #e74c3c;
-            margin: 10px 0;
-            letter-spacing: 2px;
-        }
-
-        .yaku-han {
-            display: inline-block;
-            background: #e74c3c;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .yaku-desc {
-            font-size: 15px;
-            color: #444;
-            line-height: 1.6;
-            background: #fafafa;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        /* 何切るクイズ用追加CSS */
-        .tile-img {
-            width: 35px;
-            height: auto;
-            margin: 2px;
-            border-radius: 3px;
-            box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
-            vertical-align: middle;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-            .tile-img:hover {
-                transform: translateY(-5px);
-            }
-
-        .ans-btn {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            font-size: 22px;
-            font-weight: bold;
-            margin: 5px;
-            border-radius: 50%;
-            border: 2px solid #3498db;
-            background: #fff;
-            color: #3498db;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-            .ans-btn.selected {
-                background: #3498db;
-                color: #fff;
-                transform: scale(1.1);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            }
-
-        .rank-card {
-            background: #fff;
-            border-left: 5px solid #f1c40f;
-            padding: 12px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .nani-kiru-tile {
-            border: 2px solid transparent;
-        }
-
-            .nani-kiru-tile.selected-discard {
-                border-color: #e74c3c;
-                transform: translateY(-10px);
-            }
+        /* 何切る用追加CSS */
+        .nani-kiru-tile { cursor: pointer; transition: transform 0.1s; }
+        .nani-kiru-tile:hover { transform: translateY(-5px); }
+        .nani-kiru-tile.selected-discard { border: 2px solid #e74c3c; transform: translateY(-10px); }
     </style>
 </head>
 <body>
@@ -382,6 +78,7 @@
             <button class="btn" onclick="switchView('input-view')">📝 今日の成績を入力する</button>
             <button class="btn btn-sync" onclick="switchView('data-view')" style="margin-top: 20px;">📅 シーズン成績 ＆ 日別詳細を見る</button>
             <button class="btn btn-analysis" onclick="switchView('hanchan-view')" style="margin-top: 20px;">📊 AI分析ダッシュボード</button>
+            <button class="btn btn-trivia" onclick="switchView('trivia-view')" style="margin-top: 20px;">💡 豆知識＆今日のラッキー役</button>
             <button class="btn" onclick="switchView('quiz-view')" style="margin-top: 20px; background-color: #e74c3c;">🧩 多面張タイムアタック</button>
             <button class="btn" onclick="switchView('nani-kiru-view')" style="margin-top: 20px; background-color: #9b59b6;">🤔 清一色 何切る？</button>
         </div>
@@ -389,19 +86,164 @@
         <div id="nani-kiru-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>🤔 清一色 何切る？</h2>
-
+            
             <div id="nani-kiru-play-area" style="text-align:center; margin-top: 20px;">
                 <p style="font-weight:bold; color:#666;">捨てる牌をタップしてください</p>
                 <div id="nani-kiru-hand" style="margin-bottom: 30px; background:#fafafa; padding:20px 10px; border-radius:8px; border:2px dashed #ccc; min-height: 80px;">
-                </div>
+                    </div>
 
                 <div id="nani-kiru-result" style="display:none; animation: fadeIn 0.4s;">
                     <div id="nani-kiru-message" style="font-size:24px; font-weight:bold; margin-bottom:15px;"></div>
                     <div id="nani-kiru-info" style="background:#e8f4f8; padding:15px; border-radius:10px; margin-bottom:20px;">
-                    </div>
+                        </div>
                     <button class="btn" style="background-color:#9b59b6;" onclick="nextNaniKiru()">次の問題へ</button>
                 </div>
             </div>
+        </div>
+
+        <div id="quiz-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view'); stopQuiz();">🏠 メニューに戻る</button>
+            <h2>🧩 7枚待ちタイムアタック</h2>
+
+            <div id="quiz-intro">
+                <p style="text-align:center; font-size:14px; color:#666; line-height:1.6;"><strong>全76パターン（筒子・索子 / 通常・反転）</strong>の中から<br>ランダムに選ばれた<strong>10問</strong>が出題されます！<br>全問正解までのタイムを競いましょう！</p>
+
+                <select id="quiz-player-select" class="season-select" style="margin-top: 20px;">
+                    <option value="">👤 挑戦するプレイヤーを選択...</option>
+                </select>
+                <button class="btn" style="background-color:#e74c3c; margin-top: 5px;" onclick="startQuiz()">⏱️ クイズスタート！</button>
+
+                <h3 style="margin-top: 40px; color:#f39c12;">👑 みんなのベストタイム Top3</h3>
+                <button class="btn btn-sync" style="font-size: 12px; padding: 5px; margin-bottom: 10px;" onclick="loadQuizRanking()">🔄 ランキング更新</button>
+                <div id="quiz-ranking-area">
+                    <p style="text-align:center; color:#999;">ランキングを取得中...</p>
+                </div>
+            </div>
+
+            <div id="quiz-play-area" style="display:none; text-align:center;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #ddd; padding-bottom:10px; margin-bottom:20px;">
+                    <div style="font-size:24px; font-weight:bold; color:#e74c3c; font-family:monospace;" id="quiz-timer">⏱️ 計測中...</div>
+                    <div style="font-size:16px; font-weight:bold; color:#3498db;" id="quiz-progress">1 / 10問</div>
+                </div>
+
+                <div id="quiz-tiles-area" style="margin-bottom: 30px; background:#fafafa; padding:20px 10px; border-radius:8px; border:2px dashed #ccc; min-height: 60px;">
+                </div>
+
+                <p style="font-weight:bold; color:#2c3e50; margin-bottom:15px;">待ち牌を<span style="color:#e74c3c;">すべて</span>選んでください</p>
+                <div id="quiz-keyboard" style="max-width:300px; margin:0 auto;">
+                </div>
+
+                <button class="btn" style="margin-top: 25px; font-size: 22px; padding: 15px;" onclick="submitAnswer()">解答する</button>
+                <p id="quiz-feedback" style="color:#e74c3c; font-weight:bold; height:20px; margin-top:15px;"></p>
+            </div>
+
+            <div id="quiz-result-area" style="display:none; text-align:center;">
+                <h2 style="color:#e74c3c; font-size:32px;">🎉 CLEAR! 🎉</h2>
+                <div style="background:#e8f4f8; padding:20px; border-radius:10px; margin:20px 0;">
+                    <p style="font-size:18px; font-weight:bold; margin:0;">あなたのタイム</p>
+                    <p style="font-size:48px; font-weight:bold; color:#2980b9; margin:10px 0;"><span id="quiz-final-time"></span><span style="font-size:24px;"> 秒</span></p>
+                    <p id="quiz-penalty-text" style="font-size:14px; color:#e74c3c; font-weight:bold; margin:0;"></p>
+                </div>
+                <div id="quiz-saving-status" style="font-weight:bold; color:#f39c12; margin-bottom:15px;">☁️ 記録をクラウドに送信中...</div>
+                <button class="btn" style="background-color:#e74c3c;" onclick="resetQuiz()">もう一度挑戦する</button>
+                <button class="btn btn-cancel" style="margin-top: 10px;" onclick="switchView('menu-view')">メニューに戻る</button>
+            </div>
+        </div>
+
+        <div id="input-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
+            <h2>📝 成績入力</h2>
+            <div class="date-picker">
+                <label for="play-date" style="font-weight: bold; color: #2980b9;">📅 対局日: </label>
+                <input type="date" id="play-date" onchange="loadFromCloud()">
+                <button class="btn btn-sync" style="font-size: 14px; padding: 8px; margin-top: 10px;" onclick="loadFromCloud()">🔄 クラウドと同期</button>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 15px; background: #e8f4f8; padding: 10px; border-radius: 5px;">
+                <label style="font-weight:bold; margin-right:20px; cursor:pointer;">
+                    <input type="radio" name="game-mode" value="3" checked onchange="calculateCurrentSum()"> 🀄 三麻
+                </label>
+                <label style="font-weight:bold; cursor:pointer;">
+                    <input type="radio" name="game-mode" value="4" onchange="calculateCurrentSum()"> 🀄 四麻
+                </label>
+            </div>
+
+            <div class="table-responsive">
+                <table class="input-table" style="border:none;">
+                    <tr><th style="width: 25%;">名前</th><th style="width: 40%;">得点 (例: 310)</th><th style="width: 35%;">チップ (枚)</th></tr>
+                    <tbody id="input-tbody"></tbody>
+                </table>
+            </div>
+
+            <div id="current-sum-display"></div>
+
+            <button class="btn" id="save-btn" onclick="saveRecord()">この内容を記録する</button>
+            <h3 style="margin-top: 40px;">🏆 現在の総合結果</h3>
+            <div class="table-responsive"><table class="result-table" id="total-table"></table></div>
+            <h3 style="margin-top: 30px;">📖 入力履歴</h3>
+            <div id="history-area"></div>
+        </div>
+
+        <div id="data-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
+            <h2>📅 シーズンごとの成績</h2>
+            <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData(); loadS5DailyData();">🔄 最新のデータを読み込む</button>
+            <select id="season-selector" class="season-select" onchange="renderRuikeiTableAndChart()">
+                <option value="S5">🟢 S5 (今シーズン - 2026年)</option>
+                <option value="S4">⚪ S4 (2025年)</option>
+                <option value="S3">⚪ S3 (2025年)</option>
+                <option value="S2">⚪ S2 (2025年)</option>
+                <option value="S1">⚪ S1 (2025年)</option>
+                <option value="ALL">🔥 全シーズン（S1〜S5累積）</option>
+            </select>
+            <div class="chart-container"><canvas id="ruikei-chart"></canvas></div>
+            <h3 style="margin-top: 20px;">📊 成績表</h3>
+            <div id="ruikei-area" style="margin-bottom: 40px;"></div>
+
+            <hr style="border: 1px dashed #ccc; margin: 30px 0;">
+
+            <h2>📅 日別詳細成績（S5）</h2>
+            <div style="margin-bottom:15px; background:#e8f4f8; padding:15px; border-radius:10px; text-align:center;">
+                <div id="daily-date-display" style="font-size:32px; font-weight:bold; color:#2980b9; margin-bottom:15px;">読み込み中...</div>
+
+                <div style="display:flex; justify-content:center; gap:15px;">
+                    <button class="btn" style="width:140px; padding:12px 10px; margin:0; font-size:14px;" onclick="changeDailyDate(-1)">← 前の対局</button>
+                    <button class="btn" style="width:140px; padding:12px 10px; margin:0; font-size:14px;" onclick="changeDailyDate(1)">次の対局 →</button>
+                </div>
+            </div>
+
+            <div id="daily-summary-area" style="margin-bottom:20px;"></div>
+
+            <h3 style="margin-top: 20px;">📊 その日の対局履歴</h3>
+            <div id="daily-games-area"></div>
+        </div>
+
+        <div id="hanchan-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
+            <h2>📊 AI分析ダッシュボード</h2>
+            <p style="text-align:center; font-size:12px; color:#666;">※S4+S5の半荘データを元に計算されています</p>
+            <button class="btn btn-analysis" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadHanchanData()">🔄 最新のデータを読み込む</button>
+            <div id="ai-commentary" class="ai-report"><p style="text-align:center;">☁️ データを読み込んでAIレポートを作成しています...</p></div>
+            <div class="chart-title" style="margin-top: 30px;">🕸️ プレイスタイル（能力パラメーター）</div>
+            <div class="chart-container" style="height: 300px;"><canvas id="radar-chart"></canvas></div>
+            <div class="chart-title" style="margin-top: 30px;">📈 半荘ごとのポイント推移</div>
+            <div class="chart-container"><canvas id="hanchan-chart"></canvas></div>
+            <div class="chart-title" style="margin-top: 40px;">🏆 順位獲得率の分布</div>
+            <div class="chart-container" style="height: 250px;"><canvas id="rank-chart"></canvas></div>
+            <h3 style="margin-top: 20px;">📈 詳細分析データ</h3>
+            <div id="hanchan-table-area"></div>
+        </div>
+
+        <div id="trivia-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
+            <h2>🀄 ラッキー役＆豆知識</h2>
+            <div class="chart-title" style="margin-top: 30px;">🔮 今日のあなたにおすすめの役</div>
+            <p style="text-align:center; font-size:13px; color:#666;">プレイヤーを選ぶと、今日狙うべき役を占います！</p>
+            <select id="lucky-player-select" class="season-select" onchange="showLuckyYaku()"><option value="">👤 あなたの名前を選択してください...</option></select>
+            <div id="lucky-yaku-area" class="yaku-box" style="display:none;"></div>
+            <div class="chart-title" style="margin-top: 40px; margin-bottom: 15px;">💡 麻雀豆知識</div>
+            <div class="trivia-box"><p id="trivia-text" style="font-size:15px; line-height:1.6; margin:0;"></p></div>
+            <button class="btn btn-trivia" style="font-size:15px; padding:12px;" onclick="showRandomTrivia()">🎲 別の豆知識を見る</button>
         </div>
 
     </div>
@@ -413,15 +255,51 @@
             { id: 'dyna', name: 'ダイナ' }, { id: 'tokuda', name: '徳田' }, { id: 'tasuku', name: 'たすく' }
         ];
 
-        // 既存の変数
-        let cachedRuikeiData = [];
-        let s5DailyData = [];
-        let currentDailyIndex = 0;
-        let records = [];
+        // ▼ タイムアタック用データ ▼
+        const machi19 = [
+            { q: [2, 3, 4, 5, 6, 9, 9], a: [1, 4, 7] }, { q: [2, 3, 4, 5, 6, 7, 8], a: [2, 5, 8] }, { q: [2, 3, 4, 5, 5, 6, 7], a: [2, 5, 8] },
+            { q: [2, 3, 4, 4, 4, 9, 9], a: [1, 4, 9] }, { q: [2, 3, 3, 3, 4, 5, 6], a: [1, 2, 4, 7] }, { q: [3, 3, 3, 4, 4, 5, 6], a: [2, 4, 5, 7] },
+            { q: [3, 3, 3, 4, 5, 5, 6], a: [4, 5, 7] }, { q: [3, 3, 3, 4, 5, 6, 7], a: [2, 4, 5, 7, 8] }, { q: [3, 3, 3, 4, 5, 6, 8], a: [7, 8] },
+            { q: [3, 3, 3, 5, 5, 6, 7], a: [4, 5, 8] }, { q: [3, 3, 3, 5, 6, 7, 8], a: [4, 5, 8] }, { q: [3, 3, 3, 4, 4, 5, 5], a: [3, 4, 5, 6] },
+            { q: [3, 3, 4, 4, 4, 5, 5], a: [3, 4, 5] }, { q: [3, 3, 3, 4, 5, 5, 5], a: [2, 3, 4, 5, 6] }, { q: [3, 3, 3, 4, 4, 4, 5], a: [3, 4, 5, 6] },
+            { q: [3, 3, 3, 5, 7, 7, 7], a: [4, 5, 6] }, { q: [3, 3, 4, 5, 5, 5, 5], a: [3, 4, 6] }, { q: [3, 3, 4, 4, 4, 4, 5], a: [2, 3, 5, 6] },
+            { q: [3, 4, 4, 4, 4, 5, 6], a: [2, 3, 5, 6] }
+        ];
+
+        let allQuizPool = [];
+        machi19.forEach(base => {
+            let revQ = base.q.map(n => 10 - n).sort((a, b) => a - b);
+            let revA = base.a.map(n => 10 - n).sort((a, b) => a - b);
+
+            allQuizPool.push({ q: base.q, a: base.a, type: 'p' });
+            allQuizPool.push({ q: revQ, a: revA, type: 'p' });
+            allQuizPool.push({ q: base.q, a: base.a, type: 's' });
+            allQuizPool.push({ q: revQ, a: revA, type: 's' });
+        });
+
+        let quizQuestions = [];
+        let currentQIndex = 0;
+        let selectedAns = [];
+        let quizStartTime = 0;
+        let penaltyTime = 0;
 
         // ▼ 何切る用変数 ▼
         let naniKiruPool = [];
         let currentProblem = null;
+
+        const yakuList = [{ name: "立直 (リーチ)", han: "1翻", desc: "門前でテンパイを宣言する役。" }, { name: "断幺九 (タンヤオ)", han: "1翻", desc: "2〜8の数牌だけで作る役。" }, { name: "平和 (ピンフ)", han: "1翻", desc: "順子4つと役牌以外の雀頭で作る役。" }, { name: "役牌 (ヤクハイ)", han: "1翻", desc: "三元牌や自風・場風を3枚集めるだけ。" }, { name: "対々和 (トイトイ)", han: "2翻", desc: "同じ牌を3枚ずつ4組作る役。" }, { name: "混一色 (ホンイツ)", han: "3翻", desc: "1種類の数牌と字牌だけで作る役。" }, { name: "清一色 (チンイツ)", han: "6翻", desc: "1種類の数牌のみで作る美しき役。" }, { name: "七対子 (チートイツ)", han: "2翻", desc: "対子を7組作る特殊な役。" }, { name: "三色同順 (サンショク)", han: "2翻", desc: "萬子・筒子・索子で同じ並びの順子を作る。" }, { name: "一気通貫 (イッツー)", han: "2翻", desc: "同種の数牌で123、456、789を揃える。" }, { name: "混全帯幺九 (チャンタ)", han: "2翻", desc: "全ての面子と雀頭に1,9,字牌を含める。" }, { name: "四暗刻 (スーアンコウ)", han: "役満", desc: "門前で暗刻を4つ作る役。" }, { name: "国士無双 (コクシムソウ)", han: "役満", desc: "1,9,字牌の全13種類を揃える。" }, { name: "大三元 (ダイサンゲン)", han: "役満", desc: "白・發・中の3種類を全て刻子にする。" }];
+        const triviaList = ["索子の柄は竹だと思われがちですが、実はお金を通した「紐の束」を表しています。", "筒子の柄は、昔の中国の「穴あき銭」そのものを表しています。", "萬子は、そのままお金の単位である「万」を表しています。", "一索の鳥は、元々はただの紐の結び目でしたが、遊び心で雀や孔雀が描かれるようになりました。", "「發」には元々文字が書かれておらず、緑色に塗られただけの無地の牌だったと言われています。", "点棒にある黒や赤のギザギザ模様は、盲目の人でも触って点数がわかるように工夫された名残です。", "日本発祥のローカルルール「リーチ」。実は本場中国の公式麻雀には存在しません。", "昔の麻雀牌は、牛骨などと竹を背中合わせにして作られていました。", "サイコロの1の裏は6ですが、中国のサイコロは1と4が赤く塗られていることが多いです。", "「麻雀」という名前の由来は、牌をかき混ぜる音が「麻雀（スズメ）」の鳴き声に似ているからです。", "「白」は元々、予備のツルツルの牌をそのまま役牌として使い始めたのが始まりです。", "世界で一番最初に作られた全自動麻雀卓は、日本のメーカーが開発したものです。"];
+
+        let records = [];
+        let cachedRuikeiData = [];
+        let ruikeiChart = null;
+        let hanchanChart = null;
+        let rankChart = null;
+        let radarChartObj = null;
+
+        // ▼ S5分析データ保持用 ▼
+        let s5DailyData = [];
+        let currentDailyIndex = 0;
 
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -454,7 +332,7 @@
             renderInputForm();
             initTriviaView();
             initQuizView();
-            loadNaniKiruData();
+            loadNaniKiruData(); // ここで裏側でJSONをロードしておく
         };
 
         function checkPassword() {
@@ -473,29 +351,32 @@
             document.getElementById(viewId).classList.add('active-view');
             window.scrollTo(0, 0);
 
-            if (viewId === 'nani-kiru-view') {
-                if (naniKiruPool.length === 0) {
-                    alert("何切るデータを読み込んでいます。もう少々お待ちください。");
-                } else {
-                    nextNaniKiru();
-                }
-            }
-
             if (viewId === 'input-view') loadFromCloud();
             else if (viewId === 'data-view') {
-                // シーズン＆日別詳細を開いた時は両方読み込む
                 loadRuikeiData();
                 loadS5DailyData();
             }
             else if (viewId === 'hanchan-view') loadHanchanData();
             else if (viewId === 'quiz-view') loadQuizRanking();
+            else if (viewId === 'nani-kiru-view') {
+                if (naniKiruPool.length === 0) {
+                    // ポップアップを消して、画面に読み込み中を出す
+                    document.getElementById('nani-kiru-hand').innerHTML = "<p style='color:#999; font-weight:bold;'>☁️ 問題データを読み込み中...</p>";
+                    // 少し待ってからもう一度試す
+                    setTimeout(() => {
+                        if (naniKiruPool.length > 0) nextNaniKiru();
+                        else document.getElementById('nani-kiru-hand').innerHTML = "<p style='color:red;'>データの読み込みに失敗しました。nani_kiru_data.json がGitHubにあるか確認してください。</p>";
+                    }, 1000);
+                } else {
+                    nextNaniKiru();
+                }
+            }
         }
 
         // ==========================================
-        // ▼ 何切るクイズ ロジック ▼
+        // ▼ 清一色 何切る クイズ ロジック ▼
         // ==========================================
         function loadNaniKiruData() {
-            // Pythonで生成したjsonファイルを読み込む
             fetch('nani_kiru_data.json?t=' + new Date().getTime())
                 .then(res => res.json())
                 .then(data => {
@@ -503,16 +384,16 @@
                     console.log("何切るデータ読み込み完了: " + data.length + "問");
                 })
                 .catch(err => {
-                    console.error("何切るデータの読み込みに失敗しました。ファイルがGitHubに存在するか確認してください。");
+                    console.error("何切るデータの読み込みに失敗しました。", err);
                 });
         }
 
         function nextNaniKiru() {
             if (naniKiruPool.length === 0) return;
-
+            
             // ランダムに1問選択
             currentProblem = naniKiruPool[Math.floor(Math.random() * naniKiruPool.length)];
-
+            
             const handArea = document.getElementById('nani-kiru-hand');
             const resultArea = document.getElementById('nani-kiru-result');
             resultArea.style.display = 'none';
@@ -546,30 +427,30 @@
 
             const messageEl = document.getElementById('nani-kiru-message');
             const infoEl = document.getElementById('nani-kiru-info');
-
+            infoEl.innerHTML = ""; // 初期化
+            
             if (!userOption) {
                 // テンパイすらしない打牌
                 messageEl.innerHTML = "❌ テンパイしません...";
                 messageEl.style.color = "#e74c3c";
-                infoEl.innerHTML = `<p>正解は <strong>打${bestOption.discard}</strong> (${bestOption.total_count}枚) でした。</p>`;
+                infoEl.innerHTML = `<p>正解は <strong>打${bestOption.discard}${currentProblem.type === 'p' ? '筒' : '索'}</strong> (${bestOption.total_count}枚) でした。</p>`;
             } else if (userOption.discard === bestOption.discard) {
                 // 期待値最大
                 messageEl.innerHTML = "✨ 正解！ 最善手です ✨";
                 messageEl.style.color = "#27ae60";
-                renderWaitDetails(userOption);
+                renderWaitDetails(userOption, false, infoEl);
             } else {
                 // テンパイはするが期待値が低い
                 messageEl.innerHTML = "⚠️ テンパイですが、もっといい打牌があります";
                 messageEl.style.color = "#f39c12";
-                infoEl.innerHTML = `<p>あなたの選択: 打${num} (${userOption.total_count}枚)</p>`;
-                renderWaitDetails(bestOption, true); // 最善手を表示
+                infoEl.innerHTML = `<p>あなたの選択: <strong>打${num}${currentProblem.type === 'p' ? '筒' : '索'}</strong> (${userOption.total_count}枚)</p>`;
+                renderWaitDetails(bestOption, true, infoEl); // 最善手を表示
             }
 
             document.getElementById('nani-kiru-result').style.display = 'block';
         }
 
-        function renderWaitDetails(opt, isBestLabel = false) {
-            const infoEl = document.getElementById('nani-kiru-info');
+        function renderWaitDetails(opt, isBestLabel = false, container) {
             let waitImgs = "";
             opt.waits.forEach(w => {
                 waitImgs += `<div style="display:inline-block; margin-right:8px;">
@@ -578,7 +459,7 @@
                 </div>`;
             });
 
-            infoEl.innerHTML += `
+            container.innerHTML += `
                 <div style="margin-top:10px;">
                     <strong>${isBestLabel ? '最善手: ' : ''}打${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}</strong><br>
                     待ち: ${waitImgs}<br>
@@ -645,14 +526,11 @@
             let dayData = s5DailyData[currentDailyIndex];
             document.getElementById('daily-date-display').innerText = dayData.date;
 
-            // ▼ 累計データ（K〜Q列）から、この日付の「最終日計」を探す ▼
             let finalScores = null;
             if (cachedRuikeiData && cachedRuikeiData.length > 0) {
-                // "2026-03-16" などを "3/16" 形式に変換
                 let m = dayData.date.match(/(\d{4})-(\d{2})-(\d{2})/);
                 let d1 = m ? `${parseInt(m[2], 10)}/${parseInt(m[3], 10)}` : "";
 
-                // 下から遡って該当する日付を探す
                 for (let i = cachedRuikeiData.length - 1; i >= 0; i--) {
                     let colK = String(cachedRuikeiData[i][0]).trim();
                     if (colK === dayData.date || colK === d1 || colK.replace(/-/g, "/") === dayData.date.replace(/-/g, "/")) {
@@ -662,19 +540,16 @@
                 }
             }
 
-            // ▼ 合計とチップ逆算の表示 ▼
             let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>半荘分</th><th>チップ分</th><th>最終日計</th></tr>';
             players.forEach((p, idx) => {
                 let hanchanTot = dayData.totals[idx];
-                let finalPt = hanchanTot; // 累計が見つからなかった時の仮の数値
+                let finalPt = hanchanTot; 
 
-                // 累計データが見つかれば、それを最終日計にする
                 if (finalScores) {
                     let val = parseFloat(String(finalScores[idx + 1]).replace(/,/g, ''));
                     if (!isNaN(val)) finalPt = val;
                 }
 
-                // 最終日計 - 半荘スコア ＝ チップスコア（逆算）
                 let chipPt = finalPt - hanchanTot;
 
                 if (hanchanTot !== 0 || finalPt !== 0) {
@@ -683,17 +558,16 @@
                     let fCol = finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '');
 
                     summaryHtml += `<tr>
-                                <td style="font-weight:bold;">${p.name}</td>
-                                <td class="${hCol}">${hanchanTot > 0 ? '+' : ''}${hanchanTot.toFixed(1)}</td>
-                                <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
-                                <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
-                            </tr>`;
+                            <td style="font-weight:bold;">${p.name}</td>
+                            <td class="${hCol}">${hanchanTot > 0 ? '+' : ''}${hanchanTot.toFixed(1)}</td>
+                            <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
+                            <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
+                        </tr>`;
                 }
             });
             summaryHtml += '</table></div>';
             document.getElementById('daily-summary-area').innerHTML = summaryHtml;
 
-            // 各ゲームの表示
             let gamesHtml = "";
             dayData.games.forEach(g => {
                 let details = "";
@@ -966,7 +840,6 @@
                 cachedRuikeiData = data;
                 renderRuikeiTableAndChart();
 
-                // 💡 追加：累計データが読み込まれたら、日別詳細のチップ逆算も再描画する
                 if (s5DailyData.length > 0) renderDailyView();
             });
         }
@@ -993,144 +866,6 @@
             if (ruikeiChart) ruikeiChart.destroy();
             const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#34495e'];
             ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: players.map((p, i) => ({ label: p.name, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
-        }
-
-        // ==========================================
-        // ▼ 成績入力＆送信 ▼
-        // ==========================================
-
-        function loadFromCloud() {
-            let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
-            document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
-            fetch(GAS_URL + "?date=" + selectedDate + "&t=" + new Date().getTime()).then(res => res.json()).then(data => { records = data.error ? [] : data; updateUI(); });
-        }
-
-        function calculateCurrentSum() {
-            let sum = 0; let count = 0;
-            players.forEach(p => {
-                let val = document.getElementById('score_' + p.id).value;
-                if (val) { sum += parseInt(val, 10); count++; }
-            });
-
-            let display = document.getElementById('current-sum-display');
-            let mode = document.querySelector('input[name="game-mode"]:checked').value;
-            let targetSum = (mode === "3") ? 1050 : 1000;
-
-            if (mode === "3" && count === 4 && sum >= 1200) targetSum = 1400;
-
-            if (sum === 0 && count === 0) {
-                display.innerHTML = "📝 得点を入力してください";
-            } else if (sum === targetSum && ((mode === "3" && (count === 3 || count === 4)) || (mode === "4" && count === 4))) {
-                let modeText = mode === "3" ? "三麻" : "四麻";
-                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum * 100} 点 <br> (${modeText} ${count}人プレイ 記録OK!)</span>`;
-            } else {
-                let diff = targetSum - sum;
-                let diffText = diff > 0 ? `あと <strong>${diff * 100}</strong> 点足りません` : `<strong>${-diff * 100}</strong> 点オーバーしています`;
-                let modeText = mode === "3" ? (targetSum === 1400 ? "三麻4人想定" : "三麻想定") : "四麻想定";
-                display.innerHTML = `<span style="color: #e74c3c;">⚠️ 現在の合計: ${sum * 100} 点</span><br><span style="font-size:13px; color:#666;">（${diffText} / ${modeText}）</span>`;
-            }
-        }
-
-        function renderInputForm() {
-            document.getElementById('input-tbody').innerHTML = players.map(p => `<tr><td style="font-weight:bold;">${p.name}</td><td><input type="number" id="score_${p.id}" class="score-input" placeholder="未入力" oninput="calculateCurrentSum()"></td><td><input type="number" id="chip_${p.id}" class="chip-input" placeholder="未入力"></td></tr>`).join(''); calculateCurrentSum();
-        }
-
-        function saveRecord() {
-            let activeScores = []; let totalScore = 0; let hasScore = false; let hasChip = false; let totalChip = 0;
-            let recordData = { id: Date.now(), timestamp: new Date().toLocaleString(), rawScores: {}, chips: {}, points: {} };
-
-            let mode = document.querySelector('input[name="game-mode"]:checked').value;
-
-            players.forEach(p => {
-                let scoreVal = document.getElementById('score_' + p.id).value; let chipVal = document.getElementById('chip_' + p.id).value;
-                if (scoreVal) { let s = parseInt(scoreVal, 10); activeScores.push({ id: p.id, score: s }); totalScore += s; recordData.rawScores[p.id] = s; hasScore = true; }
-                if (chipVal && parseInt(chipVal, 10) !== 0) { recordData.chips[p.id] = parseInt(chipVal, 10); hasChip = true; totalChip += parseInt(chipVal, 10); }
-            });
-
-            if (!hasScore && !hasChip) return alert("得点かチップを入力してください！");
-
-            if (hasScore) {
-                if (mode === "3") {
-                    if (activeScores.length !== 3 && activeScores.length !== 4) return alert("三麻は3人もしくは4人分入力してください！");
-                    if (activeScores.length === 3) {
-                        if (totalScore !== 1050) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 105,000点)`);
-                        activeScores.sort((a, b) => b.score - a.score);
-                        recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25;
-                        recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0;
-                        recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
-                    } else if (activeScores.length === 4) {
-                        if (totalScore === 1400) {
-                            activeScores.sort((a, b) => b.score - a.score);
-                            recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 30;
-                            recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0;
-                            recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 + 0;
-                            recordData.points[activeScores[3].id] = (activeScores[3].score - 400) / 10 - 10;
-                        } else if (totalScore === 1050) {
-                            let players3 = activeScores.filter(a => a.score > 0);
-                            if (players3.length === 3) {
-                                players3.sort((a, b) => b.score - a.score);
-                                recordData.points[players3[0].id] = (players3[0].score - 400) / 10 + 25;
-                                recordData.points[players3[1].id] = (players3[1].score - 400) / 10 + 0;
-                                recordData.points[players3[2].id] = (players3[2].score - 400) / 10 - 10;
-                            } else {
-                                return alert("三麻4人入力で合計105,000点の場合、1人は0点(抜け番)である必要があります。");
-                            }
-                        } else {
-                            return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 105,000点 または 140,000点)`);
-                        }
-                    }
-                } else if (mode === "4") {
-                    if (activeScores.length !== 4) return alert("四麻は4人分入力してください！");
-                    if (totalScore !== 1000) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 100,000点)`);
-
-                    activeScores.sort((a, b) => b.score - a.score);
-                    recordData.points[activeScores[0].id] = (activeScores[0].score - 250) / 10 + 20;
-                    recordData.points[activeScores[1].id] = (activeScores[1].score - 250) / 10 + 10;
-                    recordData.points[activeScores[2].id] = (activeScores[2].score - 250) / 10 - 10;
-                    recordData.points[activeScores[3].id] = (activeScores[3].score - 250) / 10 - 20;
-                }
-            }
-            if (hasChip && totalChip !== 0) return alert("チップの合計枚数が0になるようにしてください！");
-
-            records.push(recordData); let totals = {}; players.forEach(p => totals[p.id] = { point: 0, chip: 0 });
-            records.forEach(rec => { players.forEach(p => { if (rec.points[p.id] !== undefined) totals[p.id].point += rec.points[p.id]; if (rec.chips[p.id] !== undefined) totals[p.id].chip += rec.chips[p.id]; }); });
-            let finalPoints = {}; players.forEach(p => { finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0); });
-
-            let postData = {
-                date: document.getElementById('play-date').value || new Date().toISOString().split('T')[0], timestamp: recordData.timestamp,
-                takai_score: recordData.points['takai'] !== undefined ? recordData.points['takai'] : "", takai_chip: recordData.chips['takai'] || "", yamaguchi_score: recordData.points['yamaguchi'] !== undefined ? recordData.points['yamaguchi'] : "", yamaguchi_chip: recordData.chips['yamaguchi'] || "", yamashita_score: recordData.points['yamashita'] !== undefined ? recordData.points['yamashita'] : "", yamashita_chip: recordData.chips['yamashita'] || "", dyna_score: recordData.points['dyna'] !== undefined ? recordData.points['dyna'] : "", dyna_chip: recordData.chips['dyna'] || "", tokuda_score: recordData.points['tokuda'] !== undefined ? recordData.points['tokuda'] : "", tokuda_chip: recordData.chips['tokuda'] || "", tasuku_score: recordData.points['tasuku'] !== undefined ? recordData.points['tasuku'] : "", tasuku_chip: recordData.chips['tasuku'] || "",
-                total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'], total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'], secret: localStorage.getItem('mahjong_auth')
-            };
-            players.forEach(p => { document.getElementById('score_' + p.id).value = ""; document.getElementById('chip_' + p.id).value = ""; }); calculateCurrentSum();
-
-            fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: "data=" + encodeURIComponent(JSON.stringify(postData)) })
-                .then(res => res.text()).then(text => {
-                    if (text.includes("認証に失敗しました")) { alert("⛔ 合言葉が間違っています！"); localStorage.removeItem('mahjong_auth'); location.reload(); }
-                    else if (text.includes("GAS_ERROR")) { alert("⚠️ エラーが発生しました:\n" + text); } else { setTimeout(loadFromCloud, 1000); }
-                });
-            updateUI(); setTimeout(() => { window.scrollBy({ top: 300, behavior: 'smooth' }); }, 100);
-        }
-
-        function updateUI() {
-            let totals = {}; players.forEach(p => totals[p.id] = { point: 0, chip: 0 });
-            let historyHtml = ""; let hanchanCount = 1;
-            records.forEach(rec => {
-                let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
-                if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; } if (hasC) { title += hasS ? "& チップ" : "チップのみ"; }
-                players.forEach(p => {
-                    let text = []; if (rec.points[p.id] !== undefined) { totals[p.id].point += rec.points[p.id]; text.push(`<span class="${rec.points[p.id] > 0 ? 'plus' : (rec.points[p.id] < 0 ? 'minus' : '')}">${rec.points[p.id] > 0 ? '+' : ''}${rec.points[p.id].toFixed(1)}</span>`); }
-                    if (rec.chips[p.id]) { totals[p.id].chip += rec.chips[p.id]; text.push(`チップ${rec.chips[p.id] > 0 ? '+' : ''}${rec.chips[p.id]}枚`); }
-                    if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
-                });
-                historyHtml += `<div class="history-card"><div class="history-header"><span>${title} <span style="font-size:10px; color:#999;">(${rec.timestamp})</span></span><div>${String(rec.id).startsWith('cloud_') ? '<span style="color:#27ae60;">☁️ 同期済</span>' : '<span style="color:#e74c3c;">⏳ 送信中...</span>'}</div></div>${details}</div>`;
-            });
-            document.getElementById('history-area').innerHTML = records.length === 0 ? "<p style='text-align:center; color:#999;'>まだ記録がありません</p>" : historyHtml;
-            let totalHtml = `<tr><th>名前</th><th>得点計</th><th>チップ計</th><th>最終P</th></tr>`;
-            players.forEach(p => {
-                let finalPt = totals[p.id].point + (totals[p.id].chip * 2.0);
-                if (totals[p.id].point !== 0 || totals[p.id].chip !== 0) totalHtml += `<tr><td style="font-weight:bold;">${p.name}</td><td>${totals[p.id].point.toFixed(1)}</td><td>${totals[p.id].chip}枚</td><td class="${finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '')}" style="font-size:18px;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td></tr>`;
-            });
-            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="4" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
     </script>
 </body>
