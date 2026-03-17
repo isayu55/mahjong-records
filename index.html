@@ -1011,25 +1011,27 @@
             }
             kb.innerHTML = kbHtml;
 
-            // 💡 7枚形(19種)の一覧表示を生成（横一列で改行させない）
+            // 💡 7枚形(19種)の一覧表示を生成（画像を大きくし、待ちを改行）
             let list7Html = "";
             machi19.forEach(item => {
-                let imgs = item.q.map(n => `<img src="${n}p.png" style="width:20px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
-                list7Html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px dashed #eee; padding-bottom:5px;">
-                        <div style="display:flex; flex-wrap:nowrap; gap:1px; overflow-x:auto;">${imgs}</div>
-                        <span style="color:#e74c3c; font-weight:bold; font-size:13px; white-space:nowrap; margin-left:10px;">待: ${item.a.join(', ')}</span>
-                    </div>`;
+                // widthを20px → 28pxに拡大
+                let imgs = item.q.map(n => `<img src="${n}p.png" style="width:28px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
+                list7Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
+                    <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                    <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                </div>`;
             });
             document.getElementById('quiz-list-7').innerHTML = list7Html;
 
-            // 💡 10枚形(抜粋15種)の一覧表示を生成（横一列で改行させない）
+            // 💡 10枚形(抜粋15種)の一覧表示を生成（画像を大きくし、待ちを改行）
             let list10Html = "";
             machi10.forEach(item => {
-                let imgs = item.q.map(n => `<img src="${n}s.png" style="width:18px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
-                list10Html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px dashed #eee; padding-bottom:5px;">
-                        <div style="display:flex; flex-wrap:nowrap; gap:1px; overflow-x:auto;">${imgs}</div>
-                        <span style="color:#27ae60; font-weight:bold; font-size:13px; white-space:nowrap; margin-left:10px;">待: ${item.a.join(', ')}</span>
-                    </div>`;
+                // widthを18px → 24pxに拡大（10枚並ぶので少しだけ小さめ）
+                let imgs = item.q.map(n => `<img src="${n}s.png" style="width:24px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
+                list10Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
+                    <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                    <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                </div>`;
             });
             document.getElementById('quiz-list-10').innerHTML = list10Html;
         }
