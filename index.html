@@ -9,55 +9,357 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1, h2, h3 { text-align: center; color: #2c3e50; }
-        .view-section { display: none; }
-        .active-view { display: block; animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .table-responsive { width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; }
-        .input-table, .ruikei-table { width: 100%; border-collapse: collapse; min-width: 300px; font-size: 14px; }
-        .input-table th, .input-table td, .ruikei-table th, .ruikei-table td { padding: 8px 5px; text-align: center; vertical-align: middle; border: 1px solid #ccc; }
-        .input-table th, .ruikei-table th { background-color: #ecf0f1; font-weight: bold; }
-        .input-table input { width: 100%; box-sizing: border-box; padding: 10px; font-size: 16px; text-align: right; border-radius: 5px; border: 1px solid #ccc; }
-        .score-input { background-color: #fffacd; border: 2px solid #e1c699 !important; }
-        .chip-input { background-color: #e0f7fa; border: 2px solid #80deea !important; }
-        .btn { display: block; width: 100%; padding: 15px; margin-top: 10px; background-color: #27ae60; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
-        .btn:hover { background-color: #219150; }
-        .btn-sync { background-color: #3498db; }
-        .btn-analysis { background-color: #9b59b6; }
-        .btn-trivia { background-color: #f39c12; color: #fff; }
-        .btn-trivia:hover { background-color: #e67e22; }
-        .btn-cancel { background-color: #95a5a6; font-size: 16px; padding: 10px; margin-bottom: 20px; }
-        .result-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 320px; }
-        .result-table th, .result-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        .result-table th { background-color: #ecf0f1; }
-        .plus { color: #2980b9; font-weight: bold; }
-        .minus { color: #c0392b; font-weight: bold; }
-        .history-card { background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
-        .history-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .date-picker { text-align: center; margin-bottom: 15px; background: #e8f4f8; padding: 10px; border-radius: 5px; border: 1px dashed #3498db; }
-        .date-picker input { padding: 5px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; font-weight: bold; }
-        #current-sum-display { text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; min-height: 48px; background: #fafafa; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
-        .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; margin-bottom: 30px; }
-        .chart-title { text-align: center; font-size: 16px; font-weight: bold; color: #2c3e50; margin-bottom: -10px; }
-        .ai-report { background: #fff3cd; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; border-left: 5px solid #f1c40f; line-height: 1.6; }
-        .season-select { width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 2px solid #3498db; background-color: #f4f9f9; color: #2c3e50; font-weight: bold; margin-bottom: 15px; cursor: pointer; outline: none; }
-        .trivia-box { background: #e8f4f8; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .yaku-box { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px dashed #f1c40f; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .yaku-name { font-size: 28px; font-weight: bold; color: #e74c3c; margin: 10px 0; letter-spacing: 2px; }
-        .yaku-han { display: inline-block; background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
-        .yaku-desc { font-size: 15px; color: #444; line-height: 1.6; background: #fafafa; padding: 10px; border-radius: 5px; }
-        
-        .tile-img { width: 35px; height: auto; margin: 2px; border-radius: 3px; box-shadow: 1px 2px 3px rgba(0,0,0,0.3); vertical-align: middle; }
-        .ans-btn { display: inline-block; width: 50px; height: 50px; font-size: 22px; font-weight: bold; margin: 5px; border-radius: 50%; border: 2px solid #3498db; background: #fff; color: #3498db; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .ans-btn.selected { background: #3498db; color: #fff; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .rank-card { background: #fff; border-left: 5px solid #f1c40f; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 5px; display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 10px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .active-view {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-bottom: 15px;
+        }
+
+        .input-table, .ruikei-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 300px;
+            font-size: 14px;
+        }
+
+            .input-table th, .input-table td, .ruikei-table th, .ruikei-table td {
+                padding: 8px 5px;
+                text-align: center;
+                vertical-align: middle;
+                border: 1px solid #ccc;
+            }
+
+            .input-table th, .ruikei-table th {
+                background-color: #ecf0f1;
+                font-weight: bold;
+            }
+
+            .input-table input {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 10px;
+                font-size: 16px;
+                text-align: right;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+            }
+
+        .score-input {
+            background-color: #fffacd;
+            border: 2px solid #e1c699 !important;
+        }
+
+        .chip-input {
+            background-color: #e0f7fa;
+            border: 2px solid #80deea !important;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            background-color: #27ae60;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+            .btn:hover {
+                background-color: #219150;
+            }
+
+        .btn-sync {
+            background-color: #3498db;
+        }
+
+        .btn-analysis {
+            background-color: #9b59b6;
+        }
+
+        .btn-trivia {
+            background-color: #f39c12;
+            color: #fff;
+        }
+
+            .btn-trivia:hover {
+                background-color: #e67e22;
+            }
+
+        .btn-cancel {
+            background-color: #95a5a6;
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 320px;
+        }
+
+            .result-table th, .result-table td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: center;
+            }
+
+            .result-table th {
+                background-color: #ecf0f1;
+            }
+
+        .plus {
+            color: #2980b9;
+            font-weight: bold;
+        }
+
+        .minus {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .history-card {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .date-picker {
+            text-align: center;
+            margin-bottom: 15px;
+            background: #e8f4f8;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px dashed #3498db;
+        }
+
+            .date-picker input {
+                padding: 5px;
+                font-size: 16px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-weight: bold;
+            }
+
+        #current-sum-display {
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            min-height: 48px;
+            background: #fafafa;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: -10px;
+        }
+
+        .ai-report {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-left: 5px solid #f1c40f;
+            line-height: 1.6;
+        }
+
+        .season-select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #3498db;
+            background-color: #f4f9f9;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 15px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .trivia-box {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .yaku-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px dashed #f1c40f;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .yaku-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .yaku-han {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .yaku-desc {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.6;
+            background: #fafafa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .tile-img {
+            width: 35px;
+            height: auto;
+            margin: 2px;
+            border-radius: 3px;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+            vertical-align: middle;
+        }
+
+        .ans-btn {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 5px;
+            border-radius: 50%;
+            border: 2px solid #3498db;
+            background: #fff;
+            color: #3498db;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+            .ans-btn.selected {
+                background: #3498db;
+                color: #fff;
+                transform: scale(1.1);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+
+        .rank-card {
+            background: #fff;
+            border-left: 5px solid #f1c40f;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 18px;
+        }
 
         /* 何切る用追加CSS */
-        .nani-kiru-tile { cursor: pointer; transition: transform 0.1s; }
-        .nani-kiru-tile:hover { transform: translateY(-5px); }
-        .nani-kiru-tile.selected-discard { border: 2px solid #e74c3c; transform: translateY(-10px); }
+        .nani-kiru-tile {
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+            .nani-kiru-tile:hover {
+                transform: translateY(-5px);
+            }
+
+            .nani-kiru-tile.selected-discard {
+                border: 2px solid #e74c3c;
+                transform: translateY(-10px);
+            }
     </style>
 </head>
 <body>
@@ -86,9 +388,9 @@
         <div id="nani-kiru-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>🤔 清一色 何切る？</h2>
-            
+
             <div id="nani-kiru-play-area" style="text-align:center; margin-top: 20px;">
-                
+
                 <div style="background:#fff3cd; border-left:4px solid #f1c40f; padding:12px; text-align:left; margin-bottom:20px; font-size:14px; color:#333; border-radius:5px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
                     <strong style="color:#e67e22;">【状況設定】</strong><br>
                     🀄 三麻・東1局 1巡目<br>
@@ -142,10 +444,17 @@
                 </div>
 
                 <h3 style="margin-top: 40px; color:#f39c12;">👑 みんなのベストタイム Top3</h3>
-                <p style="text-align:center; font-size:11px; color:#999; margin-top:-10px;">※(7枚)と(10枚)で記録が分かれます</p>
-                <button class="btn btn-sync" style="font-size: 12px; padding: 5px; margin-bottom: 10px;" onclick="loadQuizRanking()">🔄 ランキング更新</button>
-                <div id="quiz-ranking-area">
-                    <p style="text-align:center; color:#999;">ランキングを取得中...</p>
+                <button class="btn btn-sync" style="font-size: 12px; padding: 5px; margin-bottom: 15px;" onclick="loadQuizRanking()">🔄 ランキング更新</button>
+
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <div style="width:50%; background:#fff; padding:10px; border-radius:5px; border:2px solid #3498db; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <h4 style="margin-top:0; margin-bottom:10px; text-align:center; color:#2980b9;">🀄 7枚形</h4>
+                        <div id="quiz-ranking-7"><p style="text-align:center; color:#999; font-size:12px;">取得中...</p></div>
+                    </div>
+                    <div style="width:50%; background:#fff; padding:10px; border-radius:5px; border:2px solid #27ae60; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <h4 style="margin-top:0; margin-bottom:10px; text-align:center; color:#27ae60;">🀄 10枚形</h4>
+                        <div id="quiz-ranking-10"><p style="text-align:center; color:#999; font-size:12px;">取得中...</p></div>
+                    </div>
                 </div>
             </div>
 
@@ -319,7 +628,7 @@
         let selectedAns = [];
         let quizStartTime = 0;
         let penaltyTime = 0;
-        let currentQuizMode = 7; 
+        let currentQuizMode = 7;
 
         // ▼ 何切る用変数 ▼
         let naniKiruPool = [];
@@ -374,7 +683,7 @@
             renderInputForm();
             initTriviaView();
             initQuizView();
-            loadNaniKiruData(); 
+            loadNaniKiruData();
         };
 
         function checkPassword() {
@@ -430,17 +739,17 @@
 
         function nextNaniKiru() {
             if (naniKiruPool.length === 0) return;
-            
+
             currentProblem = naniKiruPool[Math.floor(Math.random() * naniKiruPool.length)];
-            if(currentProblem.options && currentProblem.options.length > 0) {
+            if (currentProblem.options && currentProblem.options.length > 0) {
                 currentProblem.options.sort((a, b) => b.ev - a.ev);
             }
-            
+
             const handArea = document.getElementById('nani-kiru-hand');
             const actionArea = document.getElementById('nani-kiru-action-area');
             const resultArea = document.getElementById('nani-kiru-result');
             const keyboardArea = document.getElementById('nani-kiru-keyboard');
-            
+
             resultArea.style.display = 'none';
             actionArea.style.display = 'block';
             handArea.innerHTML = "";
@@ -450,7 +759,7 @@
             currentProblem.hand.forEach(num => {
                 let img = document.createElement('img');
                 img.src = `${num}${currentProblem.type}.png`;
-                img.style.width = 'calc(100% / 14 - 2px)'; 
+                img.style.width = 'calc(100% / 14 - 2px)';
                 img.style.maxWidth = '35px';
                 img.style.margin = '0 1px';
                 img.style.height = 'auto';
@@ -493,12 +802,12 @@
             const num = naniKiruSelected;
             const options = currentProblem.options;
             const userOption = options.find(o => o.discard === num);
-            const maxEv = options.length > 0 ? options[0].ev : 0; 
+            const maxEv = options.length > 0 ? options[0].ev : 0;
 
             const messageEl = document.getElementById('nani-kiru-message');
             const infoEl = document.getElementById('nani-kiru-info');
-            infoEl.innerHTML = ""; 
-            
+            infoEl.innerHTML = "";
+
             if (!userOption) {
                 messageEl.innerHTML = "❌ テンパイしません...";
                 messageEl.style.color = "#e74c3c";
@@ -511,17 +820,17 @@
             }
 
             let detailsHtml = "<h4 style='text-align:left; margin-bottom:10px; color:#2c3e50;'>💡 打牌候補の比較</h4>";
-            
+
             options.forEach(opt => {
                 const isUserChoice = (userOption && userOption.discard === opt.discard);
-                const isBest = (opt.ev === maxEv); 
-                
+                const isBest = (opt.ev === maxEv);
+
                 let waitImgs = "";
                 opt.waits.forEach(w => {
                     waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
-                        <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
-                        <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
-                    </div>`;
+                            <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
+                            <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
+                        </div>`;
                 });
 
                 let prob = (opt.win_prob * 100).toFixed(1);
@@ -530,33 +839,33 @@
 
                 let borderCol = isBest ? '#27ae60' : (isUserChoice ? '#3498db' : '#bdc3c7');
                 let bgCol = isUserChoice ? '#f0f8ff' : '#fff';
-                
+
                 let badge = "";
                 if (isBest) badge += '<span style="color:#27ae60; font-weight:bold; font-size:13px;">👑 最善手</span> ';
                 if (isUserChoice) badge += '<span style="color:#3498db; font-weight:bold; font-size:13px;">👉 あなたの選択</span> ';
 
                 detailsHtml += `
-                    <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                        <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
-                            ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                        <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
+                                ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                            </div>
+                            <div style="margin-bottom:10px;">${waitImgs}</div>
+                            <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                                <tr style="background:#ecf0f1;">
+                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
+                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
+                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
+                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
+                                </tr>
+                                <tr>
+                                    <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
+                                    <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
+                                    <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
+                                    <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div style="margin-bottom:10px;">${waitImgs}</div>
-                        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
-                            <tr style="background:#ecf0f1;">
-                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
-                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
-                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
-                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
-                            </tr>
-                            <tr>
-                                <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
-                                <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
-                                <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
-                                <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
+                    `;
             });
 
             infoEl.innerHTML = detailsHtml;
@@ -573,7 +882,7 @@
                 .then(data => {
                     parseS5Data(data);
                     if (s5DailyData.length > 0) {
-                        currentDailyIndex = s5DailyData.length - 1; 
+                        currentDailyIndex = s5DailyData.length - 1;
                         renderDailyView();
                     } else {
                         document.getElementById('daily-date-display').innerText = "データなし";
@@ -598,7 +907,7 @@
 
                 if (!dateVal || dateVal === "" || isNaN(matchNum) || matchNum === "") continue;
 
-                let dateStr = String(dateVal).split('T')[0]; 
+                let dateStr = String(dateVal).split('T')[0];
 
                 if (!currentDayObj || currentDayObj.date !== dateStr) {
                     currentDayObj = { date: dateStr, games: [], totals: [0, 0, 0, 0, 0, 0] };
@@ -638,7 +947,7 @@
             let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>半荘分</th><th>チップ分</th><th>最終日計</th></tr>';
             players.forEach((p, idx) => {
                 let hanchanTot = dayData.totals[idx];
-                let finalPt = hanchanTot; 
+                let finalPt = hanchanTot;
 
                 if (finalScores) {
                     let val = parseFloat(String(finalScores[idx + 1]).replace(/,/g, ''));
@@ -653,11 +962,11 @@
                     let fCol = finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '');
 
                     summaryHtml += `<tr>
-                            <td style="font-weight:bold;">${p.name}</td>
-                            <td class="${hCol}">${hanchanTot > 0 ? '+' : ''}${hanchanTot.toFixed(1)}</td>
-                            <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
-                            <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
-                        </tr>`;
+                                <td style="font-weight:bold;">${p.name}</td>
+                                <td class="${hCol}">${hanchanTot > 0 ? '+' : ''}${hanchanTot.toFixed(1)}</td>
+                                <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
+                                <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
+                            </tr>`;
                 }
             });
             summaryHtml += '</table></div>';
@@ -708,9 +1017,9 @@
             machi19.forEach(item => {
                 let imgs = item.q.map(n => `<img src="${n}p.png" style="width:20px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list7Html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px dashed #eee; padding-bottom:5px;">
-                    <div style="display:flex; flex-wrap:nowrap; gap:1px; overflow-x:auto;">${imgs}</div>
-                    <span style="color:#e74c3c; font-weight:bold; font-size:13px; white-space:nowrap; margin-left:10px;">待: ${item.a.join(', ')}</span>
-                </div>`;
+                        <div style="display:flex; flex-wrap:nowrap; gap:1px; overflow-x:auto;">${imgs}</div>
+                        <span style="color:#e74c3c; font-weight:bold; font-size:13px; white-space:nowrap; margin-left:10px;">待: ${item.a.join(', ')}</span>
+                    </div>`;
             });
             document.getElementById('quiz-list-7').innerHTML = list7Html;
 
@@ -719,35 +1028,57 @@
             machi10.forEach(item => {
                 let imgs = item.q.map(n => `<img src="${n}s.png" style="width:18px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list10Html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px dashed #eee; padding-bottom:5px;">
-                    <div style="display:flex; flex-wrap:nowrap; gap:1px; overflow-x:auto;">${imgs}</div>
-                    <span style="color:#27ae60; font-weight:bold; font-size:13px; white-space:nowrap; margin-left:10px;">待: ${item.a.join(', ')}</span>
-                </div>`;
+                        <div style="display:flex; flex-wrap:nowrap; gap:1px; overflow-x:auto;">${imgs}</div>
+                        <span style="color:#27ae60; font-weight:bold; font-size:13px; white-space:nowrap; margin-left:10px;">待: ${item.a.join(', ')}</span>
+                    </div>`;
             });
             document.getElementById('quiz-list-10').innerHTML = list10Html;
         }
 
         function loadQuizRanking() {
-            document.getElementById('quiz-ranking-area').innerHTML = "<p style='text-align:center; color:#999;'>☁️ 最新ランキングを同期中...</p>";
+            document.getElementById('quiz-ranking-7').innerHTML = "<p style='text-align:center; color:#999; font-size:12px;'>☁️ 取得中...</p>";
+            document.getElementById('quiz-ranking-10').innerHTML = "<p style='text-align:center; color:#999; font-size:12px;'>☁️ 取得中...</p>";
+
             fetch(GAS_URL + "?action=getQuizRanking&t=" + new Date().getTime())
                 .then(res => res.json())
                 .then(data => {
-                    let html = "";
+                    // 名前に含まれるタグでデータを2つに振り分ける
+                    let data7 = data.filter(d => d.name && d.name.includes('(7枚)'));
+                    let data10 = data.filter(d => d.name && d.name.includes('(10枚)'));
+
                     const medals = ["🥇", "🥈", "🥉"];
-                    if (data.length === 0) {
-                        html = "<p style='text-align:center; color:#999;'>まだ記録がありません。最初の挑戦者になってください！</p>";
-                    } else {
-                        for (let i = 0; i < 3; i++) {
-                            if (data[i]) {
-                                html += `<div class="rank-card"><span>${medals[i]} ${data[i].name}</span><span style="color:#e74c3c;">${data[i].time.toFixed(1)} 秒</span></div>`;
-                            } else {
-                                html += `<div class="rank-card" style="color:#ccc;"><span>${medals[i]} ---</span><span>--.- 秒</span></div>`;
+
+                    // 表の描画用共通関数
+                    const renderList = (listData, elementId) => {
+                        let html = "";
+                        if (listData.length === 0) {
+                            html = "<p style='text-align:center; color:#ccc; font-size:12px; margin:0;'>記録なし</p>";
+                        } else {
+                            for (let i = 0; i < 3; i++) {
+                                if (listData[i]) {
+                                    // 表示をスッキリさせるため「(7枚)」などのタグを消す
+                                    let cleanName = listData[i].name.replace(" (7枚)", "").replace(" (10枚)", "");
+                                    html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; font-weight:bold; border-bottom:1px dashed #eee; padding-bottom:3px;">
+                                                <span>${medals[i]} ${cleanName}</span>
+                                                <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
+                                             </div>`;
+                                } else {
+                                    html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; color:#ccc; border-bottom:1px dashed #eee; padding-bottom:3px;">
+                                                <span>${medals[i]} ---</span>
+                                                <span>--.-s</span>
+                                             </div>`;
+                                }
                             }
                         }
-                    }
-                    document.getElementById('quiz-ranking-area').innerHTML = html;
+                        document.getElementById(elementId).innerHTML = html;
+                    };
+
+                    renderList(data7, 'quiz-ranking-7');
+                    renderList(data10, 'quiz-ranking-10');
                 })
                 .catch(err => {
-                    document.getElementById('quiz-ranking-area').innerHTML = "<p style='text-align:center; color:red;'>ランキングの取得に失敗しました</p>";
+                    document.getElementById('quiz-ranking-7').innerHTML = "<p style='text-align:center; color:red; font-size:12px;'>エラー</p>";
+                    document.getElementById('quiz-ranking-10').innerHTML = "<p style='text-align:center; color:red; font-size:12px;'>エラー</p>";
                 });
         }
 
@@ -755,17 +1086,17 @@
             let pName = document.getElementById('quiz-player-select').value;
             if (!pName) { alert("挑戦するプレイヤーを選択してください！"); return; }
 
-            currentQuizMode = mode; 
+            currentQuizMode = mode;
             quizQuestions = [];
-            
+
             let basePool = mode === 7 ? [...machi19] : [...machi10];
             basePool.sort(() => Math.random() - 0.5);
             let selectedBases = basePool.slice(0, 10);
-            
+
             selectedBases.forEach(base => {
                 let isReverse = Math.random() < 0.5;
                 let type = Math.random() < 0.5 ? 'p' : 's';
-                
+
                 let q, a;
                 if (isReverse) {
                     q = base.q.map(n => 10 - n).sort((x, y) => x - y);
@@ -774,7 +1105,7 @@
                     q = [...base.q];
                     a = [...base.a];
                 }
-                
+
                 quizQuestions.push({ q: q, a: a, type: type });
             });
 
@@ -799,9 +1130,9 @@
 
             let qObj = quizQuestions[currentQIndex];
             let html = "";
-            
+
             let widthPercent = qObj.q.length === 7 ? 'calc(100% / 7 - 2px)' : 'calc(100% / 10 - 2px)';
-            
+
             qObj.q.forEach(num => {
                 html += `<img src="${num}${qObj.type}.png" style="width:${widthPercent}; max-width:35px; height:auto; margin:0 1px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 2px rgba(0,0,0,0.3);" alt="...">`;
             });
@@ -841,7 +1172,7 @@
         function finishQuiz() {
             let finalTime = (Date.now() - quizStartTime) / 1000 + penaltyTime;
             let pName = document.getElementById('quiz-player-select').value;
-            
+
             // 💡 記録を分けるために名前にモード情報を追加
             let recordName = pName + (currentQuizMode === 7 ? " (7枚)" : " (10枚)");
 
@@ -1020,16 +1351,16 @@
         }
 
         function calculateCurrentSum() {
-            let sum = 0; let count = 0; 
-            players.forEach(p => { 
-                let val = document.getElementById('score_' + p.id).value; 
-                if (val) { sum += parseInt(val, 10); count++; } 
+            let sum = 0; let count = 0;
+            players.forEach(p => {
+                let val = document.getElementById('score_' + p.id).value;
+                if (val) { sum += parseInt(val, 10); count++; }
             });
-            
+
             let display = document.getElementById('current-sum-display');
             let mode = document.querySelector('input[name="game-mode"]:checked').value;
             let targetSum = (mode === "3") ? 1050 : 1000;
-            
+
             if (mode === "3" && count === 4 && sum >= 1200) targetSum = 1400;
 
             if (sum === 0 && count === 0) {
@@ -1052,7 +1383,7 @@
         function saveRecord() {
             let activeScores = []; let totalScore = 0; let hasScore = false; let hasChip = false; let totalChip = 0;
             let recordData = { id: Date.now(), timestamp: new Date().toLocaleString(), rawScores: {}, chips: {}, points: {} };
-            
+
             let mode = document.querySelector('input[name="game-mode"]:checked').value;
 
             players.forEach(p => {
@@ -1062,29 +1393,29 @@
             });
 
             if (!hasScore && !hasChip) return alert("得点かチップを入力してください！");
-            
+
             if (hasScore) {
                 if (mode === "3") {
                     if (activeScores.length !== 3 && activeScores.length !== 4) return alert("三麻は3人もしくは4人分入力してください！");
                     if (activeScores.length === 3) {
                         if (totalScore !== 1050) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 105,000点)`);
-                        activeScores.sort((a, b) => b.score - a.score); 
-                        recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25; 
-                        recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
+                        activeScores.sort((a, b) => b.score - a.score);
+                        recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25;
+                        recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0;
                         recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
                     } else if (activeScores.length === 4) {
                         if (totalScore === 1400) {
                             activeScores.sort((a, b) => b.score - a.score);
-                            recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 30; 
-                            recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
-                            recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 + 0; 
+                            recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 30;
+                            recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0;
+                            recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 + 0;
                             recordData.points[activeScores[3].id] = (activeScores[3].score - 400) / 10 - 10;
                         } else if (totalScore === 1050) {
                             let players3 = activeScores.filter(a => a.score > 0);
                             if (players3.length === 3) {
                                 players3.sort((a, b) => b.score - a.score);
-                                recordData.points[players3[0].id] = (players3[0].score - 400) / 10 + 25; 
-                                recordData.points[players3[1].id] = (players3[1].score - 400) / 10 + 0; 
+                                recordData.points[players3[0].id] = (players3[0].score - 400) / 10 + 25;
+                                recordData.points[players3[1].id] = (players3[1].score - 400) / 10 + 0;
                                 recordData.points[players3[2].id] = (players3[2].score - 400) / 10 - 10;
                             } else {
                                 return alert("三麻4人入力で合計105,000点の場合、1人は0点(抜け番)である必要があります。");
@@ -1096,11 +1427,11 @@
                 } else if (mode === "4") {
                     if (activeScores.length !== 4) return alert("四麻は4人分入力してください！");
                     if (totalScore !== 1000) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 100,000点)`);
-                    
-                    activeScores.sort((a, b) => b.score - a.score); 
-                    recordData.points[activeScores[0].id] = (activeScores[0].score - 250) / 10 + 20; 
-                    recordData.points[activeScores[1].id] = (activeScores[1].score - 250) / 10 + 10; 
-                    recordData.points[activeScores[2].id] = (activeScores[2].score - 250) / 10 - 10; 
+
+                    activeScores.sort((a, b) => b.score - a.score);
+                    recordData.points[activeScores[0].id] = (activeScores[0].score - 250) / 10 + 20;
+                    recordData.points[activeScores[1].id] = (activeScores[1].score - 250) / 10 + 10;
+                    recordData.points[activeScores[2].id] = (activeScores[2].score - 250) / 10 - 10;
                     recordData.points[activeScores[3].id] = (activeScores[3].score - 250) / 10 - 20;
                 }
             }
