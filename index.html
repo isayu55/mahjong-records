@@ -53,11 +53,6 @@
         .ans-btn { display: inline-block; width: 50px; height: 50px; font-size: 22px; font-weight: bold; margin: 5px; border-radius: 50%; border: 2px solid #3498db; background: #fff; color: #3498db; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .ans-btn.selected { background: #3498db; color: #fff; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         .rank-card { background: #fff; border-left: 5px solid #f1c40f; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 5px; display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; }
-
-        /* 何切る用追加CSS */
-        .nani-kiru-tile { cursor: pointer; transition: transform 0.1s; }
-        .nani-kiru-tile:hover { transform: translateY(-5px); }
-        .nani-kiru-tile.selected-discard { border: 2px solid #e74c3c; transform: translateY(-10px); }
     </style>
 </head>
 <body>
@@ -95,11 +90,17 @@
                     👤 親番（持ち点35,000点）　🎲 ドラ: 西
                 </div>
 
-                <p style="font-weight:bold; color:#666;">捨てる牌をタップしてください</p>
-                <div id="nani-kiru-hand" style="margin-bottom: 30px; background:#fafafa; padding:20px 10px; border-radius:8px; border:2px dashed #ccc; min-height: 80px;">
+                <div id="nani-kiru-hand" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px; background:#fafafa; padding:15px 5px; border-radius:8px; border:2px dashed #ccc; min-height: 60px;">
                     </div>
 
-                <div id="nani-kiru-result" style="display:none; animation: fadeIn 0.4s;">
+                <div id="nani-kiru-action-area">
+                    <p style="font-weight:bold; color:#2c3e50; margin-bottom:15px;">捨てる牌を<span style="color:#e74c3c;">1つ</span>選んでください</p>
+                    <div id="nani-kiru-keyboard" style="max-width:350px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:center;">
+                        </div>
+                    <button class="btn" style="margin-top: 25px; font-size: 22px; padding: 15px; background-color:#9b59b6;" onclick="submitNaniKiruAnswer()">解答する</button>
+                </div>
+
+                <div id="nani-kiru-result" style="display:none; animation: fadeIn 0.4s; margin-top:30px;">
                     <div id="nani-kiru-message" style="font-size:24px; font-weight:bold; margin-bottom:15px;"></div>
                     <div id="nani-kiru-info" style="margin-bottom:20px;">
                         </div>
@@ -293,6 +294,7 @@
         // ▼ 何切る用変数 ▼
         let naniKiruPool = [];
         let currentProblem = null;
+        let naniKiruSelected = null; // 選択した牌の数字を保持
 
         const yakuList = [
             { name: "立直 (リーチ)", han: "1翻", desc: "門前でテンパイを宣言する役。" }, { name: "断幺九 (タンヤオ)", han: "1翻", desc: "2〜8の数牌だけで作る役。" }, { name: "平和 (ピンフ)", han: "1翻", desc: "順子4つと役牌以外の雀頭で作る役。" }, { name: "役牌 (ヤクハイ)", han: "1翻", desc: "三元牌や自風・場風を3枚集めるだけ。" }, { name: "対々和 (トイトイ)", han: "2翻", desc: "同じ牌を3枚ずつ4組作る役。" }, { name: "混一色 (ホンイツ)", han: "3翻", desc: "1種類の数牌と字牌だけで作る役。" }, { name: "清一色 (チンイツ)", han: "6翻", desc: "1種類の数牌のみで作る美しき役。" }, { name: "七対子 (チートイツ)", han: "2翻", desc: "対子を7組作る特殊な役。" }, { name: "三色同順 (サンショク)", han: "2翻", desc: "萬子・筒子・索子で同じ並びの順子を作る。" }, { name: "一気通貫 (イッツー)", han: "2翻", desc: "同種の数牌で123、456、789を揃える。" }, { name: "混全帯幺九 (チャンタ)", han: "2翻", desc: "全ての面子と雀頭に1,9,字牌を含める。" }, { name: "四暗刻 (スーアンコウ)", han: "役満", desc: "門前で暗刻を4つ作る役。" }, { name: "国士無双 (コクシムソウ)", han: "役満", desc: "1,9,字牌の全13種類を揃える。" }, { name: "大三元 (ダイサンゲン)", han: "役満", desc: "白・發・中の3種類を全て刻子にする。" }
@@ -308,7 +310,6 @@
         let rankChart = null;
         let radarChartObj = null;
 
-        // ▼ S5分析データ保持用 ▼
         let s5DailyData = [];
         let currentDailyIndex = 0;
 
@@ -343,7 +344,7 @@
             renderInputForm();
             initTriviaView();
             initQuizView();
-            loadNaniKiruData(); // ここで裏側でJSONをロードしておく
+            loadNaniKiruData(); 
         };
 
         function checkPassword() {
@@ -401,44 +402,78 @@
             if (naniKiruPool.length === 0) return;
             
             currentProblem = naniKiruPool[Math.floor(Math.random() * naniKiruPool.length)];
-            // 期待値順に並べ替えておく（Python側でもやってあるが念のため）
             if(currentProblem.options && currentProblem.options.length > 0) {
                 currentProblem.options.sort((a, b) => b.ev - a.ev);
             }
             
             const handArea = document.getElementById('nani-kiru-hand');
+            const actionArea = document.getElementById('nani-kiru-action-area');
             const resultArea = document.getElementById('nani-kiru-result');
+            const keyboardArea = document.getElementById('nani-kiru-keyboard');
+            
             resultArea.style.display = 'none';
+            actionArea.style.display = 'block';
             handArea.innerHTML = "";
+            keyboardArea.innerHTML = "";
+            naniKiruSelected = null;
 
-            currentProblem.hand.forEach((num, index) => {
+            // 💡 14枚の牌を横一列に並べて表示
+            currentProblem.hand.forEach(num => {
                 let img = document.createElement('img');
                 img.src = `${num}${currentProblem.type}.png`;
-                img.className = 'tile-img nani-kiru-tile';
+                img.style.width = 'calc(100% / 14 - 2px)'; // 余白を引いて14分割
+                img.style.maxWidth = '35px';
+                img.style.margin = '0 1px';
+                img.style.height = 'auto';
+                img.style.verticalAlign = 'middle';
+                img.style.borderRadius = '2px';
+                img.style.boxShadow = '1px 1px 2px rgba(0,0,0,0.3)';
                 img.alt = num;
-                img.onclick = () => selectDiscard(num, index);
                 handArea.appendChild(img);
+            });
+
+            // 💡 手牌に存在する数字だけ「キーボード」としてボタン化する
+            let uniqueHand = [...new Set(currentProblem.hand)].sort();
+            uniqueHand.forEach(num => {
+                let btn = document.createElement('button');
+                btn.className = 'ans-btn';
+                btn.id = `nani-kiru-btn-${num}`;
+                btn.innerText = num;
+                btn.onclick = () => selectNaniKiruTile(num);
+                keyboardArea.appendChild(btn);
             });
         }
 
-        function selectDiscard(num, index) {
-            if (document.getElementById('nani-kiru-result').style.display === 'block') return;
-
-            const tiles = document.querySelectorAll('.nani-kiru-tile');
-            tiles.forEach((t, i) => {
-                if (i === index) t.classList.add('selected-discard');
-                else t.classList.remove('selected-discard');
+        function selectNaniKiruTile(num) {
+            naniKiruSelected = num;
+            
+            // 選択したボタンだけ色を変える
+            let uniqueHand = [...new Set(currentProblem.hand)];
+            uniqueHand.forEach(n => {
+                let btn = document.getElementById(`nani-kiru-btn-${n}`);
+                if (n === num) btn.classList.add('selected');
+                else btn.classList.remove('selected');
             });
+        }
 
+        function submitNaniKiruAnswer() {
+            if (naniKiruSelected === null) {
+                alert("捨てる牌を選んでください！");
+                return;
+            }
+
+            // 決定したらアクションエリアを隠して結果を表示
+            document.getElementById('nani-kiru-action-area').style.display = 'none';
+
+            const num = naniKiruSelected;
             const options = currentProblem.options;
             const userOption = options.find(o => o.discard === num);
-            const maxEv = options.length > 0 ? options[0].ev : 0; // 同着1位の判定に使用
+            const maxEv = options.length > 0 ? options[0].ev : 0; 
 
             const messageEl = document.getElementById('nani-kiru-message');
             const infoEl = document.getElementById('nani-kiru-info');
             infoEl.innerHTML = ""; 
             
-            // 💡 判定メッセージ
             if (!userOption) {
                 messageEl.innerHTML = "❌ テンパイしません...";
                 messageEl.style.color = "#e74c3c";
@@ -450,12 +485,11 @@
                 messageEl.style.color = "#f39c12";
             }
 
-            // 💡 全ての打牌候補をリスト化して表示する
             let detailsHtml = "<h4 style='text-align:left; margin-bottom:10px; color:#2c3e50;'>💡 打牌候補の比較</h4>";
             
             options.forEach(opt => {
                 const isUserChoice = (userOption && userOption.discard === opt.discard);
-                const isBest = (opt.ev === maxEv); // 同着1位ならすべてBest扱い
+                const isBest = (opt.ev === maxEv); 
                 
                 let waitImgs = "";
                 opt.waits.forEach(w => {
