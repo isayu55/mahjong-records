@@ -840,6 +840,7 @@
                 cachedRuikeiData = data;
                 renderRuikeiTableAndChart();
 
+                // 💡 累計データが読み込まれたら、日別詳細のチップ逆算も再描画する
                 if (s5DailyData.length > 0) renderDailyView();
             });
         }
@@ -866,6 +867,144 @@
             if (ruikeiChart) ruikeiChart.destroy();
             const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#34495e'];
             ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: players.map((p, i) => ({ label: p.name, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+        }
+
+        // ==========================================
+        // ▼ 成績入力＆送信 ▼
+        // ==========================================
+        
+        function loadFromCloud() {
+            let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
+            document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
+            fetch(GAS_URL + "?date=" + selectedDate + "&t=" + new Date().getTime()).then(res => res.json()).then(data => { records = data.error ? [] : data; updateUI(); });
+        }
+
+        function calculateCurrentSum() {
+            let sum = 0; let count = 0; 
+            players.forEach(p => { 
+                let val = document.getElementById('score_' + p.id).value; 
+                if (val) { sum += parseInt(val, 10); count++; } 
+            });
+            
+            let display = document.getElementById('current-sum-display');
+            let mode = document.querySelector('input[name="game-mode"]:checked').value;
+            let targetSum = (mode === "3") ? 1050 : 1000;
+            
+            if (mode === "3" && count === 4 && sum >= 1200) targetSum = 1400;
+
+            if (sum === 0 && count === 0) {
+                display.innerHTML = "📝 得点を入力してください";
+            } else if (sum === targetSum && ((mode === "3" && (count === 3 || count === 4)) || (mode === "4" && count === 4))) {
+                let modeText = mode === "3" ? "三麻" : "四麻";
+                display.innerHTML = `<span style="color: #27ae60;">✅ 得点合計: ${sum * 100} 点 <br> (${modeText} ${count}人プレイ 記録OK!)</span>`;
+            } else {
+                let diff = targetSum - sum;
+                let diffText = diff > 0 ? `あと <strong>${diff * 100}</strong> 点足りません` : `<strong>${-diff * 100}</strong> 点オーバーしています`;
+                let modeText = mode === "3" ? (targetSum === 1400 ? "三麻4人想定" : "三麻想定") : "四麻想定";
+                display.innerHTML = `<span style="color: #e74c3c;">⚠️ 現在の合計: ${sum * 100} 点</span><br><span style="font-size:13px; color:#666;">（${diffText} / ${modeText}）</span>`;
+            }
+        }
+
+        function renderInputForm() {
+            document.getElementById('input-tbody').innerHTML = players.map(p => `<tr><td style="font-weight:bold;">${p.name}</td><td><input type="number" id="score_${p.id}" class="score-input" placeholder="未入力" oninput="calculateCurrentSum()"></td><td><input type="number" id="chip_${p.id}" class="chip-input" placeholder="未入力"></td></tr>`).join(''); calculateCurrentSum();
+        }
+
+        function saveRecord() {
+            let activeScores = []; let totalScore = 0; let hasScore = false; let hasChip = false; let totalChip = 0;
+            let recordData = { id: Date.now(), timestamp: new Date().toLocaleString(), rawScores: {}, chips: {}, points: {} };
+            
+            let mode = document.querySelector('input[name="game-mode"]:checked').value;
+
+            players.forEach(p => {
+                let scoreVal = document.getElementById('score_' + p.id).value; let chipVal = document.getElementById('chip_' + p.id).value;
+                if (scoreVal) { let s = parseInt(scoreVal, 10); activeScores.push({ id: p.id, score: s }); totalScore += s; recordData.rawScores[p.id] = s; hasScore = true; }
+                if (chipVal && parseInt(chipVal, 10) !== 0) { recordData.chips[p.id] = parseInt(chipVal, 10); hasChip = true; totalChip += parseInt(chipVal, 10); }
+            });
+
+            if (!hasScore && !hasChip) return alert("得点かチップを入力してください！");
+            
+            if (hasScore) {
+                if (mode === "3") {
+                    if (activeScores.length !== 3 && activeScores.length !== 4) return alert("三麻は3人もしくは4人分入力してください！");
+                    if (activeScores.length === 3) {
+                        if (totalScore !== 1050) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 105,000点)`);
+                        activeScores.sort((a, b) => b.score - a.score); 
+                        recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 25; 
+                        recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
+                        recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 - 10;
+                    } else if (activeScores.length === 4) {
+                        if (totalScore === 1400) {
+                            activeScores.sort((a, b) => b.score - a.score);
+                            recordData.points[activeScores[0].id] = (activeScores[0].score - 400) / 10 + 30; 
+                            recordData.points[activeScores[1].id] = (activeScores[1].score - 400) / 10 + 0; 
+                            recordData.points[activeScores[2].id] = (activeScores[2].score - 400) / 10 + 0; 
+                            recordData.points[activeScores[3].id] = (activeScores[3].score - 400) / 10 - 10;
+                        } else if (totalScore === 1050) {
+                            let players3 = activeScores.filter(a => a.score > 0);
+                            if (players3.length === 3) {
+                                players3.sort((a, b) => b.score - a.score);
+                                recordData.points[players3[0].id] = (players3[0].score - 400) / 10 + 25; 
+                                recordData.points[players3[1].id] = (players3[1].score - 400) / 10 + 0; 
+                                recordData.points[players3[2].id] = (players3[2].score - 400) / 10 - 10;
+                            } else {
+                                return alert("三麻4人入力で合計105,000点の場合、1人は0点(抜け番)である必要があります。");
+                            }
+                        } else {
+                            return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 105,000点 または 140,000点)`);
+                        }
+                    }
+                } else if (mode === "4") {
+                    if (activeScores.length !== 4) return alert("四麻は4人分入力してください！");
+                    if (totalScore !== 1000) return alert(`点数の合計が合いません！\n(入力合計: ${totalScore * 100}点 / 正解: 100,000点)`);
+                    
+                    activeScores.sort((a, b) => b.score - a.score); 
+                    recordData.points[activeScores[0].id] = (activeScores[0].score - 250) / 10 + 20; 
+                    recordData.points[activeScores[1].id] = (activeScores[1].score - 250) / 10 + 10; 
+                    recordData.points[activeScores[2].id] = (activeScores[2].score - 250) / 10 - 10; 
+                    recordData.points[activeScores[3].id] = (activeScores[3].score - 250) / 10 - 20;
+                }
+            }
+            if (hasChip && totalChip !== 0) return alert("チップの合計枚数が0になるようにしてください！");
+
+            records.push(recordData); let totals = {}; players.forEach(p => totals[p.id] = { point: 0, chip: 0 });
+            records.forEach(rec => { players.forEach(p => { if (rec.points[p.id] !== undefined) totals[p.id].point += rec.points[p.id]; if (rec.chips[p.id] !== undefined) totals[p.id].chip += rec.chips[p.id]; }); });
+            let finalPoints = {}; players.forEach(p => { finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0); });
+
+            let postData = {
+                date: document.getElementById('play-date').value || new Date().toISOString().split('T')[0], timestamp: recordData.timestamp,
+                takai_score: recordData.points['takai'] !== undefined ? recordData.points['takai'] : "", takai_chip: recordData.chips['takai'] || "", yamaguchi_score: recordData.points['yamaguchi'] !== undefined ? recordData.points['yamaguchi'] : "", yamaguchi_chip: recordData.chips['yamaguchi'] || "", yamashita_score: recordData.points['yamashita'] !== undefined ? recordData.points['yamashita'] : "", yamashita_chip: recordData.chips['yamashita'] || "", dyna_score: recordData.points['dyna'] !== undefined ? recordData.points['dyna'] : "", dyna_chip: recordData.chips['dyna'] || "", tokuda_score: recordData.points['tokuda'] !== undefined ? recordData.points['tokuda'] : "", tokuda_chip: recordData.chips['tokuda'] || "", tasuku_score: recordData.points['tasuku'] !== undefined ? recordData.points['tasuku'] : "", tasuku_chip: recordData.chips['tasuku'] || "",
+                total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'], total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'], secret: localStorage.getItem('mahjong_auth')
+            };
+            players.forEach(p => { document.getElementById('score_' + p.id).value = ""; document.getElementById('chip_' + p.id).value = ""; }); calculateCurrentSum();
+
+            fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: "data=" + encodeURIComponent(JSON.stringify(postData)) })
+                .then(res => res.text()).then(text => {
+                    if (text.includes("認証に失敗しました")) { alert("⛔ 合言葉が間違っています！"); localStorage.removeItem('mahjong_auth'); location.reload(); }
+                    else if (text.includes("GAS_ERROR")) { alert("⚠️ エラーが発生しました:\n" + text); } else { setTimeout(loadFromCloud, 1000); }
+                });
+            updateUI(); setTimeout(() => { window.scrollBy({ top: 300, behavior: 'smooth' }); }, 100);
+        }
+
+        function updateUI() {
+            let totals = {}; players.forEach(p => totals[p.id] = { point: 0, chip: 0 });
+            let historyHtml = ""; let hanchanCount = 1;
+            records.forEach(rec => {
+                let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
+                if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; } if (hasC) { title += hasS ? "& チップ" : "チップのみ"; }
+                players.forEach(p => {
+                    let text = []; if (rec.points[p.id] !== undefined) { totals[p.id].point += rec.points[p.id]; text.push(`<span class="${rec.points[p.id] > 0 ? 'plus' : (rec.points[p.id] < 0 ? 'minus' : '')}">${rec.points[p.id] > 0 ? '+' : ''}${rec.points[p.id].toFixed(1)}</span>`); }
+                    if (rec.chips[p.id]) { totals[p.id].chip += rec.chips[p.id]; text.push(`チップ${rec.chips[p.id] > 0 ? '+' : ''}${rec.chips[p.id]}枚`); }
+                    if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
+                });
+                historyHtml += `<div class="history-card"><div class="history-header"><span>${title} <span style="font-size:10px; color:#999;">(${rec.timestamp})</span></span><div>${String(rec.id).startsWith('cloud_') ? '<span style="color:#27ae60;">☁️ 同期済</span>' : '<span style="color:#e74c3c;">⏳ 送信中...</span>'}</div></div>${details}</div>`;
+            });
+            document.getElementById('history-area').innerHTML = records.length === 0 ? "<p style='text-align:center; color:#999;'>まだ記録がありません</p>" : historyHtml;
+            let totalHtml = `<tr><th>名前</th><th>得点計</th><th>チップ計</th><th>最終P</th></tr>`;
+            players.forEach(p => {
+                let finalPt = totals[p.id].point + (totals[p.id].chip * 2.0);
+                if (totals[p.id].point !== 0 || totals[p.id].chip !== 0) totalHtml += `<tr><td style="font-weight:bold;">${p.name}</td><td>${totals[p.id].point.toFixed(1)}</td><td>${totals[p.id].chip}枚</td><td class="${finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '')}" style="font-size:18px;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td></tr>`;
+            });
+            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="4" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
     </script>
 </body>
