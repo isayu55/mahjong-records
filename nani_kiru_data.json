@@ -1,0 +1,8932 @@
+[
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      7,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      2,
+      3,
+      3,
+      4,
+      6,
+      6,
+      6,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      3,
+      3,
+      3,
+      4,
+      5,
+      7,
+      7,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 1
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 1
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 17,
+        "types": 6
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 12,
+        "types": 5
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 11,
+        "types": 3
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+      4,
+      6,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      3,
+      4,
+      4,
+      5,
+      5,
+      5,
+      6,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 11,
+        "types": 5
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      8
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 11,
+        "types": 5
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 11,
+        "types": 5
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      6,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      3,
+      3,
+      3,
+      4,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      8,
+      8
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 1,
+        "types": 1
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 1,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      3,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 17,
+        "types": 6
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 12,
+        "types": 4
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      3,
+      4,
+      4,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 1
+          },
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 4,
+        "types": 3
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      6,
+      6,
+      6,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      3,
+      3,
+      4,
+      4,
+      6,
+      6,
+      6,
+      7,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      3,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      3,
+      4,
+      4,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 14,
+        "types": 5
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 2,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      3,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      2,
+      3,
+      4,
+      5,
+      6,
+      6,
+      6,
+      7,
+      7,
+      8
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 17,
+        "types": 6
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 13,
+        "types": 4
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 12,
+        "types": 4
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+      6,
+      7,
+      7,
+      7,
+      7,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      4,
+      5,
+      5,
+      6,
+      7,
+      8,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      3,
+      4,
+      5,
+      6,
+      6,
+      6,
+      7,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 13,
+        "types": 4
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 1
+          }
+        ],
+        "total_count": 9,
+        "types": 5
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      6,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 8,
+        "types": 4
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      4,
+      4,
+      5,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5,
+      7,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      3,
+      3,
+      3,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      8
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 11,
+        "types": 5
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 11,
+        "types": 5
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      1,
+      2,
+      5,
+      5,
+      6,
+      7,
+      8,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 13,
+        "types": 4
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 10,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 10,
+        "types": 4
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      6,
+      6,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 10,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      3,
+      4,
+      4,
+      4,
+      6,
+      6,
+      6,
+      6,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      6,
+      6,
+      6,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+      4,
+      4,
+      5,
+      6,
+      7,
+      8,
+      8,
+      8
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 16,
+        "types": 5
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      7,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      3,
+      4,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 12,
+        "types": 4
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+      6,
+      7,
+      7,
+      7,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      3,
+      3,
+      4,
+      4,
+      5,
+      8,
+      8,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 12,
+        "types": 4
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      6,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      4,
+      4,
+      6,
+      6,
+      7,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      3,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 4
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      3,
+      3,
+      3,
+      5,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      3,
+      5,
+      5,
+      6,
+      7,
+      8,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      5,
+      5,
+      6,
+      6,
+      7,
+      8,
+      8,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      7,
+      8,
+      8,
+      8
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 13,
+        "types": 4
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 11,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 12,
+        "types": 4
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 10,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      3,
+      3,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      3,
+      3,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      5,
+      5,
+      5,
+      6,
+      6,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 14,
+        "types": 5
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 10,
+        "types": 3
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 10,
+        "types": 4
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      5,
+      6,
+      6,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      3,
+      4,
+      5,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 8,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 13,
+        "types": 4
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3,
+      4,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      7,
+      8,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      3,
+      4,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 10,
+        "types": 3
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      5,
+      7,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      5,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          },
+          {
+            "tile": 5,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 1
+          },
+          {
+            "tile": 5,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 1
+          }
+        ],
+        "total_count": 1,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 2
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      6,
+      6,
+      6,
+      7,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      3,
+      4,
+      5,
+      5,
+      7,
+      7,
+      7,
+      8
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 4
+          },
+          {
+            "tile": 8,
+            "count": 3
+          },
+          {
+            "tile": 9,
+            "count": 4
+          }
+        ],
+        "total_count": 11,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      6,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      3,
+      3,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 1
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      3,
+      3,
+      5,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      6,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 12,
+        "types": 5
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 4
+          }
+        ],
+        "total_count": 11,
+        "types": 4
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 1
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 4
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 9,
+        "types": 4
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 2
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      2,
+      2,
+      4,
+      4,
+      5,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      8,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "type": "s",
+    "options": [
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 3
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 2
+          },
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 5,
+        "types": 3
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 1
+          },
+          {
+            "tile": 5,
+            "count": 3
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      6,
+      7,
+      8,
+      8,
+      8,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 3
+          },
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 1
+          }
+        ],
+        "total_count": 17,
+        "types": 7
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 12,
+        "types": 4
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 3
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 7,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 4
+          }
+        ],
+        "total_count": 9,
+        "types": 3
+      },
+      {
+        "discard": 8,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 7,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 2
+          }
+        ],
+        "total_count": 8,
+        "types": 3
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 3
+          },
+          {
+            "tile": 8,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 6,
+        "types": 3
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 4
+          }
+        ],
+        "total_count": 4,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      2,
+      3,
+      3,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      9,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 3,
+        "waits": [
+          {
+            "tile": 2,
+            "count": 3
+          },
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 6,
+            "count": 2
+          },
+          {
+            "tile": 7,
+            "count": 2
+          },
+          {
+            "tile": 8,
+            "count": 4
+          }
+        ],
+        "total_count": 12,
+        "types": 5
+      },
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 1,
+            "count": 4
+          },
+          {
+            "tile": 4,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 2,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          },
+          {
+            "tile": 6,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 2
+          }
+        ],
+        "total_count": 2,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      4,
+      5,
+      5,
+      6,
+      7,
+      7,
+      8,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 9,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 4
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 7,
+        "types": 2
+      },
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 8,
+            "count": 3
+          }
+        ],
+        "total_count": 3,
+        "types": 1
+      }
+    ]
+  },
+  {
+    "hand": [
+      1,
+      2,
+      3,
+      4,
+      4,
+      5,
+      5,
+      5,
+      6,
+      7,
+      7,
+      7,
+      9,
+      9
+    ],
+    "type": "p",
+    "options": [
+      {
+        "discard": 5,
+        "waits": [
+          {
+            "tile": 3,
+            "count": 3
+          },
+          {
+            "tile": 6,
+            "count": 3
+          }
+        ],
+        "total_count": 6,
+        "types": 2
+      },
+      {
+        "discard": 6,
+        "waits": [
+          {
+            "tile": 4,
+            "count": 2
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 4,
+        "types": 2
+      },
+      {
+        "discard": 1,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      },
+      {
+        "discard": 4,
+        "waits": [
+          {
+            "tile": 5,
+            "count": 1
+          },
+          {
+            "tile": 9,
+            "count": 2
+          }
+        ],
+        "total_count": 3,
+        "types": 2
+      }
+    ]
+  }
+]
