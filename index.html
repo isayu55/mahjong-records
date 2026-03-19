@@ -1294,18 +1294,13 @@
         }
 
         function finishQuiz() {
+            // タイム計算
             let finalTime = (Date.now() - quizStartTime) / 1000 + penaltyTime;
             let pName = document.getElementById('quiz-player-select').value;
             let recordName = pName + (currentQuizMode === 7 ? " (7枚)" : " (10枚)");
 
+            // 💡 修正：プレイ画面は消すが、ここではまだ「結果画面（タイム）」を表示しない！
             document.getElementById('quiz-play-area').style.display = 'none';
-            document.getElementById('quiz-result-area').style.display = 'block';
-            document.getElementById('quiz-final-time').innerText = finalTime.toFixed(1);
-            document.getElementById('quiz-penalty-text').innerText = penaltyTime > 0 ? `(うちペナルティ ${penaltyTime}秒)` : "✨ノーミス・パーフェクト！✨";
-
-            let saveStatus = document.getElementById('quiz-saving-status');
-            saveStatus.innerText = "☁️ 記録をクラウドに送信中...";
-            saveStatus.style.color = "#f39c12";
 
             let isNewRecord = false;
             let isNearMiss = false;
@@ -1320,27 +1315,39 @@
                 isNearMiss = true;
             }
 
+            // 結果画面の準備（裏側でテキストだけセットしておく）
+            document.getElementById('quiz-final-time').innerText = finalTime.toFixed(1);
+            document.getElementById('quiz-penalty-text').innerText = penaltyTime > 0 ? `(うちペナルティ ${penaltyTime}秒)` : "✨ノーミス・パーフェクト！✨";
+
             let newRecordMsg = document.getElementById('quiz-new-record-msg');
             let nearMissMsg = document.getElementById('quiz-near-miss-msg');
 
-            // 💡 修正：次に流す分岐用動画のファイル名を変数に入れておく
             let secondVideoSrc = "";
 
             if (isNewRecord) {
                 newRecordMsg.style.display = 'block';
                 nearMissMsg.style.display = 'none';
-                secondVideoSrc = 'success_video.mp4'; // 👑 1位更新時の動画
-                setTimeout(() => playVideoSequence(secondVideoSrc), 800);
+                secondVideoSrc = 'success_video.mp4';
+                // 💡 修正：すぐに動画再生（暗転）スタート！結果画面はまだ見せない。
+                playVideoSequence(secondVideoSrc);
             } else if (isNearMiss) {
                 newRecordMsg.style.display = 'none';
                 nearMissMsg.style.display = 'block';
                 document.getElementById('quiz-diff-time').innerText = (finalTime - bestTime).toFixed(1);
-                secondVideoSrc = 'near_miss_video.mp4'; // 💦 惜しい時の動画
-                setTimeout(() => playVideoSequence(secondVideoSrc), 800);
+                secondVideoSrc = 'near_miss_video.mp4';
+                // 💡 修正：すぐに動画再生（暗転）スタート！
+                playVideoSequence(secondVideoSrc);
             } else {
                 newRecordMsg.style.display = 'none';
                 nearMissMsg.style.display = 'none';
+                // 💡 修正：動画がない（普通のタイムの）場合だけ、すぐに結果画面を出す
+                document.getElementById('quiz-result-area').style.display = 'block';
             }
+
+            // 裏側でGAS（クラウド）へ記録を送信しておく
+            let saveStatus = document.getElementById('quiz-saving-status');
+            saveStatus.innerText = "☁️ 記録をクラウドに送信中...";
+            saveStatus.style.color = "#f39c12";
 
             let postData = { action: "saveQuiz", name: recordName, time: finalTime, secret: localStorage.getItem('mahjong_auth') };
 
@@ -1360,6 +1367,7 @@
                 .catch(err => { saveStatus.innerText = "⚠️ 通信エラーが発生しました"; saveStatus.style.color = "red"; });
         }
 
+
         // ==========================================
         // ▼ タイムアタック動画連続再生ロジック ▼
         // ==========================================
@@ -1368,29 +1376,23 @@
             let vid = document.getElementById('congrats-video');
             let skipBtn = document.getElementById('congrats-skip-btn');
 
-            // 1. 画面を真っ暗にする
             overlay.style.display = 'flex';
             vid.style.display = 'none';
             skipBtn.style.display = 'none';
 
-            // 2. 暗転から2秒後に「1本目の動画（共通の煽り）」を再生
+            // 暗転から2秒のタメの後に動画再生開始
             setTimeout(() => {
                 vid.style.display = 'block';
-
-                // 💡 1本目（共通の先バレ用）の動画ファイル名を指定
                 vid.src = 'intro_video.mp4';
-
                 vid.currentTime = 0;
                 vid.play().catch(e => console.log("自動再生がブロックされました", e));
                 skipBtn.style.display = 'block';
 
-                // 3. 1本目が終わったら、分岐用の2本目を流す！
                 vid.onended = function () {
-                    vid.src = secondVideoSrc; // ここで結果に応じた動画に切り替え
+                    vid.src = secondVideoSrc;
                     vid.currentTime = 0;
                     vid.play().catch(e => console.log("自動再生がブロックされました", e));
 
-                    // 4. 2本目も最後まで終わったら画面を閉じる
                     vid.onended = function () {
                         closeNewRecordVideo();
                     };
@@ -1398,52 +1400,21 @@
             }, 2000);
         }
 
-        // 動画スキップ関数（押せば1本目でも2本目でも即終了）
         function skipCongratsVideo() {
             let vid = document.getElementById('congrats-video');
             vid.pause();
             closeNewRecordVideo();
         }
 
+        // 💡 修正：動画が終わった（またはスキップした）瞬間に、結果画面をバーン！と表示する
         function closeNewRecordVideo() {
             let overlay = document.getElementById('new-record-overlay');
             let vid = document.getElementById('congrats-video');
             vid.pause();
             overlay.style.display = 'none';
-        }
 
-        // ==========================================
-        // ▼ 1位獲得時の動画再生ロジック（暗転タメ追加） ▼
-        // ==========================================
-        function playNewRecordVideo() {
-            let overlay = document.getElementById('new-record-overlay');
-            let vid = document.getElementById('congrats-video');
-            let btn = document.getElementById('congrats-close-btn');
-
-            // 💡 1. 画面を真っ暗にする（動画とボタンはまだ隠しておく）
-            overlay.style.display = 'flex';
-            vid.style.display = 'none';
-            btn.style.display = 'none';
-
-            // 💡 2. 暗転から 2秒後（2000ms）に動画をドーンと表示して再生！
-            // （長すぎる/短すぎる場合はここの 2000 を調整してください）
-            setTimeout(() => {
-                vid.style.display = 'block';
-                vid.currentTime = 0;
-                vid.play().catch(e => console.log("自動再生がブロックされました", e));
-                btn.style.display = 'block';
-            }, 2000);
-
-            vid.onended = function () {
-                closeNewRecordVideo();
-            };
-        }
-
-        function closeNewRecordVideo() {
-            let overlay = document.getElementById('new-record-overlay');
-            let vid = document.getElementById('congrats-video');
-            vid.pause();
-            overlay.style.display = 'none';
+            // 動画演出が終わったここで初めてタイムとおめでとうの文字をお披露目！
+            document.getElementById('quiz-result-area').style.display = 'block';
         }
 
         function resetQuiz() {
