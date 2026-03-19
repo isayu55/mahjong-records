@@ -952,7 +952,8 @@
                     }
 
                     let totals = {};
-                    players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0 });
+                    // 💡 追加：トップとラスの回数をカウントするための箱を用意
+                    players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0, top: 0, last: 0 });
 
                     let gamesHtml = "";
                     let hanchanCount = 1;
@@ -965,17 +966,31 @@
                         if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
                         if (hasC && !hasS) { title = "チップのみ"; }
 
-                        // 💡 修正：参加したプレイヤーだけを抽出し、得点順(またはチップ順)にソート
+                        // 💡 追加：トップとラスの回数を計算
+                        if (hasS) {
+                            let gameScores = [];
+                            players.forEach(p => {
+                                if (rec.points[p.id] !== undefined) {
+                                    gameScores.push({ id: p.id, score: rec.points[p.id] });
+                                }
+                            });
+                            if (gameScores.length > 0) {
+                                gameScores.sort((a, b) => b.score - a.score);
+                                totals[gameScores[0].id].top++; // 1位
+                                totals[gameScores[gameScores.length - 1].id].last++; // 最下位
+                            }
+                        }
+
                         let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
                         sortedPlayers.sort((a, b) => {
                             if (hasS) {
                                 let ptA = rec.points[a.id] !== undefined ? rec.points[a.id] : -99999;
                                 let ptB = rec.points[b.id] !== undefined ? rec.points[b.id] : -99999;
-                                return ptB - ptA; // 得点が高い順
+                                return ptB - ptA;
                             } else {
                                 let cA = rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999;
                                 let cB = rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999;
-                                return cB - cA; // チップが多い順
+                                return cB - cA;
                             }
                         });
 
@@ -1010,24 +1025,41 @@
                                       </div>`;
                     });
 
-                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>最終P</th></tr>';
+                    // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
+                    let summaryData = [];
                     players.forEach(p => {
                         let rawPt = totals[p.id].rawPt;
                         let chipPt = totals[p.id].chipRaw * 2;
                         let finalPt = rawPt + chipPt;
 
                         if (rawPt !== 0 || totals[p.id].chipRaw !== 0) {
-                            let sCol = rawPt > 0 ? 'plus' : (rawPt < 0 ? 'minus' : '');
-                            let cCol = chipPt > 0 ? 'plus' : (chipPt < 0 ? 'minus' : '');
-                            let fCol = finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '');
-
-                            summaryHtml += `<tr>
-                                            <td style="font-weight:bold;">${p.name}</td>
-                                            <td class="${sCol}">${rawPt > 0 ? '+' : ''}${rawPt.toFixed(1)}</td>
-                                            <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
-                                            <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
-                                        </tr>`;
+                            summaryData.push({
+                                name: p.name,
+                                rawPt: rawPt,
+                                chipPt: chipPt,
+                                finalPt: finalPt,
+                                top: totals[p.id].top,
+                                last: totals[p.id].last
+                            });
                         }
+                    });
+
+                    // 最終Pの大きい順にソート
+                    summaryData.sort((a, b) => b.finalPt - a.finalPt);
+
+                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>';
+                    summaryData.forEach(d => {
+                        let sCol = d.rawPt > 0 ? 'plus' : (d.rawPt < 0 ? 'minus' : '');
+                        let cCol = d.chipPt > 0 ? 'plus' : (d.chipPt < 0 ? 'minus' : '');
+                        let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
+
+                        summaryHtml += `<tr>
+                                        <td style="font-weight:bold;">${d.name}</td>
+                                        <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                        <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                                        <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                                        <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                                    </tr>`;
                     });
                     summaryHtml += '</table></div>';
 
@@ -1514,7 +1546,9 @@
         // ▼ 記録入力画面の更新（こちらも表示を統一）
         // ==========================================
         function updateUI() {
-            let totals = {}; players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0 });
+            let totals = {};
+            // 💡 追加：トップとラスの回数をカウントするための箱を用意
+            players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0, top: 0, last: 0 });
             let historyHtml = ""; let hanchanCount = 1;
 
             records.forEach(rec => {
@@ -1522,7 +1556,21 @@
                 if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
                 if (hasC && !hasS) { title = "チップのみ"; }
 
-                // 💡 修正：参加したプレイヤーだけを抽出し、得点順(またはチップ順)にソート
+                // 💡 追加：トップとラスの回数を計算
+                if (hasS) {
+                    let gameScores = [];
+                    players.forEach(p => {
+                        if (rec.points[p.id] !== undefined) {
+                            gameScores.push({ id: p.id, score: rec.points[p.id] });
+                        }
+                    });
+                    if (gameScores.length > 0) {
+                        gameScores.sort((a, b) => b.score - a.score);
+                        totals[gameScores[0].id].top++;
+                        totals[gameScores[gameScores.length - 1].id].last++;
+                    }
+                }
+
                 let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
                 sortedPlayers.sort((a, b) => {
                     if (hasS) {
@@ -1556,26 +1604,43 @@
             });
             document.getElementById('history-area').innerHTML = records.length === 0 ? "<p style='text-align:center; color:#999;'>まだ記録がありません</p>" : historyHtml;
 
-            let totalHtml = `<tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>最終P</th></tr>`;
+            // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
+            let summaryData = [];
             players.forEach(p => {
                 let rawPt = totals[p.id].rawPt;
                 let chipPt = totals[p.id].chipRaw * 2;
                 let finalPt = rawPt + chipPt;
 
                 if (rawPt !== 0 || totals[p.id].chipRaw !== 0) {
-                    let sCol = rawPt > 0 ? 'plus' : (rawPt < 0 ? 'minus' : '');
-                    let cCol = chipPt > 0 ? 'plus' : (chipPt < 0 ? 'minus' : '');
-                    let fCol = finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '');
-
-                    totalHtml += `<tr>
-                                    <td style="font-weight:bold;">${p.name}</td>
-                                    <td class="${sCol}">${rawPt > 0 ? '+' : ''}${rawPt.toFixed(1)}</td>
-                                    <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
-                                    <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
-                                </tr>`;
+                    summaryData.push({
+                        name: p.name,
+                        rawPt: rawPt,
+                        chipPt: chipPt,
+                        finalPt: finalPt,
+                        top: totals[p.id].top,
+                        last: totals[p.id].last
+                    });
                 }
             });
-            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="4" style="color:#999;">データがありません</td></tr>` : totalHtml;
+
+            // 最終Pの大きい順にソート
+            summaryData.sort((a, b) => b.finalPt - a.finalPt);
+
+            let totalHtml = `<tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>`;
+            summaryData.forEach(d => {
+                let sCol = d.rawPt > 0 ? 'plus' : (d.rawPt < 0 ? 'minus' : '');
+                let cCol = d.chipPt > 0 ? 'plus' : (d.chipPt < 0 ? 'minus' : '');
+                let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
+
+                totalHtml += `<tr>
+                                <td style="font-weight:bold;">${d.name}</td>
+                                <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                                <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                                <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                            </tr>`;
+            });
+            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="5" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
     </script>
 </body>
