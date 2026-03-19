@@ -965,12 +965,25 @@
                         if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
                         if (hasC && !hasS) { title = "チップのみ"; }
 
-                        players.forEach(p => {
+                        // 💡 修正：参加したプレイヤーだけを抽出し、得点順(またはチップ順)にソート
+                        let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
+                        sortedPlayers.sort((a, b) => {
+                            if (hasS) {
+                                let ptA = rec.points[a.id] !== undefined ? rec.points[a.id] : -99999;
+                                let ptB = rec.points[b.id] !== undefined ? rec.points[b.id] : -99999;
+                                return ptB - ptA; // 得点が高い順
+                            } else {
+                                let cA = rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999;
+                                let cB = rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999;
+                                return cB - cA; // チップが多い順
+                            }
+                        });
+
+                        sortedPlayers.forEach(p => {
                             let text = [];
-                            // 💡 修正：シートから来る値は純粋な「素点」と「チップ枚数」
                             let gameRawPt = rec.points[p.id];
                             let gameChipRaw = rec.chips[p.id] || 0;
-                            let gameChipPt = gameChipRaw * 2; // チップを得点化
+                            let gameChipPt = gameChipRaw * 2;
 
                             if (gameRawPt !== undefined) {
                                 totals[p.id].rawPt += gameRawPt;
@@ -997,12 +1010,11 @@
                                       </div>`;
                     });
 
-                    // 💡 最終的な表の描画
                     let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>最終P</th></tr>';
                     players.forEach(p => {
                         let rawPt = totals[p.id].rawPt;
                         let chipPt = totals[p.id].chipRaw * 2;
-                        let finalPt = rawPt + chipPt; // ここで初めて足し算する
+                        let finalPt = rawPt + chipPt;
 
                         if (rawPt !== 0 || totals[p.id].chipRaw !== 0) {
                             let sCol = rawPt > 0 ? 'plus' : (rawPt < 0 ? 'minus' : '');
@@ -1510,7 +1522,21 @@
                 if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
                 if (hasC && !hasS) { title = "チップのみ"; }
 
-                players.forEach(p => {
+                // 💡 修正：参加したプレイヤーだけを抽出し、得点順(またはチップ順)にソート
+                let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
+                sortedPlayers.sort((a, b) => {
+                    if (hasS) {
+                        let ptA = rec.points[a.id] !== undefined ? rec.points[a.id] : -99999;
+                        let ptB = rec.points[b.id] !== undefined ? rec.points[b.id] : -99999;
+                        return ptB - ptA;
+                    } else {
+                        let cA = rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999;
+                        let cB = rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999;
+                        return cB - cA;
+                    }
+                });
+
+                sortedPlayers.forEach(p => {
                     let text = [];
                     let gameRawPt = rec.points[p.id];
                     let gameChipRaw = rec.chips[p.id] || 0;
