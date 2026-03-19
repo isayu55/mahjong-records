@@ -585,6 +585,14 @@
         </div>
 
     </div>
+    <div id="custom-confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
+        <div style="background:#fff; padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.2s;">
+            <p style="font-size:20px; font-weight:bold; color:#e74c3c; margin-top:0; margin-bottom:15px;">本当に削除しても<br>よろしいですか？</p>
+            <p style="font-size:12px; color:#666; margin-bottom:25px;">（S5分析・累計シートからも自動的に削除・修復されます）</p>
+            <button onclick="executeDelete()" style="background:#e74c3c; color:#fff; border:none; padding:18px; border-radius:8px; width:100%; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:15px; box-shadow:0 4px 0 #c0392b; transition:0.1s;">よろしくお願いしまぁぁぁぁぁぁぁぁぁぁぁす！</button>
+            <button onclick="closeConfirmModal()" style="background:#95a5a6; color:#fff; border:none; padding:12px; border-radius:8px; width:100%; font-size:15px; font-weight:bold; cursor:pointer;">やっぱりやめる</button>
+        </div>
+    </div>
 
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxyZ3loLBCqCAHNM3zHWL2gRu6cNy6L2xUSHdZUF48_MROKBzTio-vLXhhmUGVH63-c-g/exec";
@@ -833,9 +841,9 @@
                 let waitImgs = "";
                 opt.waits.forEach(w => {
                     waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
-                                <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
-                                <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
-                            </div>`;
+                                    <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
+                                    <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
+                                </div>`;
                 });
 
                 let prob = (opt.win_prob * 100).toFixed(1);
@@ -850,27 +858,27 @@
                 if (isUserChoice) badge += '<span style="color:#3498db; font-weight:bold; font-size:13px;">👉 あなたの選択</span> ';
 
                 detailsHtml += `
-                            <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                                <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
-                                    ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                                <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                    <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
+                                        ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                                    </div>
+                                    <div style="margin-bottom:10px;">${waitImgs}</div>
+                                    <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                                        <tr style="background:#ecf0f1;">
+                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
+                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
+                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
+                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
+                                            <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
+                                            <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
+                                            <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
+                                        </tr>
+                                    </table>
                                 </div>
-                                <div style="margin-bottom:10px;">${waitImgs}</div>
-                                <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
-                                    <tr style="background:#ecf0f1;">
-                                        <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
-                                        <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
-                                        <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
-                                        <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
-                                        <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
-                                        <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
-                                        <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        `;
+                            `;
             });
 
             infoEl.innerHTML = detailsHtml;
@@ -1024,11 +1032,11 @@
                         }
 
                         gamesHtml += `<div class="history-card">
-                                        <div class="history-header">
-                                            <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
-                                        </div>
-                                        ${details}
-                                      </div>`;
+                                            <div class="history-header">
+                                                <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
+                                            </div>
+                                            ${details}
+                                          </div>`;
                     });
 
                     // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
@@ -1060,12 +1068,12 @@
                         let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
                         summaryHtml += `<tr>
-                                        <td style="font-weight:bold;">${d.name}</td>
-                                        <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
-                                        <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
-                                        <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                        <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
-                                    </tr>`;
+                                            <td style="font-weight:bold;">${d.name}</td>
+                                            <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                            <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                                            <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                                            <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                                        </tr>`;
                     });
                     summaryHtml += '</table></div>';
 
@@ -1108,9 +1116,9 @@
                 // widthを20px → 28pxに拡大
                 let imgs = item.q.map(n => `<img src="${n}p.png" style="width:28px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list7Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                        <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                        <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                    </div>`;
+                            <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                            <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                        </div>`;
             });
             document.getElementById('quiz-list-7').innerHTML = list7Html;
 
@@ -1120,9 +1128,9 @@
                 // widthを18px → 24pxに拡大（10枚並ぶので少しだけ小さめ）
                 let imgs = item.q.map(n => `<img src="${n}s.png" style="width:24px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list10Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                        <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                        <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                    </div>`;
+                            <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                            <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                        </div>`;
             });
             document.getElementById('quiz-list-10').innerHTML = list10Html;
         }
@@ -1151,14 +1159,14 @@
                                     // 表示をスッキリさせるため「(7枚)」などのタグを消す
                                     let cleanName = listData[i].name.replace(" (7枚)", "").replace(" (10枚)", "");
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; font-weight:bold; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                    <span>${medals[i]} ${cleanName}</span>
-                                                    <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
-                                                 </div>`;
+                                                        <span>${medals[i]} ${cleanName}</span>
+                                                        <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
+                                                     </div>`;
                                 } else {
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; color:#ccc; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                    <span>${medals[i]} ---</span>
-                                                    <span>--.-s</span>
-                                                 </div>`;
+                                                        <span>${medals[i]} ---</span>
+                                                        <span>--.-s</span>
+                                                     </div>`;
                                 }
                             }
                         }
@@ -1639,12 +1647,12 @@
                 let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
                 totalHtml += `<tr>
-                                <td style="font-weight:bold;">${d.name}</td>
-                                <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
-                                <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
-                                <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
-                            </tr>`;
+                                    <td style="font-weight:bold;">${d.name}</td>
+                                    <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                    <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                                    <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                                    <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                                </tr>`;
             });
             document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="5" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
@@ -1655,9 +1663,27 @@
         let lastDeletedRecord = null;
         let lastDeletedDate = null;
         let undoTimeout = null;
+        let recordToDelete = null; // 削除対象を一時保存する変数
 
+        // 1. 削除ボタンが押されたらポップアップを表示する
         function deleteRecord(timestamp, id) {
-            if (!confirm("この半荘の記録を削除しますか？\n（S5分析・累計シートからも自動的に削除・修復されます）")) return;
+            recordToDelete = { timestamp: timestamp, id: id };
+            document.getElementById('custom-confirm-modal').style.display = 'flex';
+        }
+
+        // 2. ポップアップを閉じる（キャンセル）
+        function closeConfirmModal() {
+            document.getElementById('custom-confirm-modal').style.display = 'none';
+            recordToDelete = null;
+        }
+
+        // 3. 「よろしくお願いしまぁぁぁぁぁぁぁぁぁぁぁす！」が押された時の本処理
+        function executeDelete() {
+            if (!recordToDelete) return;
+            closeConfirmModal(); // ポップアップを閉じる
+
+            let timestamp = recordToDelete.timestamp;
+            let id = recordToDelete.id;
 
             let rec = records.find(r => r.timestamp === timestamp);
             if (!rec) return;
@@ -1672,7 +1698,6 @@
                 secret: localStorage.getItem('mahjong_auth')
             };
 
-            // 💡 復元のために削除前のデータを保持しておく
             lastDeletedRecord = rec;
             lastDeletedDate = date;
 
@@ -1689,7 +1714,7 @@
                         alert("⚠️ 削除エラー:\n" + text);
                         if (btn) btn.innerText = "🗑️ 削除";
                     } else {
-                        showUndoButton(); // 成功したら「元に戻す」ボタンを表示！
+                        showUndoButton();
                         loadFromCloud();
                     }
                 })
@@ -1709,10 +1734,10 @@
                 document.body.appendChild(undoArea);
             }
             undoArea.innerHTML = `
-                <span>🗑️ 記録を削除しました</span>
-                <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
-                <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
-            `;
+                    <span>🗑️ 記録を削除しました</span>
+                    <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
+                    <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
+                `;
             undoArea.style.display = 'flex';
             undoArea.style.opacity = '1';
 
