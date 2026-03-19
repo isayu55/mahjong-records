@@ -482,6 +482,10 @@
                     👑 １位獲得！ 👑<br>おめでとう！
                 </div>
 
+                <div id="quiz-near-miss-msg" style="display:none; color:#3498db; font-size:24px; font-weight:bold; text-shadow:0 2px 4px rgba(0,0,0,0.2); margin-bottom:15px; line-height:1.4;">
+                    惜しい！💦<br>1位まであと <span id="quiz-diff-time"></span> 秒！
+                </div>
+
                 <div style="background:#e8f4f8; padding:20px; border-radius:10px; margin:10px 0 20px 0;">
                     <p style="font-size:18px; font-weight:bold; margin:0;">あなたのタイム</p>
                     <p style="font-size:48px; font-weight:bold; color:#2980b9; margin:10px 0;"><span id="quiz-final-time"></span><span style="font-size:24px;"> 秒</span></p>
@@ -600,9 +604,11 @@
     </div>
 
     <div id="new-record-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:30000; justify-content:center; align-items:center; flex-direction:column; text-align:center; animation: fadeIn 0.3s;">
-        <video id="congrats-video" src="congrats.mp4" style="display:none; max-width:100%; max-height:85vh; outline:none;" playsinline></video>
 
-        <button id="congrats-close-btn" onclick="closeNewRecordVideo()" style="display:none; margin-top:20px; padding:12px 30px; font-size:18px; font-weight:bold; background:#e74c3c; color:#fff; border:none; border-radius:30px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5);">結果画面へ戻る</button>
+        <video id="congrats-video" src="" style="display:none; max-width:100%; max-height:85vh; outline:none;" playsinline></video>
+
+        <button id="congrats-skip-btn" onclick="skipCongratsVideo()" style="display:none; margin-top:20px; padding:10px 25px; font-size:16px; font-weight:bold; background:#95a5a6; color:#fff; border:none; border-radius:30px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5);">⏭️ スキップ</button>
+
     </div>
 
     <script>
@@ -1302,22 +1308,38 @@
             saveStatus.style.color = "#f39c12";
 
             let isNewRecord = false;
-            if (currentQuizMode === 7 && finalTime < bestTime7) {
+            let isNearMiss = false;
+
+            let bestTime = (currentQuizMode === 7) ? bestTime7 : bestTime10;
+
+            if (finalTime < bestTime) {
                 isNewRecord = true;
-                bestTime7 = finalTime;
-            } else if (currentQuizMode === 10 && finalTime < bestTime10) {
-                isNewRecord = true;
-                bestTime10 = finalTime;
+                if (currentQuizMode === 7) bestTime7 = finalTime;
+                else bestTime10 = finalTime;
+            } else if (finalTime <= bestTime + 5) {
+                isNearMiss = true;
             }
 
-            // 💡 修正：1位メッセージの表示と、暗転の呼び出し
             let newRecordMsg = document.getElementById('quiz-new-record-msg');
+            let nearMissMsg = document.getElementById('quiz-near-miss-msg');
+
+            // 💡 修正：次に流す分岐用動画のファイル名を変数に入れておく
+            let secondVideoSrc = "";
+
             if (isNewRecord) {
                 newRecordMsg.style.display = 'block';
-                // クリア画面が出てから 0.8秒後 に画面を暗転させる
-                setTimeout(playNewRecordVideo, 800);
+                nearMissMsg.style.display = 'none';
+                secondVideoSrc = 'success_video.mp4'; // 👑 1位更新時の動画
+                setTimeout(() => playVideoSequence(secondVideoSrc), 800);
+            } else if (isNearMiss) {
+                newRecordMsg.style.display = 'none';
+                nearMissMsg.style.display = 'block';
+                document.getElementById('quiz-diff-time').innerText = (finalTime - bestTime).toFixed(1);
+                secondVideoSrc = 'near_miss_video.mp4'; // 💦 惜しい時の動画
+                setTimeout(() => playVideoSequence(secondVideoSrc), 800);
             } else {
                 newRecordMsg.style.display = 'none';
+                nearMissMsg.style.display = 'none';
             }
 
             let postData = { action: "saveQuiz", name: recordName, time: finalTime, secret: localStorage.getItem('mahjong_auth') };
@@ -1336,6 +1358,58 @@
                     }
                 })
                 .catch(err => { saveStatus.innerText = "⚠️ 通信エラーが発生しました"; saveStatus.style.color = "red"; });
+        }
+
+        // ==========================================
+        // ▼ タイムアタック動画連続再生ロジック ▼
+        // ==========================================
+        function playVideoSequence(secondVideoSrc) {
+            let overlay = document.getElementById('new-record-overlay');
+            let vid = document.getElementById('congrats-video');
+            let skipBtn = document.getElementById('congrats-skip-btn');
+
+            // 1. 画面を真っ暗にする
+            overlay.style.display = 'flex';
+            vid.style.display = 'none';
+            skipBtn.style.display = 'none';
+
+            // 2. 暗転から2秒後に「1本目の動画（共通の煽り）」を再生
+            setTimeout(() => {
+                vid.style.display = 'block';
+
+                // 💡 1本目（共通の先バレ用）の動画ファイル名を指定
+                vid.src = 'intro_video.mp4';
+
+                vid.currentTime = 0;
+                vid.play().catch(e => console.log("自動再生がブロックされました", e));
+                skipBtn.style.display = 'block';
+
+                // 3. 1本目が終わったら、分岐用の2本目を流す！
+                vid.onended = function () {
+                    vid.src = secondVideoSrc; // ここで結果に応じた動画に切り替え
+                    vid.currentTime = 0;
+                    vid.play().catch(e => console.log("自動再生がブロックされました", e));
+
+                    // 4. 2本目も最後まで終わったら画面を閉じる
+                    vid.onended = function () {
+                        closeNewRecordVideo();
+                    };
+                };
+            }, 2000);
+        }
+
+        // 動画スキップ関数（押せば1本目でも2本目でも即終了）
+        function skipCongratsVideo() {
+            let vid = document.getElementById('congrats-video');
+            vid.pause();
+            closeNewRecordVideo();
+        }
+
+        function closeNewRecordVideo() {
+            let overlay = document.getElementById('new-record-overlay');
+            let vid = document.getElementById('congrats-video');
+            vid.pause();
+            overlay.style.display = 'none';
         }
 
         // ==========================================
