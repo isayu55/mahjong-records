@@ -925,7 +925,7 @@
         }
 
         // ==========================================
-        // ▼ 日別成績（S5）の描画ロジックを日付シート直接読み込みに変更
+        // ▼ 日別成績（S5）の描画ロジック
         // ==========================================
         function renderDailyView() {
             if (s5DailyData.length === 0) return;
@@ -935,18 +935,14 @@
             document.getElementById('daily-summary-area').innerHTML = "<p style='text-align:center; font-weight:bold; color:#2980b9;'>☁️ 日別詳細データを取得中...</p>";
             document.getElementById('daily-games-area').innerHTML = "";
 
-            // 💡 追加：スプレッドシート特有の「2026/3/14」などを「2026-03-14」に強制変換する
             let fetchDate = dayData.date;
             if (fetchDate.includes('/')) {
                 let parts = fetchDate.split('/');
                 if (parts.length === 3) {
-                    // 月や日が1桁(3など)だった場合、03のように2桁にゼロ埋めする
                     fetchDate = parts[0] + '-' + parts[1].padStart(2, '0') + '-' + parts[2].padStart(2, '0');
                 }
             }
-            console.log("🔍 読みに行くシート名: ", fetchDate);
 
-            // 💡 変換した fetchDate を使ってGASにアクセス！
             fetch(GAS_URL + "?date=" + fetchDate + "&t=" + new Date().getTime())
                 .then(res => res.json())
                 .then(records => {
@@ -971,13 +967,18 @@
 
                         players.forEach(p => {
                             let text = [];
-                            if (rec.points[p.id] !== undefined) {
-                                totals[p.id].point += rec.points[p.id];
-                                text.push(`<span class="${rec.points[p.id] > 0 ? 'plus' : (rec.points[p.id] < 0 ? 'minus' : '')}">${rec.points[p.id] > 0 ? '+' : ''}${rec.points[p.id].toFixed(1)}</span>`);
+                            let gameCombined = rec.points[p.id];
+                            let gameChipRaw = rec.chips[p.id] || 0;
+                            let gameChipPt = gameChipRaw * 2; // チップを得点化
+
+                            if (gameCombined !== undefined) {
+                                totals[p.id].point += gameCombined;
+                                let gameRawPt = gameCombined - gameChipPt; // チップを抜いた純粋な得点
+                                text.push(`<span class="${gameRawPt > 0 ? 'plus' : (gameRawPt < 0 ? 'minus' : '')}">得点${gameRawPt > 0 ? '+' : ''}${gameRawPt.toFixed(1)}</span>`);
                             }
-                            if (rec.chips[p.id]) {
-                                totals[p.id].chip += rec.chips[p.id];
-                                text.push(`チップ${rec.chips[p.id] > 0 ? '+' : ''}${rec.chips[p.id]}枚`);
+                            if (gameChipRaw !== 0) {
+                                totals[p.id].chip += gameChipRaw;
+                                text.push(`<span class="${gameChipPt > 0 ? 'plus' : (gameChipPt < 0 ? 'minus' : '')}">チップ${gameChipPt > 0 ? '+' : ''}${gameChipPt.toFixed(1)}</span>`);
                             }
                             if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
                         });
@@ -996,17 +997,23 @@
                                       </div>`;
                     });
 
-                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>最終P(チップ込)</th><th>チップ計</th></tr>';
+                    // 💡 修正：表の項目を「得点合計」「チップ計」「最終P」の3つに分割
+                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>最終P</th></tr>';
                     players.forEach(p => {
                         let finalPt = totals[p.id].point;
-                        let chipCount = totals[p.id].chip;
-                        if (finalPt !== 0 || chipCount !== 0) {
+                        let chipPt = totals[p.id].chip * 2; // 得点化
+                        let rawPt = finalPt - chipPt;       // チップ抜きの得点
+
+                        if (finalPt !== 0 || totals[p.id].chip !== 0) {
+                            let sCol = rawPt > 0 ? 'plus' : (rawPt < 0 ? 'minus' : '');
+                            let cCol = chipPt > 0 ? 'plus' : (chipPt < 0 ? 'minus' : '');
                             let fCol = finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '');
-                            let cCol = chipCount > 0 ? 'plus' : (chipCount < 0 ? 'minus' : '');
+
                             summaryHtml += `<tr>
                                             <td style="font-weight:bold;">${p.name}</td>
+                                            <td class="${sCol}">${rawPt > 0 ? '+' : ''}${rawPt.toFixed(1)}</td>
+                                            <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
                                             <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
-                                            <td class="${cCol}">${chipCount > 0 ? '+' : ''}${chipCount}枚</td>
                                         </tr>`;
                         }
                     });
@@ -1491,9 +1498,13 @@
             updateUI(); setTimeout(() => { window.scrollBy({ top: 300, behavior: 'smooth' }); }, 100);
         }
 
+        // ==========================================
+        // ▼ 記録入力画面の更新（こちらも表示を統一）
+        // ==========================================
         function updateUI() {
             let totals = {}; players.forEach(p => totals[p.id] = { point: 0, chip: 0 });
             let historyHtml = ""; let hanchanCount = 1;
+
             records.forEach(rec => {
                 let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
                 if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
@@ -1501,13 +1512,18 @@
 
                 players.forEach(p => {
                     let text = [];
-                    if (rec.points[p.id] !== undefined) {
-                        totals[p.id].point += rec.points[p.id];
-                        text.push(`<span class="${rec.points[p.id] > 0 ? 'plus' : (rec.points[p.id] < 0 ? 'minus' : '')}">${rec.points[p.id] > 0 ? '+' : ''}${rec.points[p.id].toFixed(1)}</span>`);
+                    let gameCombined = rec.points[p.id];
+                    let gameChipRaw = rec.chips[p.id] || 0;
+                    let gameChipPt = gameChipRaw * 2;
+
+                    if (gameCombined !== undefined) {
+                        totals[p.id].point += gameCombined;
+                        let gameRawPt = gameCombined - gameChipPt;
+                        text.push(`<span class="${gameRawPt > 0 ? 'plus' : (gameRawPt < 0 ? 'minus' : '')}">得点${gameRawPt > 0 ? '+' : ''}${gameRawPt.toFixed(1)}</span>`);
                     }
-                    if (rec.chips[p.id]) {
-                        totals[p.id].chip += rec.chips[p.id];
-                        text.push(`チップ${rec.chips[p.id] > 0 ? '+' : ''}${rec.chips[p.id]}枚`);
+                    if (gameChipRaw !== 0) {
+                        totals[p.id].chip += gameChipRaw;
+                        text.push(`<span class="${gameChipPt > 0 ? 'plus' : (gameChipPt < 0 ? 'minus' : '')}">チップ${gameChipPt > 0 ? '+' : ''}${gameChipPt.toFixed(1)}</span>`);
                     }
                     if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
                 });
@@ -1515,16 +1531,26 @@
             });
             document.getElementById('history-area').innerHTML = records.length === 0 ? "<p style='text-align:center; color:#999;'>まだ記録がありません</p>" : historyHtml;
 
-            let totalHtml = `<tr><th>名前</th><th>最終P(チップ込)</th><th>チップ計</th></tr>`;
+            let totalHtml = `<tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>最終P</th></tr>`;
             players.forEach(p => {
-                // 💡 修正：GAS側ですでにチップを合算した値が届くため、二重加算を削除
                 let finalPt = totals[p.id].point;
-                let chipCount = totals[p.id].chip;
-                if (finalPt !== 0 || chipCount !== 0) {
-                    totalHtml += `<tr><td style="font-weight:bold;">${p.name}</td><td class="${finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '')}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td><td class="${chipCount > 0 ? 'plus' : (chipCount < 0 ? 'minus' : '')}">${chipCount > 0 ? '+' : ''}${chipCount}枚</td></tr>`;
+                let chipPt = totals[p.id].chip * 2;
+                let rawPt = finalPt - chipPt;
+
+                if (finalPt !== 0 || totals[p.id].chip !== 0) {
+                    let sCol = rawPt > 0 ? 'plus' : (rawPt < 0 ? 'minus' : '');
+                    let cCol = chipPt > 0 ? 'plus' : (chipPt < 0 ? 'minus' : '');
+                    let fCol = finalPt > 0 ? 'plus' : (finalPt < 0 ? 'minus' : '');
+
+                    totalHtml += `<tr>
+                                    <td style="font-weight:bold;">${p.name}</td>
+                                    <td class="${sCol}">${rawPt > 0 ? '+' : ''}${rawPt.toFixed(1)}</td>
+                                    <td class="${cCol}">${chipPt > 0 ? '+' : ''}${chipPt.toFixed(1)}</td>
+                                    <td class="${fCol}" style="font-size:18px; font-weight:bold;">${finalPt > 0 ? '+' : ''}${finalPt.toFixed(1)}</td>
+                                </tr>`;
                 }
             });
-            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="3" style="color:#999;">データがありません</td></tr>` : totalHtml;
+            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="4" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
     </script>
 </body>
