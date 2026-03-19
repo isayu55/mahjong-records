@@ -594,6 +594,14 @@
         </div>
     </div>
 
+    <div id="new-record-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:30000; justify-content:center; align-items:center; flex-direction:column; text-align:center; animation: fadeIn 0.5s;">
+        <h1 style="color:#f1c40f; font-size:36px; text-shadow:0 0 15px #f39c12; margin-bottom:20px;">ランキング1位獲得！<br>おめでとう！</h1>
+
+        <video id="congrats-video" src="congrats.mp4" style="max-width:90%; max-height:60vh; border:2px solid #f1c40f; border-radius:10px; box-shadow:0 0 20px #f1c40f;" playsinline></video>
+
+        <button onclick="closeNewRecordVideo()" style="margin-top:30px; padding:12px 30px; font-size:18px; font-weight:bold; background:#e74c3c; color:#fff; border:none; border-radius:30px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5);">結果画面へ戻る</button>
+    </div>
+
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxyZ3loLBCqCAHNM3zHWL2gRu6cNy6L2xUSHdZUF48_MROKBzTio-vLXhhmUGVH63-c-g/exec";
         const players = [
@@ -636,6 +644,9 @@
         let quizStartTime = 0;
         let penaltyTime = 0;
         let currentQuizMode = 7;
+        // 💡 追加：現在の1位のタイムを記憶しておく変数（最初は適当な遅いタイムを入れておく）
+        let bestTime7 = 9999;
+        let bestTime10 = 9999;
 
         // ▼ 何切る用変数 ▼
         let naniKiruPool = [];
@@ -841,9 +852,9 @@
                 let waitImgs = "";
                 opt.waits.forEach(w => {
                     waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
-                                    <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
-                                    <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
-                                </div>`;
+                                        <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
+                                        <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
+                                    </div>`;
                 });
 
                 let prob = (opt.win_prob * 100).toFixed(1);
@@ -858,27 +869,27 @@
                 if (isUserChoice) badge += '<span style="color:#3498db; font-weight:bold; font-size:13px;">👉 あなたの選択</span> ';
 
                 detailsHtml += `
-                                <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                                    <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
-                                        ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                                    <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                        <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
+                                            ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                                        </div>
+                                        <div style="margin-bottom:10px;">${waitImgs}</div>
+                                        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                                            <tr style="background:#ecf0f1;">
+                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
+                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
+                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
+                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
+                                                <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
+                                                <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
+                                                <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
+                                            </tr>
+                                        </table>
                                     </div>
-                                    <div style="margin-bottom:10px;">${waitImgs}</div>
-                                    <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
-                                        <tr style="background:#ecf0f1;">
-                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
-                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
-                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
-                                            <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
-                                            <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
-                                            <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
-                                            <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            `;
+                                `;
             });
 
             infoEl.innerHTML = detailsHtml;
@@ -1032,11 +1043,11 @@
                         }
 
                         gamesHtml += `<div class="history-card">
-                                            <div class="history-header">
-                                                <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
-                                            </div>
-                                            ${details}
-                                          </div>`;
+                                                <div class="history-header">
+                                                    <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
+                                                </div>
+                                                ${details}
+                                              </div>`;
                     });
 
                     // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
@@ -1068,12 +1079,12 @@
                         let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
                         summaryHtml += `<tr>
-                                            <td style="font-weight:bold;">${d.name}</td>
-                                            <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
-                                            <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
-                                            <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                            <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
-                                        </tr>`;
+                                                <td style="font-weight:bold;">${d.name}</td>
+                                                <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                                <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                                                <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                                                <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                                            </tr>`;
                     });
                     summaryHtml += '</table></div>';
 
@@ -1116,9 +1127,9 @@
                 // widthを20px → 28pxに拡大
                 let imgs = item.q.map(n => `<img src="${n}p.png" style="width:28px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list7Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                            <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                            <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                        </div>`;
+                                <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                                <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                            </div>`;
             });
             document.getElementById('quiz-list-7').innerHTML = list7Html;
 
@@ -1128,9 +1139,9 @@
                 // widthを18px → 24pxに拡大（10枚並ぶので少しだけ小さめ）
                 let imgs = item.q.map(n => `<img src="${n}s.png" style="width:24px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list10Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                            <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                            <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                        </div>`;
+                                <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                                <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                            </div>`;
             });
             document.getElementById('quiz-list-10').innerHTML = list10Html;
         }
@@ -1146,6 +1157,10 @@
                     let data7 = data.filter(d => d.name && d.name.includes('(7枚)'));
                     let data10 = data.filter(d => d.name && d.name.includes('(10枚)'));
 
+                    // 💡 追加：現在の1位のタイムを保存しておく
+                    if (data7.length > 0) bestTime7 = data7[0].time;
+                    if (data10.length > 0) bestTime10 = data10[0].time;
+
                     const medals = ["🥇", "🥈", "🥉"];
 
                     // 表の描画用共通関数
@@ -1159,14 +1174,14 @@
                                     // 表示をスッキリさせるため「(7枚)」などのタグを消す
                                     let cleanName = listData[i].name.replace(" (7枚)", "").replace(" (10枚)", "");
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; font-weight:bold; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                        <span>${medals[i]} ${cleanName}</span>
-                                                        <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
-                                                     </div>`;
+                                                            <span>${medals[i]} ${cleanName}</span>
+                                                            <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
+                                                         </div>`;
                                 } else {
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; color:#ccc; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                        <span>${medals[i]} ---</span>
-                                                        <span>--.-s</span>
-                                                     </div>`;
+                                                            <span>${medals[i]} ---</span>
+                                                            <span>--.-s</span>
+                                                         </div>`;
                                 }
                             }
                         }
@@ -1273,7 +1288,6 @@
             let finalTime = (Date.now() - quizStartTime) / 1000 + penaltyTime;
             let pName = document.getElementById('quiz-player-select').value;
 
-            // 💡 記録を分けるために名前にモード情報を追加
             let recordName = pName + (currentQuizMode === 7 ? " (7枚)" : " (10枚)");
 
             document.getElementById('quiz-play-area').style.display = 'none';
@@ -1284,6 +1298,21 @@
             let saveStatus = document.getElementById('quiz-saving-status');
             saveStatus.innerText = "☁️ 記録をクラウドに送信中...";
             saveStatus.style.color = "#f39c12";
+
+            // 💡 追加：1位を更新したかどうかの判定
+            let isNewRecord = false;
+            if (currentQuizMode === 7 && finalTime < bestTime7) {
+                isNewRecord = true;
+                bestTime7 = finalTime; // 連続で挑戦した時のためにローカルのベストも更新
+            } else if (currentQuizMode === 10 && finalTime < bestTime10) {
+                isNewRecord = true;
+                bestTime10 = finalTime;
+            }
+
+            // 新記録なら、0.5秒後に暗転して動画を流す！
+            if (isNewRecord) {
+                setTimeout(playNewRecordVideo, 500);
+            }
 
             let postData = {
                 action: "saveQuiz",
@@ -1312,6 +1341,31 @@
                     saveStatus.innerText = "⚠️ 通信エラーが発生しました";
                     saveStatus.style.color = "red";
                 });
+        }
+
+        // ==========================================
+        // ▼ 1位獲得時の動画再生ロジック ▼
+        // ==========================================
+        function playNewRecordVideo() {
+            let overlay = document.getElementById('new-record-overlay');
+            let vid = document.getElementById('congrats-video');
+            overlay.style.display = 'flex';
+
+            // 動画を最初から再生
+            vid.currentTime = 0;
+            vid.play().catch(e => console.log("自動再生がブロックされました", e));
+
+            // 動画が最後まで終わったら自動で閉じる（任意）
+            vid.onended = function () {
+                closeNewRecordVideo();
+            };
+        }
+
+        function closeNewRecordVideo() {
+            let overlay = document.getElementById('new-record-overlay');
+            let vid = document.getElementById('congrats-video');
+            vid.pause();
+            overlay.style.display = 'none';
         }
 
         function resetQuiz() {
@@ -1647,12 +1701,12 @@
                 let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
                 totalHtml += `<tr>
-                                    <td style="font-weight:bold;">${d.name}</td>
-                                    <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
-                                    <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
-                                    <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                    <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
-                                </tr>`;
+                                        <td style="font-weight:bold;">${d.name}</td>
+                                        <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                        <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                                        <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                                        <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                                    </tr>`;
             });
             document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="5" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
@@ -1734,10 +1788,10 @@
                 document.body.appendChild(undoArea);
             }
             undoArea.innerHTML = `
-                    <span>🗑️ 記録を削除しました</span>
-                    <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
-                    <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
-                `;
+                        <span>🗑️ 記録を削除しました</span>
+                        <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
+                        <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
+                    `;
             undoArea.style.display = 'flex';
             undoArea.style.opacity = '1';
 
