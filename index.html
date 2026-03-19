@@ -924,6 +924,9 @@
             }
         }
 
+        // ==========================================
+        // ▼ 日別成績（S5）の描画ロジックを日付シート直接読み込みに変更
+        // ==========================================
         function renderDailyView() {
             if (s5DailyData.length === 0) return;
             let dayData = s5DailyData[currentDailyIndex];
@@ -932,12 +935,23 @@
             document.getElementById('daily-summary-area').innerHTML = "<p style='text-align:center; font-weight:bold; color:#2980b9;'>☁️ 日別詳細データを取得中...</p>";
             document.getElementById('daily-games-area').innerHTML = "";
 
-            // 💡 その日の「日付シート」から詳細データを直接取得！
-            fetch(GAS_URL + "?date=" + dayData.date + "&t=" + new Date().getTime())
+            // 💡 追加：スプレッドシート特有の「2026/3/14」などを「2026-03-14」に強制変換する
+            let fetchDate = dayData.date;
+            if (fetchDate.includes('/')) {
+                let parts = fetchDate.split('/');
+                if (parts.length === 3) {
+                    // 月や日が1桁(3など)だった場合、03のように2桁にゼロ埋めする
+                    fetchDate = parts[0] + '-' + parts[1].padStart(2, '0') + '-' + parts[2].padStart(2, '0');
+                }
+            }
+            console.log("🔍 読みに行くシート名: ", fetchDate);
+
+            // 💡 変換した fetchDate を使ってGASにアクセス！
+            fetch(GAS_URL + "?date=" + fetchDate + "&t=" + new Date().getTime())
                 .then(res => res.json())
                 .then(records => {
                     if (records.length === 0 || records.error) {
-                        document.getElementById('daily-summary-area').innerHTML = "<p style='text-align:center; color:#e74c3c;'>詳細データが見つかりません。シートが作成されていない可能性があります。</p>";
+                        document.getElementById('daily-summary-area').innerHTML = `<p style='text-align:center; color:#e74c3c;'>「${fetchDate}」の詳細データが見つかりません。<br>シート名が完全に一致しているか確認してください。</p>`;
                         return;
                     }
 
@@ -968,7 +982,6 @@
                             if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
                         });
 
-                        // 時間のフォーマット調整
                         let timeStr = "";
                         if (rec.timestamp) {
                             let m = String(rec.timestamp).match(/\d{2}:\d{2}/);
@@ -983,7 +996,6 @@
                                       </div>`;
                     });
 
-                    // 💡 サマリー表の作成 (GASで合算済みなので計算不要)
                     let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>最終P(チップ込)</th><th>チップ計</th></tr>';
                     players.forEach(p => {
                         let finalPt = totals[p.id].point;
