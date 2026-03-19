@@ -1606,7 +1606,7 @@
                     }
                     if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
                 });
-                historyHtml += `<div class="history-card"><div class="history-header"><span>${title} <span style="font-size:10px; color:#999;">(${rec.timestamp})</span></span><div>${String(rec.id).startsWith('cloud_') ? '<span style="color:#27ae60;">☁️ 同期済</span>' : '<span style="color:#e74c3c;">⏳ 送信中...</span>'}</div></div>${details}</div>`;
+                historyHtml += `<div class="history-card"><div class="history-header"><span style="display:flex; align-items:center;">${title} <span style="font-size:10px; color:#999; margin-left:5px;">(${rec.timestamp})</span></span><div>${String(rec.id).startsWith('cloud_') ? '<span style="color:#27ae60;">☁️ 同期済</span>' : '<span style="color:#e74c3c;">⏳ 送信中...</span>'}<button id="delete-btn-${rec.id}" onclick="deleteRecord('${rec.timestamp}', '${rec.id}')" style="margin-left:10px; padding:3px 8px; font-size:12px; background:#e74c3c; color:#fff; border:none; border-radius:3px; cursor:pointer;">🗑️ 削除</button></div></div>${details}</div>`;
             });
             document.getElementById('history-area').innerHTML = records.length === 0 ? "<p style='text-align:center; color:#999;'>まだ記録がありません</p>" : historyHtml;
 
@@ -1647,6 +1647,47 @@
                             </tr>`;
             });
             document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="5" style="color:#999;">データがありません</td></tr>` : totalHtml;
+        }
+
+        // ==========================================
+        // ▼ 成績削除ロジック
+        // ==========================================
+        function deleteRecord(timestamp, id) {
+            if (!confirm("この半荘の記録を削除しますか？\n（S5分析・累計シートからも自動的に削除・修復されます）")) return;
+
+            let rec = records.find(r => r.timestamp === timestamp);
+            if (!rec) return;
+
+            let date = document.getElementById('play-date').value;
+
+            let postData = {
+                action: "deleteRecord",
+                date: date,
+                timestamp: timestamp,
+                rawScores: rec.points,
+                secret: localStorage.getItem('mahjong_auth')
+            };
+
+            let btn = document.getElementById('delete-btn-' + id);
+            if (btn) btn.innerText = "⏳ 削除中...";
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: "data=" + encodeURIComponent(JSON.stringify(postData))
+            })
+                .then(res => res.text()).then(text => {
+                    if (text.includes("GAS_ERROR")) {
+                        alert("⚠️ 削除エラー:\n" + text);
+                        if (btn) btn.innerText = "🗑️ 削除";
+                    } else {
+                        loadFromCloud(); // 削除成功したら自動リロード
+                    }
+                })
+                .catch(err => {
+                    alert("通信エラーが発生しました");
+                    if (btn) btn.innerText = "🗑️ 削除";
+                });
         }
     </script>
 </body>
