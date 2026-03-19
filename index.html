@@ -476,8 +476,13 @@
             </div>
 
             <div id="quiz-result-area" style="display:none; text-align:center;">
-                <h2 style="color:#e74c3c; font-size:32px;">🎉 CLEAR! 🎉</h2>
-                <div style="background:#e8f4f8; padding:20px; border-radius:10px; margin:20px 0;">
+                <h2 style="color:#e74c3c; font-size:32px; margin-bottom:10px;">🎉 CLEAR! 🎉</h2>
+
+                <div id="quiz-new-record-msg" style="display:none; color:#f1c40f; font-size:28px; font-weight:bold; text-shadow:0 2px 4px rgba(0,0,0,0.2); margin-bottom:15px; line-height:1.4;">
+                    👑 １位獲得！ 👑<br>おめでとう！
+                </div>
+
+                <div style="background:#e8f4f8; padding:20px; border-radius:10px; margin:10px 0 20px 0;">
                     <p style="font-size:18px; font-weight:bold; margin:0;">あなたのタイム</p>
                     <p style="font-size:48px; font-weight:bold; color:#2980b9; margin:10px 0;"><span id="quiz-final-time"></span><span style="font-size:24px;"> 秒</span></p>
                     <p id="quiz-penalty-text" style="font-size:14px; color:#e74c3c; font-weight:bold; margin:0;"></p>
@@ -594,12 +599,10 @@
         </div>
     </div>
 
-    <div id="new-record-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:30000; justify-content:center; align-items:center; flex-direction:column; text-align:center; animation: fadeIn 0.5s;">
-        <h1 style="color:#f1c40f; font-size:36px; text-shadow:0 0 15px #f39c12; margin-bottom:20px;">ランキング1位獲得！<br>おめでとう！</h1>
+    <div id="new-record-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:30000; justify-content:center; align-items:center; flex-direction:column; text-align:center; animation: fadeIn 0.3s;">
+        <video id="congrats-video" src="congrats.mp4" style="display:none; max-width:100%; max-height:85vh; outline:none;" playsinline></video>
 
-        <video id="congrats-video" src="congrats.mp4" style="max-width:90%; max-height:60vh; border:2px solid #f1c40f; border-radius:10px; box-shadow:0 0 20px #f1c40f;" playsinline></video>
-
-        <button onclick="closeNewRecordVideo()" style="margin-top:30px; padding:12px 30px; font-size:18px; font-weight:bold; background:#e74c3c; color:#fff; border:none; border-radius:30px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5);">結果画面へ戻る</button>
+        <button id="congrats-close-btn" onclick="closeNewRecordVideo()" style="display:none; margin-top:20px; padding:12px 30px; font-size:18px; font-weight:bold; background:#e74c3c; color:#fff; border:none; border-radius:30px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5);">結果画面へ戻る</button>
     </div>
 
     <script>
@@ -1287,7 +1290,6 @@
         function finishQuiz() {
             let finalTime = (Date.now() - quizStartTime) / 1000 + penaltyTime;
             let pName = document.getElementById('quiz-player-select').value;
-
             let recordName = pName + (currentQuizMode === 7 ? " (7枚)" : " (10枚)");
 
             document.getElementById('quiz-play-area').style.display = 'none';
@@ -1299,27 +1301,26 @@
             saveStatus.innerText = "☁️ 記録をクラウドに送信中...";
             saveStatus.style.color = "#f39c12";
 
-            // 💡 追加：1位を更新したかどうかの判定
             let isNewRecord = false;
             if (currentQuizMode === 7 && finalTime < bestTime7) {
                 isNewRecord = true;
-                bestTime7 = finalTime; // 連続で挑戦した時のためにローカルのベストも更新
+                bestTime7 = finalTime;
             } else if (currentQuizMode === 10 && finalTime < bestTime10) {
                 isNewRecord = true;
                 bestTime10 = finalTime;
             }
 
-            // 新記録なら、0.5秒後に暗転して動画を流す！
+            // 💡 修正：1位メッセージの表示と、暗転の呼び出し
+            let newRecordMsg = document.getElementById('quiz-new-record-msg');
             if (isNewRecord) {
-                setTimeout(playNewRecordVideo, 500);
+                newRecordMsg.style.display = 'block';
+                // クリア画面が出てから 0.8秒後 に画面を暗転させる
+                setTimeout(playNewRecordVideo, 800);
+            } else {
+                newRecordMsg.style.display = 'none';
             }
 
-            let postData = {
-                action: "saveQuiz",
-                name: recordName,
-                time: finalTime,
-                secret: localStorage.getItem('mahjong_auth')
-            };
+            let postData = { action: "saveQuiz", name: recordName, time: finalTime, secret: localStorage.getItem('mahjong_auth') };
 
             fetch(GAS_URL, {
                 method: 'POST',
@@ -1329,33 +1330,36 @@
                 .then(res => res.text())
                 .then(text => {
                     if (text.includes("GAS_ERROR")) {
-                        saveStatus.innerText = "⚠️ エラー：記録の送信に失敗しました";
-                        saveStatus.style.color = "red";
+                        saveStatus.innerText = "⚠️ エラー：記録の送信に失敗しました"; saveStatus.style.color = "red";
                     } else {
-                        saveStatus.innerText = "✅ 記録を保存しました！";
-                        saveStatus.style.color = "#27ae60";
-                        loadQuizRanking();
+                        saveStatus.innerText = "✅ 記録を保存しました！"; saveStatus.style.color = "#27ae60"; loadQuizRanking();
                     }
                 })
-                .catch(err => {
-                    saveStatus.innerText = "⚠️ 通信エラーが発生しました";
-                    saveStatus.style.color = "red";
-                });
+                .catch(err => { saveStatus.innerText = "⚠️ 通信エラーが発生しました"; saveStatus.style.color = "red"; });
         }
 
         // ==========================================
-        // ▼ 1位獲得時の動画再生ロジック ▼
+        // ▼ 1位獲得時の動画再生ロジック（暗転タメ追加） ▼
         // ==========================================
         function playNewRecordVideo() {
             let overlay = document.getElementById('new-record-overlay');
             let vid = document.getElementById('congrats-video');
+            let btn = document.getElementById('congrats-close-btn');
+
+            // 💡 1. 画面を真っ暗にする（動画とボタンはまだ隠しておく）
             overlay.style.display = 'flex';
+            vid.style.display = 'none';
+            btn.style.display = 'none';
 
-            // 動画を最初から再生
-            vid.currentTime = 0;
-            vid.play().catch(e => console.log("自動再生がブロックされました", e));
+            // 💡 2. 暗転から 2秒後（2000ms）に動画をドーンと表示して再生！
+            // （長すぎる/短すぎる場合はここの 2000 を調整してください）
+            setTimeout(() => {
+                vid.style.display = 'block';
+                vid.currentTime = 0;
+                vid.play().catch(e => console.log("自動再生がブロックされました", e));
+                btn.style.display = 'block';
+            }, 2000);
 
-            // 動画が最後まで終わったら自動で閉じる（任意）
             vid.onended = function () {
                 closeNewRecordVideo();
             };
