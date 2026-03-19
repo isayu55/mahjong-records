@@ -1728,16 +1728,19 @@
         // 2. ポップアップを閉じる（キャンセル）
         function closeConfirmModal() {
             document.getElementById('custom-confirm-modal').style.display = 'none';
-            recordToDelete = null;
+            // 💡 修正：ここで recordToDelete を消さないようにしました！
         }
 
         // 3. 「よろしくお願いしまぁぁぁぁぁぁぁぁぁぁぁす！」が押された時の本処理
         function executeDelete() {
             if (!recordToDelete) return;
-            closeConfirmModal(); // ポップアップを閉じる
 
+            // 💡 修正：ポップアップを閉じる「前」に、削除するデータを安全な場所に移す！
             let timestamp = recordToDelete.timestamp;
             let id = recordToDelete.id;
+
+            closeConfirmModal(); // ポップアップを閉じる
+            recordToDelete = null; // 使い終わったのでここでリセット
 
             let rec = records.find(r => r.timestamp === timestamp);
             if (!rec) return;
