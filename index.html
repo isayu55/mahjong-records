@@ -1527,25 +1527,84 @@
         function renderRuikeiTableAndChart() {
             if (!cachedRuikeiData || cachedRuikeiData.length === 0) return;
             let season = document.getElementById('season-selector').value; let targetRows = []; let rowIndices = [];
-            const ranges = { 'S1': { start: 1, end: 7 }, 'S2': { start: 10, end: 22 }, 'S3': { start: 27, end: 40 }, 'S4': { start: 46, end: 59 }, 'S5': { start: 70, end: 79 }, 'S6': { start: 98, end: cachedRuikeiData.length - 1 } };
-            if (season === 'ALL') { cachedRuikeiData.forEach((row, i) => { targetRows.push(row); rowIndices.push(i); }); } else { for (let i = ranges[season].start; i <= ranges[season].end; i++) if (cachedRuikeiData[i]) { targetRows.push(cachedRuikeiData[i]); rowIndices.push(i); } }
+            const ranges = { 'S1': { start: 1, end: 7 }, 'S2': { start: 10, end: 22 }, 'S3': { start: 27, end: 40 }, 'S4': { start: 46, end: 59 }, 'S5': { start: 70, end: 83 }, 'S6': { start: 98, end: cachedRuikeiData.length - 1 } };
+            if (season === 'ALL') {
+                cachedRuikeiData.forEach((row, i) => { targetRows.push(row); rowIndices.push(i); });
+            } else {
+                for (let i = ranges[season].start; i <= ranges[season].end; i++) {
+                    if (cachedRuikeiData[i]) {
+                        targetRows.push(cachedRuikeiData[i]);
+                        rowIndices.push(i);
+                    }
+                }
+            }
+
+            // データが一番下どこまであるか（空白行を除外して計算）
+            let lastDataIndex = cachedRuikeiData.length - 1;
+            while(lastDataIndex > 0 && String(cachedRuikeiData[lastDataIndex][0]).trim() === "") {
+                lastDataIndex--;
+            }
+
             let html = '<div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
-            let labels = []; let chartData = [[], [], [], [], [], []]; let runningTotals = [0, 0, 0, 0, 0, 0];
+            let labels = [];
+            let chartData = [[], [], [], [], [], []];
+            let runningTotals = [0, 0, 0, 0, 0, 0];
+
             targetRows.forEach((row, idx) => {
-                let colK = String(row[0]).trim(); if (!colK) return;
-                let isDate = /^(?:20\d{2}[-/])?\d{1,2}[-/]\d{1,2}$/.test(colK) || /^\d{1,2}月\d{1,2}日$/.test(colK);
+                let colDate = String(row[0]).trim();
+                if (!colDate) return;
+
+                let isDate = /^(?:20\d{2}[-\/])?\d{1,2}[-\/]\d{1,2}$/.test(colDate) || /^\d{1,2}月\d{1,2}日$/.test(colDate);
+
                 if (isDate) {
-                    let dateLabel = /^\d{1,2}[-/]\d{1,2}$/.test(colK) ? (rowIndices[idx] >= 98 ? "2026" : "2025") + "/" + colK.replace("-", "/") : colK.replace(/-/g, "/");
-                    labels.push(dateLabel); html += `<tr><td>${dateLabel}</td>`;
-                    for (let i = 0; i < 6; i++) { let val = parseFloat(String(row[i + 1]).replace(/,/g, '')) || 0; runningTotals[i] += val; chartData[i].push(runningTotals[i]); }
-                    for (let i = 1; i <= 6; i++) { let cell = row[i]; let val = parseFloat(String(cell).replace(/,/g, '')); html += (!isNaN(val) && cell !== "") ? `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')}; font-weight:bold;">${cell}</td>` : `<td>${cell || ""}</td>`; }
+                    let dateLabel = /^\d{1,2}[-\/]\d{1,2}$/.test(colDate) ? (rowIndices[idx] >= 98 ? "2026" : "2025") + "/" + colDate.replace("-", "/") : colDate.replace(/-/g, "/");
+                    labels.push(dateLabel);
+                    html += `<tr><td>${dateLabel}</td>`;
+                    for (let i = 0; i < 6; i++) {
+                        let val = parseFloat(String(row[i + 1]).replace(/,/g, '')) || 0;
+                        runningTotals[i] += val;
+                        chartData[i].push(runningTotals[i]);
+                    }
+                    for (let i = 1; i <= 6; i++) {
+                        let cell = row[i];
+                        let val = parseFloat(String(cell).replace(/,/g, ''));
+                        html += (!isNaN(val) && cell !== "") ? `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')}; font-weight:bold;">${cell}</td>` : `<td>${cell || ""}</td>`;
+                    }
                     html += '</tr>';
-                } else { html += `<tr style="background-color: ${colK.includes("金額") ? "#d4edda" : "#fff3cd"}; font-weight: bold;">`; for (let i = 0; i <= 6; i++) html += `<td>${row[i] || ""}</td>`; html += '</tr>'; }
+                } else {
+                    // 💡 修正②: ALL（全シーズン）の時は、中間シーズンの「計」や「金額」を非表示にする
+                    if (season === 'ALL') {
+                        // 一番下の行（総計がある最後の数行）以外はスキップ（表示しない）
+                        if (rowIndices[idx] < lastDataIndex - 3) {
+                            return; 
+                        }
+                    }
+
+                    html += `<tr style="background-color: ${colDate.includes("金額") ? "#d4edda" : "#fff3cd"}; font-weight: bold;">`;
+                    for (let i = 0; i <= 6; i++) html += `<td>${row[i] || ""}</td>`;
+                    html += '</tr>';
+                }
             });
-            html += '</table></div>'; document.getElementById('ruikei-area').innerHTML = html;
+
+            html += '</table></div>';
+            document.getElementById('ruikei-area').innerHTML = html;
+
             if (ruikeiChart) ruikeiChart.destroy();
             const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#34495e'];
-            ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: players.map((p, i) => ({ label: p.name, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+            ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: players.map((p, i) => ({
+                        label: p.name,
+                        data: chartData[i],
+                        borderColor: colors[i],
+                        backgroundColor: colors[i],
+                        fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2
+                    }))
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
         }
 
         function loadFromCloud() {
