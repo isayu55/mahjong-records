@@ -536,12 +536,13 @@
             <h2>📅 シーズンごとの成績</h2>
             <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData(); loadS5DailyData();">🔄 最新のデータを読み込む</button>
             <select id="season-selector" class="season-select" onchange="renderRuikeiTableAndChart()">
-                <option value="S5">🟢 S5 (今シーズン - 2026年)</option>
+                <option value="S6">🟢 S6 (今シーズン - 2026年)</option>
+                <option value="S5">⚪ S5 (2026年)</option>
                 <option value="S4">⚪ S4 (2025年)</option>
                 <option value="S3">⚪ S3 (2025年)</option>
                 <option value="S2">⚪ S2 (2025年)</option>
                 <option value="S1">⚪ S1 (2025年)</option>
-                <option value="ALL">🔥 全シーズン（S1〜S5累積）</option>
+                <option value="ALL">🔥 全シーズン（S1〜S6累積）</option>
             </select>
             <div class="chart-container"><canvas id="ruikei-chart"></canvas></div>
             <h3 style="margin-top: 20px;">📊 成績表</h3>
@@ -549,7 +550,7 @@
 
             <hr style="border: 1px dashed #ccc; margin: 30px 0;">
 
-            <h2>📅 日別詳細成績（S5）</h2>
+            <h2>📅 日別詳細成績（S6）</h2>
             <div style="margin-bottom:15px; background:#e8f4f8; padding:15px; border-radius:10px; text-align:center;">
                 <div id="daily-date-display" style="font-size:32px; font-weight:bold; color:#2980b9; margin-bottom:15px;">読み込み中...</div>
 
@@ -568,7 +569,7 @@
         <div id="hanchan-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📊 AI分析ダッシュボード</h2>
-            <p style="text-align:center; font-size:12px; color:#666;">※S4+S5の半荘データを元に計算されています</p>
+            <p style="text-align:center; font-size:12px; color:#666;">※S4~S6の半荘データを元に計算されています</p>
             <button class="btn btn-analysis" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadHanchanData()">🔄 最新のデータを読み込む</button>
             <div id="ai-commentary" class="ai-report"><p style="text-align:center;">☁️ データを読み込んでAIレポートを作成しています...</p></div>
             <div class="chart-title" style="margin-top: 30px;">🕸️ プレイスタイル（能力パラメーター）</div>
@@ -597,7 +598,7 @@
     <div id="custom-confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
         <div style="background:#fff; padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.2s;">
             <p style="font-size:20px; font-weight:bold; color:#e74c3c; margin-top:0; margin-bottom:15px;">本当に削除しても<br>よろしいですか？</p>
-            <p style="font-size:12px; color:#666; margin-bottom:25px;">（S5分析・累計シートからも自動的に削除・修復されます）</p>
+            <p style="font-size:12px; color:#666; margin-bottom:25px;">（S6分析・累計シートからも自動的に削除・修復されます）</p>
             <button onclick="executeDelete()" style="background:#e74c3c; color:#fff; border:none; padding:18px; border-radius:8px; width:100%; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:15px; box-shadow:0 4px 0 #c0392b; transition:0.1s;">よろしくお願いしまぁぁぁぁぁぁぁぁぁぁぁす！</button>
             <button onclick="closeConfirmModal()" style="background:#95a5a6; color:#fff; border:none; padding:12px; border-radius:8px; width:100%; font-size:15px; font-weight:bold; cursor:pointer;">やっぱりやめる</button>
         </div>
@@ -676,7 +677,7 @@
         let rankChart = null;
         let radarChartObj = null;
 
-        let s5DailyData = [];
+        let s6DailyData = [];
         let currentDailyIndex = 0;
 
         window.onload = function () {
@@ -738,7 +739,7 @@
             if (viewId === 'input-view') loadFromCloud();
             else if (viewId === 'data-view') {
                 loadRuikeiData();
-                loadS5DailyData();
+                loadS6DailyData();
             }
             else if (viewId === 'hanchan-view') loadHanchanData();
             else if (viewId === 'quiz-view') loadQuizRanking();
@@ -906,16 +907,16 @@
         }
 
         // ==========================================
-        // ▼ 日別成績（S5分析＆チップ逆算）処理 ▼
+        // ▼ 日別成績（S6分析＆チップ逆算）処理 ▼
         // ==========================================
-        function loadS5DailyData() {
+        function loadS6DailyData() {
             document.getElementById('daily-date-display').innerText = "☁️ 読込中...";
-            fetch(GAS_URL + "?action=getS5Analysis&t=" + new Date().getTime())
+            fetch(GAS_URL + "?action=getS6Analysis&t=" + new Date().getTime())
                 .then(res => res.json())
                 .then(data => {
-                    parseS5Data(data);
-                    if (s5DailyData.length > 0) {
-                        currentDailyIndex = s5DailyData.length - 1;
+                    parseS6Data(data);
+                    if (s6DailyData.length > 0) {
+                        currentDailyIndex = s6DailyData.length - 1;
                         renderDailyView();
                     } else {
                         document.getElementById('daily-date-display').innerText = "データなし";
@@ -929,8 +930,8 @@
                 });
         }
 
-        function parseS5Data(data) {
-            s5DailyData = [];
+        function parseS6Data(data) {
+            s6DailyData = [];
             let currentDayObj = null;
 
             for (let i = 1; i < data.length; i++) {
@@ -944,7 +945,7 @@
 
                 if (!currentDayObj || currentDayObj.date !== dateStr) {
                     currentDayObj = { date: dateStr, games: [], totals: [0, 0, 0, 0, 0, 0] };
-                    s5DailyData.push(currentDayObj);
+                    s6DailyData.push(currentDayObj);
                 }
 
                 let scores = [];
@@ -959,11 +960,11 @@
         }
 
         // ==========================================
-        // ▼ 日別成績（S5）の描画ロジック
+        // ▼ 日別成績（S6）の描画ロジック
         // ==========================================
         function renderDailyView() {
-            if (s5DailyData.length === 0) return;
-            let dayData = s5DailyData[currentDailyIndex];
+            if (s6DailyData.length === 0) return;
+            let dayData = s6DailyData[currentDailyIndex];
             document.getElementById('daily-date-display').innerText = dayData.date;
 
             document.getElementById('daily-summary-area').innerHTML = "<p style='text-align:center; font-weight:bold; color:#2980b9;'>☁️ 日別詳細データを取得中...</p>";
@@ -1108,7 +1109,7 @@
         function changeDailyDate(dir) {
             currentDailyIndex += dir;
             if (currentDailyIndex < 0) currentDailyIndex = 0;
-            if (currentDailyIndex >= s5DailyData.length) currentDailyIndex = s5DailyData.length - 1;
+            if (currentDailyIndex >= s6DailyData.length) currentDailyIndex = s6DailyData.length - 1;
             renderDailyView();
         }
 
@@ -1519,14 +1520,14 @@
                 cachedRuikeiData = data;
                 renderRuikeiTableAndChart();
 
-                if (s5DailyData.length > 0) renderDailyView();
+                if (s6DailyData.length > 0) renderDailyView();
             });
         }
 
         function renderRuikeiTableAndChart() {
             if (!cachedRuikeiData || cachedRuikeiData.length === 0) return;
             let season = document.getElementById('season-selector').value; let targetRows = []; let rowIndices = [];
-            const ranges = { 'S1': { start: 1, end: 7 }, 'S2': { start: 10, end: 22 }, 'S3': { start: 27, end: 40 }, 'S4': { start: 46, end: 59 }, 'S5': { start: 70, end: cachedRuikeiData.length - 1 } };
+            const ranges = { 'S1': { start: 1, end: 7 }, 'S2': { start: 10, end: 22 }, 'S3': { start: 27, end: 40 }, 'S4': { start: 46, end: 59 }, 'S5': { start: 70, end: 79 }, 'S6': { start: 98, end: cachedRuikeiData.length - 1 } };
             if (season === 'ALL') { cachedRuikeiData.forEach((row, i) => { targetRows.push(row); rowIndices.push(i); }); } else { for (let i = ranges[season].start; i <= ranges[season].end; i++) if (cachedRuikeiData[i]) { targetRows.push(cachedRuikeiData[i]); rowIndices.push(i); } }
             let html = '<div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
             let labels = []; let chartData = [[], [], [], [], [], []]; let runningTotals = [0, 0, 0, 0, 0, 0];
@@ -1534,7 +1535,7 @@
                 let colK = String(row[0]).trim(); if (!colK) return;
                 let isDate = /^(?:20\d{2}[-/])?\d{1,2}[-/]\d{1,2}$/.test(colK) || /^\d{1,2}月\d{1,2}日$/.test(colK);
                 if (isDate) {
-                    let dateLabel = /^\d{1,2}[-/]\d{1,2}$/.test(colK) ? (rowIndices[idx] >= 70 ? "2026" : "2025") + "/" + colK.replace("-", "/") : colK.replace(/-/g, "/");
+                    let dateLabel = /^\d{1,2}[-/]\d{1,2}$/.test(colK) ? (rowIndices[idx] >= 98 ? "2026" : "2025") + "/" + colK.replace("-", "/") : colK.replace(/-/g, "/");
                     labels.push(dateLabel); html += `<tr><td>${dateLabel}</td>`;
                     for (let i = 0; i < 6; i++) { let val = parseFloat(String(row[i + 1]).replace(/,/g, '')) || 0; runningTotals[i] += val; chartData[i].push(runningTotals[i]); }
                     for (let i = 1; i <= 6; i++) { let cell = row[i]; let val = parseFloat(String(cell).replace(/,/g, '')); html += (!isNaN(val) && cell !== "") ? `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')}; font-weight:bold;">${cell}</td>` : `<td>${cell || ""}</td>`; }
