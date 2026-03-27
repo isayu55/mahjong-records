@@ -1526,8 +1526,19 @@
 
         function renderRuikeiTableAndChart() {
             if (!cachedRuikeiData || cachedRuikeiData.length === 0) return;
-            let season = document.getElementById('season-selector').value; let targetRows = []; let rowIndices = [];
-            const ranges = { 'S1': { start: 1, end: 7 }, 'S2': { start: 10, end: 22 }, 'S3': { start: 27, end: 40 }, 'S4': { start: 46, end: 59 }, 'S5': { start: 70, end: 83 }, 'S6': { start: 98, end: cachedRuikeiData.length - 1 } };
+            let season = document.getElementById('season-selector').value;
+            let targetRows = [];
+            let rowIndices = [];
+
+            const ranges = {
+                'S1': { start: 1, end: 8 },
+                'S2': { start: 10, end: 25 },
+                'S3': { start: 27, end: 43 },
+                'S4': { start: 46, end: 67 },
+                'S5': { start: 70, end: 92 },
+                'S6': { start: 97, end: 118 }
+            };
+
             if (season === 'ALL') {
                 cachedRuikeiData.forEach((row, i) => { targetRows.push(row); rowIndices.push(i); });
             } else {
@@ -1539,32 +1550,29 @@
                 }
             }
 
-            // データが一番下どこまであるか（空白行を除外して計算）
-            let lastDataIndex = cachedRuikeiData.length - 1;
-            while(lastDataIndex > 0 && String(cachedRuikeiData[lastDataIndex][0]).trim() === "") {
-                lastDataIndex--;
-            }
-
             let html = '<div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
             let labels = [];
             let chartData = [[], [], [], [], [], []];
-            let runningTotals = [0, 0, 0, 0, 0, 0];
+            let runningTotals = [0, 0, 0, 0, 0, 0]; 
 
             targetRows.forEach((row, idx) => {
                 let colDate = String(row[0]).trim();
                 if (!colDate) return;
 
+                // 日付行かどうかの判定
                 let isDate = /^(?:20\d{2}[-\/])?\d{1,2}[-\/]\d{1,2}$/.test(colDate) || /^\d{1,2}月\d{1,2}日$/.test(colDate);
 
                 if (isDate) {
                     let dateLabel = /^\d{1,2}[-\/]\d{1,2}$/.test(colDate) ? (rowIndices[idx] >= 98 ? "2026" : "2025") + "/" + colDate.replace("-", "/") : colDate.replace(/-/g, "/");
                     labels.push(dateLabel);
                     html += `<tr><td>${dateLabel}</td>`;
+                    
                     for (let i = 0; i < 6; i++) {
                         let val = parseFloat(String(row[i + 1]).replace(/,/g, '')) || 0;
-                        runningTotals[i] += val;
+                        runningTotals[i] += val; 
                         chartData[i].push(runningTotals[i]);
                     }
+                    
                     for (let i = 1; i <= 6; i++) {
                         let cell = row[i];
                         let val = parseFloat(String(cell).replace(/,/g, ''));
@@ -1572,16 +1580,44 @@
                     }
                     html += '</tr>';
                 } else {
-                    // 💡 修正②: ALL（全シーズン）の時は、中間シーズンの「計」や「金額」を非表示にする
+                    // 💡 修正: 他の行の「三麻」と被らないように、完全一致に近い形で指定する！
+                    // （※「四麻t得点計」のようなタイポがあっても拾えるように保険で入れておきます）
+                    let summaryKeywords = ["三麻得点計", "三麻金額計", "四麻得点計", "四麻金額計", "総計"];
+                    let isUserSummary = summaryKeywords.some(kw => colDate.includes(kw));
+
                     if (season === 'ALL') {
-                        // 一番下の行（総計がある最後の数行）以外はスキップ（表示しない）
-                        if (rowIndices[idx] < lastDataIndex - 3) {
-                            return; 
-                        }
+                        // ALLの時は「集計表(isUserSummary)」だけを表示し、途中のS1計などは無視する
+                        if (!isUserSummary) return; 
+                    } else {
+                        // 各シーズンの時は「集計表(isUserSummary)」が一番下に間違って混ざらないように無視する
+                        if (isUserSummary) return; 
                     }
 
-                    html += `<tr style="background-color: ${colDate.includes("金額") ? "#d4edda" : "#fff3cd"}; font-weight: bold;">`;
-                    for (let i = 0; i <= 6; i++) html += `<td>${row[i] || ""}</td>`;
+                    // 行の種類に合わせて背景色を分かりやすく設定
+                    let bgColor = "#fff3cd"; // デフォルト（黄色っぽい）
+                    if (colDate.includes("金額")) bgColor = "#d4edda"; // 金額（緑っぽい）
+                    if (colDate.includes("総計")) bgColor = "#f1c40f"; // 総計（濃い黄金色）
+
+                    // 総計の行だけ少し文字を大きくして影をつける
+                    html += `<tr style="background-color: ${bgColor}; font-weight: bold; ${colDate.includes('総計') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}">`;
+                    
+                    // C列のラベル名を表示
+                    html += `<td>${colDate}</td>`;
+
+                    // 各プレイヤーの数値を表示（D列〜I列）
+                    for (let i = 1; i <= 6; i++) {
+                        let cell = row[i];
+                        
+                        // 💡 ¥マーク(半角・全角)やカンマが含まれていても数字として判定できるようにする
+                        let val = parseFloat(String(cell).replace(/[,¥￥]/g, ''));
+                        
+                        // 値が数字ならプラスマイナスの色を付けて表示
+                        if (!isNaN(val) && cell !== "") {
+                            html += `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')};">${cell}</td>`;
+                        } else {
+                            html += `<td>${cell || ""}</td>`;
+                        }
+                    }
                     html += '</tr>';
                 }
             });
@@ -1606,7 +1642,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
         }
-
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
