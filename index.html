@@ -862,9 +862,9 @@
                 let waitImgs = "";
                 opt.waits.forEach(w => {
                     waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
-                                        <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
-                                        <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
-                                    </div>`;
+                                            <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
+                                            <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
+                                        </div>`;
                 });
 
                 let prob = (opt.win_prob * 100).toFixed(1);
@@ -879,27 +879,27 @@
                 if (isUserChoice) badge += '<span style="color:#3498db; font-weight:bold; font-size:13px;">👉 あなたの選択</span> ';
 
                 detailsHtml += `
-                                    <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                                        <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
-                                            ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                                        <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                            <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
+                                                ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                                            </div>
+                                            <div style="margin-bottom:10px;">${waitImgs}</div>
+                                            <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                                                <tr style="background:#ecf0f1;">
+                                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
+                                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
+                                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
+                                                    <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
+                                                    <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
+                                                    <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
+                                                    <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
+                                                </tr>
+                                            </table>
                                         </div>
-                                        <div style="margin-bottom:10px;">${waitImgs}</div>
-                                        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
-                                            <tr style="background:#ecf0f1;">
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
-                                                <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
-                                                <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
-                                                <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                `;
+                                    `;
             });
 
             infoEl.innerHTML = detailsHtml;
@@ -1053,11 +1053,11 @@
                         }
 
                         gamesHtml += `<div class="history-card">
-                                                <div class="history-header">
-                                                    <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
-                                                </div>
-                                                ${details}
-                                              </div>`;
+                                                    <div class="history-header">
+                                                        <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
+                                                    </div>
+                                                    ${details}
+                                                  </div>`;
                     });
 
                     // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
@@ -1089,12 +1089,12 @@
                         let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
                         summaryHtml += `<tr>
-                                                <td style="font-weight:bold;">${d.name}</td>
-                                                <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
-                                                <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
-                                                <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                                <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
-                                            </tr>`;
+                                                    <td style="font-weight:bold;">${d.name}</td>
+                                                    <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                                    <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                                                    <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                                                    <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                                                </tr>`;
                     });
                     summaryHtml += '</table></div>';
 
@@ -1137,9 +1137,9 @@
                 // widthを20px → 28pxに拡大
                 let imgs = item.q.map(n => `<img src="${n}p.png" style="width:28px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list7Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                                <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                                <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                            </div>`;
+                                    <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                                    <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                                </div>`;
             });
             document.getElementById('quiz-list-7').innerHTML = list7Html;
 
@@ -1149,9 +1149,9 @@
                 // widthを18px → 24pxに拡大（10枚並ぶので少しだけ小さめ）
                 let imgs = item.q.map(n => `<img src="${n}s.png" style="width:24px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list10Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                                <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                                <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                            </div>`;
+                                    <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                                    <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                                </div>`;
             });
             document.getElementById('quiz-list-10').innerHTML = list10Html;
         }
@@ -1184,14 +1184,14 @@
                                     // 表示をスッキリさせるため「(7枚)」などのタグを消す
                                     let cleanName = listData[i].name.replace(" (7枚)", "").replace(" (10枚)", "");
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; font-weight:bold; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                            <span>${medals[i]} ${cleanName}</span>
-                                                            <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
-                                                         </div>`;
+                                                                <span>${medals[i]} ${cleanName}</span>
+                                                                <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
+                                                             </div>`;
                                 } else {
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; color:#ccc; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                            <span>${medals[i]} ---</span>
-                                                            <span>--.-s</span>
-                                                         </div>`;
+                                                                <span>${medals[i]} ---</span>
+                                                                <span>--.-s</span>
+                                                             </div>`;
                                 }
                             }
                         }
@@ -1531,12 +1531,12 @@
             let rowIndices = [];
 
             const ranges = {
-                'S1': { start: 1, end: 8 },
+                'S1': { start: 1, end: 9 },
                 'S2': { start: 10, end: 25 },
-                'S3': { start: 27, end: 43 },
-                'S4': { start: 46, end: 67 },
-                'S5': { start: 70, end: 92 },
-                'S6': { start: 97, end: 118 }
+                'S3': { start: 27, end: 42 },
+                'S4': { start: 44, end: 62 },
+                'S5': { start: 65, end: 83 },
+                'S6': { start: 85, end: 103 }
             };
 
             if (season === 'ALL') {
@@ -1553,7 +1553,7 @@
             let html = '<div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
             let labels = [];
             let chartData = [[], [], [], [], [], []];
-            let runningTotals = [0, 0, 0, 0, 0, 0]; 
+            let runningTotals = [0, 0, 0, 0, 0, 0];
 
             targetRows.forEach((row, idx) => {
                 let colDate = String(row[0]).trim();
@@ -1566,13 +1566,13 @@
                     let dateLabel = /^\d{1,2}[-\/]\d{1,2}$/.test(colDate) ? (rowIndices[idx] >= 98 ? "2026" : "2025") + "/" + colDate.replace("-", "/") : colDate.replace(/-/g, "/");
                     labels.push(dateLabel);
                     html += `<tr><td>${dateLabel}</td>`;
-                    
+
                     for (let i = 0; i < 6; i++) {
                         let val = parseFloat(String(row[i + 1]).replace(/,/g, '')) || 0;
-                        runningTotals[i] += val; 
+                        runningTotals[i] += val;
                         chartData[i].push(runningTotals[i]);
                     }
-                    
+
                     for (let i = 1; i <= 6; i++) {
                         let cell = row[i];
                         let val = parseFloat(String(cell).replace(/,/g, ''));
@@ -1582,35 +1582,35 @@
                 } else {
                     // 💡 修正: 他の行の「三麻」と被らないように、完全一致に近い形で指定する！
                     // （※「四麻t得点計」のようなタイポがあっても拾えるように保険で入れておきます）
-                    let summaryKeywords = ["三麻得点計", "三麻金額計", "四麻得点計", "四麻金額計", "総計"];
+                    let summaryKeywords = ["三麻得点計", "三麻ソシー計", "四麻得点計", "四麻ソシー計", "ソシー計"];
                     let isUserSummary = summaryKeywords.some(kw => colDate.includes(kw));
 
                     if (season === 'ALL') {
                         // ALLの時は「集計表(isUserSummary)」だけを表示し、途中のS1計などは無視する
-                        if (!isUserSummary) return; 
+                        if (!isUserSummary) return;
                     } else {
                         // 各シーズンの時は「集計表(isUserSummary)」が一番下に間違って混ざらないように無視する
-                        if (isUserSummary) return; 
+                        if (isUserSummary) return;
                     }
 
                     // 行の種類に合わせて背景色を分かりやすく設定
                     let bgColor = "#fff3cd"; // デフォルト（黄色っぽい）
-                    if (colDate.includes("金額")) bgColor = "#d4edda"; // 金額（緑っぽい）
-                    if (colDate.includes("総計")) bgColor = "#f1c40f"; // 総計（濃い黄金色）
+                    if (colDate.includes("ソシー")) bgColor = "#d4edda"; // 金額（緑っぽい）
+                    if (colDate.includes("総ソシー")) bgColor = "#f1c40f"; // 総計（濃い黄金色）
 
                     // 総計の行だけ少し文字を大きくして影をつける
-                    html += `<tr style="background-color: ${bgColor}; font-weight: bold; ${colDate.includes('総計') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}">`;
-                    
+                    html += `<tr style="background-color: ${bgColor}; font-weight: bold; ${colDate.includes('総ソシー') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}">`;
+
                     // C列のラベル名を表示
                     html += `<td>${colDate}</td>`;
 
                     // 各プレイヤーの数値を表示（D列〜I列）
                     for (let i = 1; i <= 6; i++) {
                         let cell = row[i];
-                        
+
                         // 💡 ¥マーク(半角・全角)やカンマが含まれていても数字として判定できるようにする
                         let val = parseFloat(String(cell).replace(/[,¥￥]/g, ''));
-                        
+
                         // 値が数字ならプラスマイナスの色を付けて表示
                         if (!isNaN(val) && cell !== "") {
                             html += `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')};">${cell}</td>`;
@@ -1759,8 +1759,8 @@
         // ==========================================
         function updateUI() {
             let totals = {};
-            // 💡 追加：トップとラスの回数をカウントするための箱を用意
-            players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0, top: 0, last: 0 });
+            // 💡 三麻と四麻でPtを分ける
+            players.forEach(p => totals[p.id] = { sanmaPt: 0, yonmaPt: 0, chipRaw: 0, top: 0, last: 0 });
             let historyHtml = ""; let hanchanCount = 1;
 
             records.forEach(rec => {
@@ -1768,14 +1768,14 @@
                 if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
                 if (hasC && !hasS) { title = "チップのみ"; }
 
-                // 💡 追加：トップとラスの回数を計算
+                // 三麻か四麻かの判定（GASから取得したmode、無ければ合計点から推測）
+                let ptsSum = 0;
+                players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
+                let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
+
                 if (hasS) {
                     let gameScores = [];
-                    players.forEach(p => {
-                        if (rec.points[p.id] !== undefined) {
-                            gameScores.push({ id: p.id, score: rec.points[p.id] });
-                        }
-                    });
+                    players.forEach(p => { if (rec.points[p.id] !== undefined) gameScores.push({ id: p.id, score: rec.points[p.id] }); });
                     if (gameScores.length > 0) {
                         gameScores.sort((a, b) => b.score - a.score);
                         totals[gameScores[0].id].top++;
@@ -1786,13 +1786,9 @@
                 let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
                 sortedPlayers.sort((a, b) => {
                     if (hasS) {
-                        let ptA = rec.points[a.id] !== undefined ? rec.points[a.id] : -99999;
-                        let ptB = rec.points[b.id] !== undefined ? rec.points[b.id] : -99999;
-                        return ptB - ptA;
+                        return (rec.points[b.id] !== undefined ? rec.points[b.id] : -99999) - (rec.points[a.id] !== undefined ? rec.points[a.id] : -99999);
                     } else {
-                        let cA = rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999;
-                        let cB = rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999;
-                        return cB - cA;
+                        return (rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999) - (rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999);
                     }
                 });
 
@@ -1800,14 +1796,15 @@
                     let text = [];
                     let gameRawPt = rec.points[p.id];
                     let gameChipRaw = rec.chips[p.id] || 0;
-                    let gameChipPt = gameChipRaw * 2;
 
                     if (gameRawPt !== undefined) {
-                        totals[p.id].rawPt += gameRawPt;
+                        if (isYonma) totals[p.id].yonmaPt += gameRawPt;
+                        else totals[p.id].sanmaPt += gameRawPt;
                         text.push(`<span class="${gameRawPt > 0 ? 'plus' : (gameRawPt < 0 ? 'minus' : '')}">得点${gameRawPt > 0 ? '+' : ''}${gameRawPt.toFixed(1)}</span>`);
                     }
                     if (gameChipRaw !== 0) {
                         totals[p.id].chipRaw += gameChipRaw;
+                        let gameChipPt = gameChipRaw * 2;
                         text.push(`<span class="${gameChipPt > 0 ? 'plus' : (gameChipPt < 0 ? 'minus' : '')}">チップ${gameChipPt > 0 ? '+' : ''}${gameChipPt.toFixed(1)}</span>`);
                     }
                     if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
@@ -1816,43 +1813,38 @@
             });
             document.getElementById('history-area').innerHTML = records.length === 0 ? "<p style='text-align:center; color:#999;'>まだ記録がありません</p>" : historyHtml;
 
-            // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
             let summaryData = [];
             players.forEach(p => {
-                let rawPt = totals[p.id].rawPt;
+                let sanma = totals[p.id].sanmaPt;
+                let yonma = totals[p.id].yonmaPt;
                 let chipPt = totals[p.id].chipRaw * 2;
-                let finalPt = rawPt + chipPt;
+                let finalPt = sanma + yonma + chipPt;
 
-                if (rawPt !== 0 || totals[p.id].chipRaw !== 0) {
-                    summaryData.push({
-                        name: p.name,
-                        rawPt: rawPt,
-                        chipPt: chipPt,
-                        finalPt: finalPt,
-                        top: totals[p.id].top,
-                        last: totals[p.id].last
-                    });
+                if (sanma !== 0 || yonma !== 0 || totals[p.id].chipRaw !== 0) {
+                    summaryData.push({ name: p.name, sanma: sanma, yonma: yonma, chipPt: chipPt, finalPt: finalPt, top: totals[p.id].top, last: totals[p.id].last });
                 }
             });
 
-            // 最終Pの大きい順にソート
             summaryData.sort((a, b) => b.finalPt - a.finalPt);
 
-            let totalHtml = `<tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>`;
+            // 💡 表のヘッダーと中身を「三麻」と「四麻」に分裂
+            let totalHtml = `<tr><th style="min-width:60px;">名前</th><th>三麻得点</th><th>四麻得点</th><th>チップ計</th><th style="font-size:12px;">トップ/ラス</th><th>最終P</th></tr>`;
             summaryData.forEach(d => {
-                let sCol = d.rawPt > 0 ? 'plus' : (d.rawPt < 0 ? 'minus' : '');
+                let sCol = d.sanma > 0 ? 'plus' : (d.sanma < 0 ? 'minus' : '');
+                let yCol = d.yonma > 0 ? 'plus' : (d.yonma < 0 ? 'minus' : '');
                 let cCol = d.chipPt > 0 ? 'plus' : (d.chipPt < 0 ? 'minus' : '');
                 let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
                 totalHtml += `<tr>
                                         <td style="font-weight:bold;">${d.name}</td>
-                                        <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                        <td class="${sCol}">${d.sanma > 0 ? '+' : ''}${d.sanma.toFixed(1)}</td>
+                                        <td class="${yCol}">${d.yonma > 0 ? '+' : ''}${d.yonma.toFixed(1)}</td>
                                         <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
                                         <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                        <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                                        <td class="${fCol}" style="font-size:16px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
                                     </tr>`;
             });
-            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="5" style="color:#999;">データがありません</td></tr>` : totalHtml;
+            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="6" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
 
         // ==========================================
@@ -1935,10 +1927,10 @@
                 document.body.appendChild(undoArea);
             }
             undoArea.innerHTML = `
-                        <span>🗑️ 記録を削除しました</span>
-                        <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
-                        <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
-                    `;
+                            <span>🗑️ 記録を削除しました</span>
+                            <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
+                            <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
+                        `;
             undoArea.style.display = 'flex';
             undoArea.style.opacity = '1';
 
