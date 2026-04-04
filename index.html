@@ -1747,6 +1747,9 @@
         // ==========================================
         // ▼ 記録入力画面の更新（こちらも表示を統一）
         // ==========================================
+// ==========================================
+        // ▼ 記録入力画面の更新（こちらも表示を統一）
+        // ==========================================
         function updateUI() {
             let totals = {};
             // 💡 三麻と四麻でPtを分ける
@@ -1756,7 +1759,7 @@
             records.forEach(rec => {
                 let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
 
-                // 💡 追加：合計得点かGASからのモード情報で三麻/四麻を判定
+                // 💡 追加：合計得点かGASからのモード情報で三麻/四麻を判定 (ここで1回だけ宣言！)
                 let ptsSum = 0;
                 players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
                 let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
@@ -1767,15 +1770,7 @@
                         : '<span style="background:#27ae60; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">三麻</span>';
                     title += `${modeBadge}第${hanchanCount}半荘 `;
                     hanchanCount++;
-                }
-                if (hasC && !hasS) { title = "チップのみ"; }
 
-                // 三麻か四麻かの判定（GASから取得したmode、無ければ合計点から推測）
-                let ptsSum = 0;
-                players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
-                let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
-
-                if (hasS) {
                     let gameScores = [];
                     players.forEach(p => { if (rec.points[p.id] !== undefined) gameScores.push({ id: p.id, score: rec.points[p.id] }); });
                     if (gameScores.length > 0) {
@@ -1784,6 +1779,7 @@
                         totals[gameScores[gameScores.length - 1].id].last++;
                     }
                 }
+                if (hasC && !hasS) { title = "チップのみ"; }
 
                 let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
                 sortedPlayers.sort((a, b) => {
@@ -1829,7 +1825,6 @@
 
             summaryData.sort((a, b) => b.finalPt - a.finalPt);
 
-            // 💡 表のヘッダーと中身を「三麻」と「四麻」に分裂
             let totalHtml = `<tr><th style="min-width:60px;">名前</th><th>三麻得点</th><th>四麻得点</th><th>チップ計</th><th style="font-size:12px;">トップ/ラス</th><th>最終P</th></tr>`;
             summaryData.forEach(d => {
                 let sCol = d.sanma > 0 ? 'plus' : (d.sanma < 0 ? 'minus' : '');
