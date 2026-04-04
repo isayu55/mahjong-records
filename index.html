@@ -1740,6 +1740,8 @@
             let finalPoints = {}; players.forEach(p => { finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0); });
 
             let postData = {
+                action: "saveRecord",
+                mode: mode,
                 date: document.getElementById('play-date').value || new Date().toISOString().split('T')[0], timestamp: recordData.timestamp,
                 takai_score: recordData.points['takai'] !== undefined ? recordData.points['takai'] : "", takai_chip: recordData.chips['takai'] || "", yamaguchi_score: recordData.points['yamaguchi'] !== undefined ? recordData.points['yamaguchi'] : "", yamaguchi_chip: recordData.chips['yamaguchi'] || "", yamashita_score: recordData.points['yamashita'] !== undefined ? recordData.points['yamashita'] : "", yamashita_chip: recordData.chips['yamashita'] || "", dyna_score: recordData.points['dyna'] !== undefined ? recordData.points['dyna'] : "", dyna_chip: recordData.chips['dyna'] || "", tokuda_score: recordData.points['tokuda'] !== undefined ? recordData.points['tokuda'] : "", tokuda_chip: recordData.chips['tokuda'] || "", tasuku_score: recordData.points['tasuku'] !== undefined ? recordData.points['tasuku'] : "", tasuku_chip: recordData.chips['tasuku'] || "",
                 total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'], total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'], secret: localStorage.getItem('mahjong_auth')
