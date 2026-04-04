@@ -998,7 +998,19 @@
                         let title = "";
                         let hasS = Object.keys(rec.points).length > 0;
                         let hasC = Object.keys(rec.chips).length > 0;
-                        if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
+
+                        // 💡 追加：合計得点かGASからのモード情報で三麻/四麻を判定
+                        let ptsSum = 0;
+                        players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
+                        let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
+
+                        if (hasS) {
+                            let modeBadge = isYonma
+                                ? '<span style="background:#8e44ad; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">四麻</span>'
+                                : '<span style="background:#27ae60; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">三麻</span>';
+                            title += `${modeBadge}第${hanchanCount}半荘 `;
+                            hanchanCount++;
+                        }
                         if (hasC && !hasS) { title = "チップのみ"; }
 
                         // 💡 追加：トップとラスの回数を計算
@@ -1767,7 +1779,19 @@
 
             records.forEach(rec => {
                 let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
-                if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
+
+                // 💡 追加：合計得点かGASからのモード情報で三麻/四麻を判定
+                let ptsSum = 0;
+                players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
+                let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
+
+                if (hasS) {
+                    let modeBadge = isYonma
+                        ? '<span style="background:#8e44ad; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">四麻</span>'
+                        : '<span style="background:#27ae60; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">三麻</span>';
+                    title += `${modeBadge}第${hanchanCount}半荘 `;
+                    hanchanCount++;
+                }
                 if (hasC && !hasS) { title = "チップのみ"; }
 
                 // 三麻か四麻かの判定（GASから取得したmode、無ければ合計点から推測）
