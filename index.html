@@ -994,12 +994,9 @@
                     let hanchanCount = 1;
 
                     records.forEach(rec => {
-                        let details = "";
-                        let title = "";
-                        let hasS = Object.keys(rec.points).length > 0;
-                        let hasC = Object.keys(rec.chips).length > 0;
+                        let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
 
-                        // 💡 追加：合計得点かGASからのモード情報で三麻/四麻を判定
+                        // 💡 三麻/四麻を判定（重複をなくし、ここで1回だけ宣言します）
                         let ptsSum = 0;
                         players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
                         let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
@@ -1010,34 +1007,24 @@
                                 : '<span style="background:#27ae60; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">三麻</span>';
                             title += `${modeBadge}第${hanchanCount}半荘 `;
                             hanchanCount++;
-                        }
-                        if (hasC && !hasS) { title = "チップのみ"; }
 
-                        // 💡 追加：トップとラスの回数を計算
-                        if (hasS) {
+                            // トップとラスの集計
                             let gameScores = [];
-                            players.forEach(p => {
-                                if (rec.points[p.id] !== undefined) {
-                                    gameScores.push({ id: p.id, score: rec.points[p.id] });
-                                }
-                            });
+                            players.forEach(p => { if (rec.points[p.id] !== undefined) gameScores.push({ id: p.id, score: rec.points[p.id] }); });
                             if (gameScores.length > 0) {
                                 gameScores.sort((a, b) => b.score - a.score);
-                                totals[gameScores[0].id].top++; // 1位
-                                totals[gameScores[gameScores.length - 1].id].last++; // 最下位
+                                totals[gameScores[0].id].top++;
+                                totals[gameScores[gameScores.length - 1].id].last++;
                             }
                         }
+                        if (hasC && !hasS) { title = "チップのみ"; }
 
                         let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
                         sortedPlayers.sort((a, b) => {
                             if (hasS) {
-                                let ptA = rec.points[a.id] !== undefined ? rec.points[a.id] : -99999;
-                                let ptB = rec.points[b.id] !== undefined ? rec.points[b.id] : -99999;
-                                return ptB - ptA;
+                                return (rec.points[b.id] !== undefined ? rec.points[b.id] : -99999) - (rec.points[a.id] !== undefined ? rec.points[a.id] : -99999);
                             } else {
-                                let cA = rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999;
-                                let cB = rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999;
-                                return cB - cA;
+                                return (rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999) - (rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999);
                             }
                         });
 
@@ -1045,31 +1032,20 @@
                             let text = [];
                             let gameRawPt = rec.points[p.id];
                             let gameChipRaw = rec.chips[p.id] || 0;
-                            let gameChipPt = gameChipRaw * 2;
 
                             if (gameRawPt !== undefined) {
-                                totals[p.id].rawPt += gameRawPt;
+                                if (isYonma) totals[p.id].yonmaPt += gameRawPt;
+                                else totals[p.id].sanmaPt += gameRawPt;
                                 text.push(`<span class="${gameRawPt > 0 ? 'plus' : (gameRawPt < 0 ? 'minus' : '')}">得点${gameRawPt > 0 ? '+' : ''}${gameRawPt.toFixed(1)}</span>`);
                             }
                             if (gameChipRaw !== 0) {
                                 totals[p.id].chipRaw += gameChipRaw;
+                                let gameChipPt = gameChipRaw * 2;
                                 text.push(`<span class="${gameChipPt > 0 ? 'plus' : (gameChipPt < 0 ? 'minus' : '')}">チップ${gameChipPt > 0 ? '+' : ''}${gameChipPt.toFixed(1)}</span>`);
                             }
                             if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
                         });
-
-                        let timeStr = "";
-                        if (rec.timestamp) {
-                            let m = String(rec.timestamp).match(/\d{2}:\d{2}/);
-                            timeStr = m ? m[0] : String(rec.timestamp).substring(11, 16);
-                        }
-
-                        gamesHtml += `<div class="history-card">
-                                                    <div class="history-header">
-                                                        <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
-                                                    </div>
-                                                    ${details}
-                                                  </div>`;
+                        historyHtml += `<div class="history-card"><div class="history-header"><span style="display:flex; align-items:center;">${title} <span style="font-size:10px; color:#999; margin-left:5px;">(${rec.timestamp})</span></span><div>${String(rec.id).startsWith('cloud_') ? '<span style="color:#27ae60;">☁️ 同期済</span>' : '<span style="color:#e74c3c;">⏳ 送信中...</span>'}<button id="delete-btn-${rec.id}" onclick="deleteRecord('${rec.timestamp}', '${rec.id}')" style="margin-left:10px; padding:3px 8px; font-size:12px; background:#e74c3c; color:#fff; border:none; border-radius:3px; cursor:pointer;">🗑️ 削除</button></div></div>${details}</div>`;
                     });
 
                     // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
