@@ -1469,6 +1469,7 @@
                     sheetStats[colBStr] = [row[2], row[3], row[4], row[5], row[6], row[7]];
                 }
             }
+
             let validStats = pStats.filter(s => s.matches > 0);
             if (validStats.length > 0) {
                 let aiText = "<strong style='font-size:16px;'>🤖 AIアドバイザーによるプレイヤー分析レポート</strong><br><br>";
@@ -1477,19 +1478,105 @@
                 let bestDef = [...validStats].sort((a, b) => (a.r3 / a.matches) - (b.r3 / b.matches))[0];
                 aiText += `🛡️ <strong>鉄壁の守備：</strong> ラス回避率トップは「${players[pStats.indexOf(bestDef)].name}」さん（ラス率${(bestDef.r3 / bestDef.matches * 100).toFixed(1)}%）！<br><br>`;
                 aiText += "<strong style='font-size:15px; color:#2980b9;'>📝 各プレイヤーのプレイスタイル診断</strong><br>";
+
+                // 💡 各プレイヤーの成績と「順位」を計算
+                let pData = [];
                 for (let i = 0; i < 6; i++) {
-                    let s = pStats[i]; if (s.matches === 0) continue;
-                    let topRate = s.r1 / s.matches; let lastRate = s.r3 / s.matches; let avg = s.total / s.matches; let styleTitle = ""; let styleDesc = "";
-                    if (topRate >= 0.35 && lastRate >= 0.30) { styleTitle = "超攻撃・爆発型 🌋"; styleDesc = "トップかラスかのスリリングな麻雀が特徴。"; }
-                    else if (topRate >= 0.35 && lastRate <= 0.25) { styleTitle = "パーフェクト無双型 👑"; styleDesc = "トップを量産しつつラスも引かない最強のステータス。"; }
-                    else if (topRate >= 0.30 && lastRate <= 0.30) { styleTitle = "バランス・攻撃寄り型 ⚔️"; styleDesc = "攻めと守りのバランスが良く、安定して上位に食い込める。"; }
-                    else if (lastRate <= 0.25) { styleTitle = "鉄壁の守備・安定型 🛡️"; styleDesc = "絶対にラスを引かない手堅さが最大の武器。"; }
-                    else if (topRate <= 0.25 && lastRate >= 0.35) { styleTitle = "大穴・逆襲待ち型 🌪️"; styleDesc = "大逆転劇に期待がかかります。"; }
-                    else { styleTitle = "堅実・オールラウンダー型 ⚖️"; styleDesc = "柔軟な対応が得意なバランス派。"; }
-                    aiText += `<div style="background:#fff; padding:10px; border-radius:5px; margin-top:10px; border-left:4px solid ${colors[i]}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"><span style="font-weight:bold; font-size:15px; color:${colors[i]}">👤 ${players[i].name}：【${styleTitle}】</span><br><span style="font-size:12px; color:#555; font-weight:bold;">トップ率: ${(topRate * 100).toFixed(1)}% / ラス回避: ${((1 - lastRate) * 100).toFixed(1)}% / 平均: ${avg.toFixed(1)}点</span><br><span style="font-size:13px; color:#333;">${styleDesc}</span></div>`;
+                    let s = pStats[i];
+                    if (s.matches > 0) {
+                        pData.push({
+                            idx: i,
+                            topRate: s.r1 / s.matches,
+                            lastRate: s.r3 / s.matches, // ラス率（大きいほど順位が上＝よくラスを引く）
+                            midRate: s.r2 / s.matches,
+                            avgScore: s.total / s.matches,
+                            maxScore: s.scores.length > 0 ? Math.max(...s.scores) : 0,
+                            name: players[i].name,
+                            color: colors[i],
+                            s: s
+                        });
+                    }
                 }
+
+                // 順位を計算するヘルパー関数
+                const getRank = (arr, key) => {
+                    let sorted = [...arr].sort((a, b) => b[key] - a[key]); // 降順（大きい方が1位）
+                    arr.forEach(p => p[key + 'Rank'] = sorted.findIndex(x => x.idx === p.idx) + 1);
+                };
+
+                getRank(pData, 'topRate');
+                getRank(pData, 'lastRate'); // ※1位が一番ラスを引いている人
+                getRank(pData, 'midRate');
+                getRank(pData, 'avgScore');
+                getRank(pData, 'maxScore');
+
+                // 💡 称号のバリエーション16種（上にあるものほど条件が厳しく、優先的に割り当てられる）
+                let stylesPool = [
+                    // { id: 'ouja', title: "絶対王者・神域型 👑", desc: "平均得点1位＆トップ率1位。他を寄せ付けない圧倒的な強さ。まさに卓上の支配者。", cond: p => p.avgScoreRank === 1 && p.topRateRank === 1 },
+                    { id: 'kamikaze', title: "特攻・カミカゼ型 🛩️", desc: "トップかラスか。生きるか死ぬかのヒリつく勝負を好む、生粋のギャンブラー。", cond: p => p.topRateRank <= 2 && p.lastRateRank <= 2 },
+                    { id: 'sniper', title: "一撃必殺・スナイパー型 🎯", desc: "普段は息を潜め、特大トップの一撃で全てをひっくり返す恐るべき伏兵。", cond: p => p.maxScoreRank === 1 && p.topRateRank >= 3 },
+                    { id: 'jizo', title: "平和主義・お地蔵様型 🗿", desc: "トップも取らないがラスも引かない。争いを避けて卓上の平和を守る守護神。", cond: p => p.topRateRank >= 4 && p.lastRateRank >= 4 },
+                    { id: 'assassin', title: "静かなるアサシン 🗡️", desc: "目立たないように着実にポイントを削り取る、いぶし銀のテクニックの持ち主。", cond: p => p.avgScoreRank <= 4 && p.topRateRank >= 4 },
+                    { id: 'zombie', title: "不屈・ゾンビ型 🧟", desc: "何度ラスを引いてもマイナスを抑え込む。驚異的なメンタルと粘り強さ。", cond: p => p.lastRateRank <= 2 && p.avgScoreRank <= 3 },
+                    { id: 'bulldozer', title: "猪突猛進・ブルドーザー 🚜", desc: "ブレーキの壊れたダンプカー。ひたすら前に出続けるその姿勢は清々しい。", cond: p => p.topRateRank <= 3 && p.lastRateRank <= 2 },
+
+                    // 以下は単一条件（優先度中）
+                    { id: 'berserker', title: "超攻撃・狂戦士型 🪓", desc: "トップをもぎ取る破壊力は随一。スリリングで攻撃的な麻雀が持ち味。", cond: p => p.topRateRank === 1 },
+                    { id: 'guardian', title: "鉄壁・ガーディアン型 🛡️", desc: "絶対にラスを引かない手堅さが最大の武器。圧倒的な守備力の高さが光る。", cond: p => p.lastRateRank === pData.length },
+                    { id: 'balancer', title: "堅実・バランサー型 ⚖️", desc: "状況に応じた柔軟な立ち回りが得意。大崩れしない安定感が魅力。", cond: p => p.midRateRank === 1 },
+                    { id: 'roman', title: "ロマン追及・豪腕型 💪", desc: "ツボにはまった時の爆発力は脅威。打点の高さと夢を追い求める。", cond: p => p.maxScoreRank <= 2 },
+                    { id: 'magician', title: "技巧派・マジシャン型 🎩", desc: "多彩な技で場をコントロールし、気付けば上位に食い込んでいる実力者。", cond: p => p.avgScoreRank <= 3 },
+
+                    // 誰にでも当てはまる汎用枠（優先度低）
+                    { id: 'trickster', title: "嵐を呼ぶトリックスター 🃏", desc: "場をかき乱し、誰も予想できない結末を生み出す起爆剤。", cond: p => true },
+                    { id: 'entertainer', title: "孤高のエンターテイナー 🎭", desc: "勝敗よりも卓を盛り上げることに命を懸ける、愛すべき雀士。", cond: p => true },
+                    { id: 'mood', title: "気分屋・お天気丸型 🌤️", desc: "日によって強さが乱高下。乗っている時は誰にも止められない。", cond: p => true },
+                    { id: 'gambler', title: "勝負師・ギャンブラー型 🎲", desc: "直感と度胸で勝負を切り開く。ここぞという時の勝負強さに期待。", cond: p => true }
+                ];
+
+                let assignedIds = new Set();
+
+                // レアな称号から順に、条件を満たすプレイヤーを探して割り当て
+                stylesPool.forEach(style => {
+                    if (assignedIds.size >= pData.length) return;
+                    let candidates = pData.filter(p => !p.styleObj && style.cond(p));
+                    if (candidates.length > 0) {
+                        // 複数いる場合はランダムに1人選ぶ
+                        let selected = candidates[Math.floor(Math.random() * candidates.length)];
+                        selected.styleObj = style;
+                        assignedIds.add(style.id);
+                    }
+                });
+
+                // まだ称号がないプレイヤーがいたら汎用称号から割り当て
+                pData.forEach(p => {
+                    if (!p.styleObj) {
+                        let available = stylesPool.filter(s => s.cond(p) && !assignedIds.has(s.id));
+                        let fallback = available.length > 0 ? available[Math.floor(Math.random() * available.length)] : stylesPool[12];
+                        p.styleObj = fallback;
+                        assignedIds.add(fallback.id);
+                    }
+                });
+
+                // 元のプレイヤー順に戻す
+                pData.sort((a, b) => a.idx - b.idx);
+
+                pData.forEach(p => {
+                    let s = p.s;
+                    let topRateStr = (p.topRate * 100).toFixed(1);
+                    let lastAvoidRateStr = ((1 - p.lastRate) * 100).toFixed(1); // ラス回避率
+                    let avgStr = p.avgScore.toFixed(1);
+
+                    aiText += `<div style="background:#fff; padding:10px; border-radius:5px; margin-top:10px; border-left:4px solid ${p.color}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <span style="font-weight:bold; font-size:15px; color:${p.color}">👤 ${p.name}：【${p.styleObj.title}】</span><br>
+                                <span style="font-size:12px; color:#555; font-weight:bold;">トップ率: ${topRateStr}% / ラス回避: ${lastAvoidRateStr}% / 平均: ${avgStr}点</span><br>
+                                <span style="font-size:13px; color:#333;">${p.styleObj.desc}</span>
+                               </div>`;
+                });
+
                 document.getElementById('ai-commentary').innerHTML = aiText;
             }
+
             if (radarChartObj) radarChartObj.destroy();
             let radarDatasets = [];
             for (let i = 0; i < 6; i++) {
@@ -1497,10 +1584,13 @@
                 radarDatasets.push({ label: players[i].name, data: [Math.round(Math.min(100, (s.r1 / s.matches) * 100 * 2.5)), Math.round(Math.min(100, (1 - (s.r3 / s.matches)) * 100 * 1.5)), Math.round(Math.min(100, (s.r2 / s.matches) * 100 * 2.5)), Math.round(Math.min(100, Math.max(0, (s.total / s.matches + 20) * 2.5))), Math.round(s.scores.length > 0 ? Math.min(100, Math.max(...s.scores) / 1.5) : 0)], borderColor: colors[i], backgroundColor: colors[i] + '33', borderWidth: 2, hidden: i > 2 });
             }
             radarChartObj = new Chart(document.getElementById('radar-chart').getContext('2d'), { type: 'radar', data: { labels: ['攻撃(トップ率)', '守備(ラス回避)', '堅実さ(中位率)', '平均スコア', '爆発(最大得点)'], datasets: radarDatasets }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { position: 'bottom' } } } });
+
             if (hanchanChart) hanchanChart.destroy();
             hanchanChart = new Chart(document.getElementById('hanchan-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: pNames.map((n, i) => ({ label: n, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 1 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+
             if (rankChart) rankChart.destroy();
             rankChart = new Chart(document.getElementById('rank-chart').getContext('2d'), { type: 'bar', data: { labels: pNames, datasets: [{ label: '1位率', data: pStats.map(s => s.matches ? (s.r1 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#f1c40f' }, { label: '中位率', data: pStats.map(s => s.matches ? (s.r2 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#2ecc71' }, { label: '最下位率', data: pStats.map(s => s.matches ? (s.r3 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#34495e' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, max: 100 } } } });
+
             let tbl = '<div class="table-responsive"><table class="ruikei-table">'; tbl += `<tr><th></th>${pNames.map(n => `<th>${n}</th>`).join('')}</tr>`;
             let makeRow = (title, fn) => { tbl += `<tr><th style="background:#e8f4f8;">${title}</th>`; for (let i = 0; i < 6; i++) tbl += `<td>${fn(pStats[i], i)}</td>`; tbl += `</tr>`; };
             makeRow("1位数", s => s.r1); makeRow("1位率", s => s.matches ? (s.r1 / s.matches * 100).toFixed(2) + "%" : "0%");
