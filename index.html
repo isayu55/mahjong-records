@@ -986,9 +986,9 @@
                         return;
                     }
 
-                    let totals = {};
-                    // 💡 日別成績用は「rawPt」で統一して集計する
-                    players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0, top: 0, last: 0 });
+                                        let totals = {};
+                    // 💡 rawPtをsanmaPtとyonmaPtに分割して初期化
+                    players.forEach(p => totals[p.id] = { sanmaPt: 0, yonmaPt: 0, chipRaw: 0, top: 0, last: 0 });
 
                     let gamesHtml = "";
                     let hanchanCount = 1;
@@ -1034,8 +1034,9 @@
                             let gameChipRaw = rec.chips[p.id] || 0;
 
                             if (gameRawPt !== undefined) {
-                                // 💡 修正：日別画面では「得点合計」を出すために rawPt を使う
-                                totals[p.id].rawPt += gameRawPt;
+                                // 💡 三麻と四麻で別々に加算する
+                                if (isYonma) totals[p.id].yonmaPt += gameRawPt;
+                                else totals[p.id].sanmaPt += gameRawPt;
                                 text.push(`<span class="${gameRawPt > 0 ? 'plus' : (gameRawPt < 0 ? 'minus' : '')}">得点${gameRawPt > 0 ? '+' : ''}${gameRawPt.toFixed(1)}</span>`);
                             }
                             if (gameChipRaw !== 0) {
@@ -1045,20 +1046,21 @@
                             }
                             if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
                         });
-                        // 💡 修正：historyHtml ではなく 正しい変数名(gamesHtml) を使う
                         gamesHtml += `<div class="history-card"><div class="history-header"><span style="display:flex; align-items:center;">${title} <span style="font-size:10px; color:#999; margin-left:5px;">(${rec.timestamp})</span></span><div>${String(rec.id).startsWith('cloud_') ? '<span style="color:#27ae60;">☁️ 同期済</span>' : '<span style="color:#e74c3c;">⏳ 送信中...</span>'}<button id="delete-btn-${rec.id}" onclick="deleteRecord('${rec.timestamp}', '${rec.id}')" style="margin-left:10px; padding:3px 8px; font-size:12px; background:#e74c3c; color:#fff; border:none; border-radius:3px; cursor:pointer;">🗑️ 削除</button></div></div>${details}</div>`;
                     });
 
                     let summaryData = [];
                     players.forEach(p => {
-                        let rawPt = totals[p.id].rawPt;
+                        let sanma = totals[p.id].sanmaPt;
+                        let yonma = totals[p.id].yonmaPt;
                         let chipPt = totals[p.id].chipRaw * 2;
-                        let finalPt = rawPt + chipPt;
+                        let finalPt = sanma + yonma + chipPt;
 
-                        if (rawPt !== 0 || totals[p.id].chipRaw !== 0) {
+                        if (sanma !== 0 || yonma !== 0 || totals[p.id].chipRaw !== 0) {
                             summaryData.push({
                                 name: p.name,
-                                rawPt: rawPt,
+                                sanma: sanma,
+                                yonma: yonma,
                                 chipPt: chipPt,
                                 finalPt: finalPt,
                                 top: totals[p.id].top,
@@ -1069,15 +1071,22 @@
 
                     summaryData.sort((a, b) => b.finalPt - a.finalPt);
 
-                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>';
+                                        // 💡 「三麻得点」と「四麻得点」で列（セル）を分ける
+                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>三麻得点</th><th>四麻得点</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>';
+
                     summaryData.forEach(d => {
-                        let sCol = d.rawPt > 0 ? 'plus' : (d.rawPt < 0 ? 'minus' : '');
+                        let sCol = d.sanma > 0 ? 'plus' : (d.sanma < 0 ? 'minus' : '');
+                        let yCol = d.yonma > 0 ? 'plus' : (d.yonma < 0 ? 'minus' : '');
                         let cCol = d.chipPt > 0 ? 'plus' : (d.chipPt < 0 ? 'minus' : '');
                         let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
+                        let sStr = d.sanma > 0 ? '+' + d.sanma.toFixed(1) : d.sanma.toFixed(1);
+                        let yStr = d.yonma > 0 ? '+' + d.yonma.toFixed(1) : d.yonma.toFixed(1);
+
                         summaryHtml += `<tr>
                                                     <td style="font-weight:bold;">${d.name}</td>
-                                                    <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
+                                                    <td class="${sCol}">${sStr}</td>
+                                                    <td class="${yCol}">${yStr}</td>
                                                     <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
                                                     <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
                                                     <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
@@ -1537,80 +1546,128 @@
                 }
             }
 
-            let html = '<div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
+            // 💡 三麻、四麻、ソシー（総合）の3つのテーブルを用意する
+            let sanmaHtml = '<h3 style="margin-top:10px; color:#27ae60;">🀄 三麻 成績表</h3><div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
+            let yonmaHtml = '<h3 style="margin-top:40px; color:#8e44ad;">🀄 四麻 成績表</h3><div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
+            let sosieHtml = '<h3 style="margin-top:40px; color:#2c3e50;">💰 総合（ソシー）</h3><div class="table-responsive"><table class="ruikei-table"><tr><th>項目</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
+
             let labels = [];
             let chartData = [[], [], [], [], [], []];
             let runningTotals = [0, 0, 0, 0, 0, 0];
 
+            let hasAnyYonma = false;
+            let hasAnySosie = false;
+
             targetRows.forEach((row, idx) => {
-                let colDate = String(row[0]).trim();
+                let colDate = String(row[0]).trim(); // C列
                 if (!colDate) return;
 
-                // 日付行かどうかの判定
                 let isDate = /^(?:20\d{2}[-\/])?\d{1,2}[-\/]\d{1,2}$/.test(colDate) || /^\d{1,2}月\d{1,2}日$/.test(colDate);
 
                 if (isDate) {
                     let dateLabel = /^\d{1,2}[-\/]\d{1,2}$/.test(colDate) ? (rowIndices[idx] >= 98 ? "2026" : "2025") + "/" + colDate.replace("-", "/") : colDate.replace(/-/g, "/");
                     labels.push(dateLabel);
-                    html += `<tr><td>${dateLabel}</td>`;
 
+                    // チャート用の計算
                     for (let i = 0; i < 6; i++) {
-                        let val = parseFloat(String(row[i + 1]).replace(/,/g, '')) || 0;
-                        runningTotals[i] += val;
+                        let sanmaStr = String(row[i + 1] || "").replace(/[,¥￥]/g, '');
+                        let yonmaStr = String(row[i + 19] || "").replace(/[,¥￥]/g, '');
+
+                        let sVal = parseFloat(sanmaStr) || 0;
+                        let yVal = parseFloat(yonmaStr) || 0;
+
+                        runningTotals[i] += (sVal + yVal);
                         chartData[i].push(runningTotals[i]);
                     }
 
-                    for (let i = 1; i <= 6; i++) {
-                        let cell = row[i];
-                        let val = parseFloat(String(cell).replace(/,/g, ''));
-                        html += (!isNaN(val) && cell !== "") ? `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')}; font-weight:bold;">${cell}</td>` : `<td>${cell || ""}</td>`;
+                    // 💡 三麻テーブルの行生成（D〜I列）
+                    let sRowHtml = `<tr><td>${dateLabel}</td>`;
+                    let hasSanmaData = false;
+                    for (let i = 0; i < 6; i++) {
+                        let sStr = String(row[i + 1] || "").trim();
+                        if (sStr !== "") hasSanmaData = true;
+                        let sVal = parseFloat(sStr.replace(/[,¥￥]/g, ''));
+                        let c1 = isNaN(sVal) ? '#333' : (sVal > 0 ? '#2980b9' : (sVal < 0 ? '#c0392b' : '#333'));
+                        sRowHtml += `<td style="color:${c1}; font-weight:bold;">${sStr}</td>`;
                     }
-                    html += '</tr>';
+                    sRowHtml += '</tr>';
+
+                    if (hasSanmaData) {
+                        sanmaHtml += sRowHtml;
+                    }
+
+                    // 💡 四麻テーブルの行生成（V〜AA列）
+                    let yRowHtml = `<tr><td>${dateLabel}</td>`;
+                    let hasYonmaData = false;
+                    for (let i = 0; i < 6; i++) {
+                        let yStr = String(row[i + 19] || "").trim();
+                        if (yStr !== "") hasYonmaData = true;
+                        let yVal = parseFloat(yStr.replace(/[,¥￥]/g, ''));
+                        let c2 = isNaN(yVal) ? '#333' : (yVal > 0 ? '#2980b9' : (yVal < 0 ? '#c0392b' : '#333'));
+                        yRowHtml += `<td style="color:${c2}; font-weight:bold;">${yStr}</td>`;
+                    }
+                    yRowHtml += '</tr>';
+
+                    if (hasYonmaData) {
+                        yonmaHtml += yRowHtml;
+                        hasAnyYonma = true;
+                    }
+
                 } else {
-                    // 💡 修正: 他の行の「三麻」と被らないように、完全一致に近い形で指定する！
-                    // （※「四麻t得点計」のようなタイポがあっても拾えるように保険で入れておきます）
+                    // ▼ 集計行の処理
                     let summaryKeywords = ["三麻得点計", "三麻ソシー計", "四麻得点計", "四麻ソシー計", "ソシー計"];
                     let isUserSummary = summaryKeywords.some(kw => colDate.includes(kw));
 
                     if (season === 'ALL') {
-                        // ALLの時は「集計表(isUserSummary)」だけを表示し、途中のS1計などは無視する
                         if (!isUserSummary) return;
                     } else {
-                        // 各シーズンの時は「集計表(isUserSummary)」が一番下に間違って混ざらないように無視する
                         if (isUserSummary) return;
                     }
 
-                    // 行の種類に合わせて背景色を分かりやすく設定
-                    let bgColor = "#fff3cd"; // デフォルト（黄色っぽい）
-                    if (colDate.includes("ソシー")) bgColor = "#d4edda"; // 金額（緑っぽい）
-                    if (colDate.includes("総ソシー")) bgColor = "#f1c40f"; // 総計（濃い黄金色）
+                    let bgColor = "#fff3cd";
+                    if (colDate.includes("ソシー")) bgColor = "#d4edda";
+                    if (colDate.includes("総ソシー")) bgColor = "#f1c40f";
 
-                    // 総計の行だけ少し文字を大きくして影をつける
-                    html += `<tr style="background-color: ${bgColor}; font-weight: bold; ${colDate.includes('総ソシー') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}">`;
+                    let trStyle = `style="background-color: ${bgColor}; font-weight: bold; ${colDate.includes('総ソシー') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}"`;
+                    let rowHtml = `<tr ${trStyle}><td>${colDate}</td>`;
 
-                    // C列のラベル名を表示
-                    html += `<td>${colDate}</td>`;
-
-                    // 各プレイヤーの数値を表示（D列〜I列）
-                    for (let i = 1; i <= 6; i++) {
-                        let cell = row[i];
-
-                        // 💡 ¥マーク(半角・全角)やカンマが含まれていても数字として判定できるようにする
-                        let val = parseFloat(String(cell).replace(/[,¥￥]/g, ''));
-
-                        // 値が数字ならプラスマイナスの色を付けて表示
-                        if (!isNaN(val) && cell !== "") {
-                            html += `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')};">${cell}</td>`;
-                        } else {
-                            html += `<td>${cell || ""}</td>`;
-                        }
+                    // 💡 集計行はすべて「前と同じところ（D〜I列：row[i + 1]）」を参照する
+                    for (let i = 0; i < 6; i++) {
+                        let cell = String(row[i + 1] || "");
+                        let val = parseFloat(cell.replace(/[,¥￥]/g, ''));
+                        if (!isNaN(val) && cell !== "") rowHtml += `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')};">${cell}</td>`;
+                        else rowHtml += `<td>${cell || ""}</td>`;
                     }
-                    html += '</tr>';
+                    rowHtml += '</tr>';
+
+                    // 💡 内容に応じて追加するテーブルを振り分ける
+                    if (colDate.includes("四麻")) {
+                        yonmaHtml += rowHtml;
+                        hasAnyYonma = true;
+                    } else if (colDate.includes("三麻")) {
+                        sanmaHtml += rowHtml;
+                    } else {
+                        // 「三麻」「四麻」が含まれないもの（ソシー計、総ソシーなど）は総合（ソシー）表へ
+                        sosieHtml += rowHtml;
+                        hasAnySosie = true;
+                    }
                 }
             });
 
-            html += '</table></div>';
-            document.getElementById('ruikei-area').innerHTML = html;
+            sanmaHtml += '</table></div>';
+            yonmaHtml += '</table></div>';
+            sosieHtml += '</table></div>';
+
+            // 💡 三麻の表を表示し、データがあれば四麻とソシーの表をその下に追加する
+            let finalHtml = sanmaHtml;
+            if (hasAnyYonma) {
+                finalHtml += yonmaHtml;
+            }
+            if (hasAnySosie) {
+                finalHtml += sosieHtml;
+            }
+
+            document.getElementById('ruikei-area').innerHTML = finalHtml;
 
             if (ruikeiChart) ruikeiChart.destroy();
             const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#34495e'];
@@ -1629,6 +1686,7 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
         }
+
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
@@ -1744,9 +1802,6 @@
         }
 
         // ==========================================
-        // ▼ 記録入力画面の更新（こちらも表示を統一）
-        // ==========================================
-// ==========================================
         // ▼ 記録入力画面の更新（こちらも表示を統一）
         // ==========================================
         function updateUI() {
