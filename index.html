@@ -534,15 +534,16 @@
         <div id="data-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📅 シーズンごとの成績</h2>
-            <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData(); loadS5DailyData();">🔄 最新のデータを読み込む</button>
+            <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData(); loadS7DailyData();">🔄 最新のデータを読み込む</button>
             <select id="season-selector" class="season-select" onchange="renderRuikeiTableAndChart()">
-                <option value="S6">🟢 S6 (今シーズン - 2026年)</option>
+                <option value="S7">🟢 S7 (今シーズン - 2026年)</option>
+                <option value="S6">⚪ S6 (2026年)</option>
                 <option value="S5">⚪ S5 (2026年)</option>
                 <option value="S4">⚪ S4 (2025年)</option>
                 <option value="S3">⚪ S3 (2025年)</option>
                 <option value="S2">⚪ S2 (2025年)</option>
                 <option value="S1">⚪ S1 (2025年)</option>
-                <option value="ALL">🔥 全シーズン（S1〜S6累積）</option>
+                <option value="ALL">🔥 全シーズン（S1〜S7累積）</option>
             </select>
             <div class="chart-container"><canvas id="ruikei-chart"></canvas></div>
             <h3 style="margin-top: 20px;">📊 成績表</h3>
@@ -550,7 +551,7 @@
 
             <hr style="border: 1px dashed #ccc; margin: 30px 0;">
 
-            <h2>📅 日別詳細成績（S6）</h2>
+            <h2>📅 日別詳細成績（S7）</h2>
             <div style="margin-bottom:15px; background:#e8f4f8; padding:15px; border-radius:10px; text-align:center;">
                 <div id="daily-date-display" style="font-size:32px; font-weight:bold; color:#2980b9; margin-bottom:15px;">読み込み中...</div>
 
@@ -569,7 +570,7 @@
         <div id="hanchan-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📊 AI分析ダッシュボード</h2>
-            <p style="text-align:center; font-size:12px; color:#666;">※S4~S6の半荘データを元に計算されています</p>
+            <p style="text-align:center; font-size:12px; color:#666;">※S4~S7の半荘データを元に計算されています</p>
             <button class="btn btn-analysis" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadHanchanData()">🔄 最新のデータを読み込む</button>
             <div id="ai-commentary" class="ai-report"><p style="text-align:center;">☁️ データを読み込んでAIレポートを作成しています...</p></div>
             <div class="chart-title" style="margin-top: 30px;">🕸️ プレイスタイル（能力パラメーター）</div>
@@ -598,7 +599,7 @@
     <div id="custom-confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
         <div style="background:#fff; padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.2s;">
             <p style="font-size:20px; font-weight:bold; color:#e74c3c; margin-top:0; margin-bottom:15px;">本当に削除しても<br>よろしいですか？</p>
-            <p style="font-size:12px; color:#666; margin-bottom:25px;">（S6分析・累計シートからも自動的に削除・修復されます）</p>
+            <p style="font-size:12px; color:#666; margin-bottom:25px;">（S7分析・累計シートからも自動的に削除・修復されます）</p>
             <button onclick="executeDelete()" style="background:#e74c3c; color:#fff; border:none; padding:18px; border-radius:8px; width:100%; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:15px; box-shadow:0 4px 0 #c0392b; transition:0.1s;">よろしくお願いしまぁぁぁぁぁぁぁぁぁぁぁす！</button>
             <button onclick="closeConfirmModal()" style="background:#95a5a6; color:#fff; border:none; padding:12px; border-radius:8px; width:100%; font-size:15px; font-weight:bold; cursor:pointer;">やっぱりやめる</button>
         </div>
@@ -677,7 +678,7 @@
         let rankChart = null;
         let radarChartObj = null;
 
-        let s6DailyData = [];
+        let s7DailyData = [];
         let currentDailyIndex = 0;
 
         window.onload = function () {
@@ -739,7 +740,7 @@
             if (viewId === 'input-view') loadFromCloud();
             else if (viewId === 'data-view') {
                 loadRuikeiData();
-                loadS6DailyData();
+                loadS7DailyData();
             }
             else if (viewId === 'hanchan-view') loadHanchanData();
             else if (viewId === 'quiz-view') loadQuizRanking();
@@ -907,16 +908,16 @@
         }
 
         // ==========================================
-        // ▼ 日別成績（S6分析＆チップ逆算）処理 ▼
+        // ▼ 日別成績（S7分析＆チップ逆算）処理 ▼
         // ==========================================
-        function loadS6DailyData() {
+        function loadS7DailyData() {
             document.getElementById('daily-date-display').innerText = "☁️ 読込中...";
-            fetch(GAS_URL + "?action=getS6Analysis&t=" + new Date().getTime())
+            fetch(GAS_URL + "?action=getS7Analysis&t=" + new Date().getTime())
                 .then(res => res.json())
                 .then(data => {
-                    parseS6Data(data);
-                    if (s6DailyData.length > 0) {
-                        currentDailyIndex = s6DailyData.length - 1;
+                    parseS7Data(data);
+                    if (s7DailyData.length > 0) {
+                        currentDailyIndex = s7DailyData.length - 1;
                         renderDailyView();
                     } else {
                         document.getElementById('daily-date-display').innerText = "データなし";
@@ -930,8 +931,8 @@
                 });
         }
 
-        function parseS6Data(data) {
-            s6DailyData = [];
+        function parseS7Data(data) {
+            s7DailyData = [];
             let currentDayObj = null;
 
             for (let i = 1; i < data.length; i++) {
@@ -945,7 +946,7 @@
 
                 if (!currentDayObj || currentDayObj.date !== dateStr) {
                     currentDayObj = { date: dateStr, games: [], totals: [0, 0, 0, 0, 0, 0] };
-                    s6DailyData.push(currentDayObj);
+                    s7DailyData.push(currentDayObj);
                 }
 
                 let scores = [];
@@ -960,11 +961,11 @@
         }
 
         // ==========================================
-        // ▼ 日別成績（S6）の描画ロジック
+        // ▼ 日別成績（S7）の描画ロジック
         // ==========================================
         function renderDailyView() {
-            if (s6DailyData.length === 0) return;
-            let dayData = s6DailyData[currentDailyIndex];
+            if (s7DailyData.length === 0) return;
+            let dayData = s7DailyData[currentDailyIndex];
             document.getElementById('daily-date-display').innerText = dayData.date;
 
             document.getElementById('daily-summary-area').innerHTML = "<p style='text-align:center; font-weight:bold; color:#2980b9;'>☁️ 日別詳細データを取得中...</p>";
@@ -1105,7 +1106,7 @@
         function changeDailyDate(dir) {
             currentDailyIndex += dir;
             if (currentDailyIndex < 0) currentDailyIndex = 0;
-            if (currentDailyIndex >= s6DailyData.length) currentDailyIndex = s6DailyData.length - 1;
+            if (currentDailyIndex >= s7DailyData.length) currentDailyIndex = s7DailyData.length - 1;
             renderDailyView();
         }
 
@@ -1606,7 +1607,7 @@
                 cachedRuikeiData = data;
                 renderRuikeiTableAndChart();
 
-                if (s6DailyData.length > 0) renderDailyView();
+                if (s7DailyData.length > 0) renderDailyView();
             });
         }
 
@@ -1622,7 +1623,8 @@
                 'S3': { start: 27, end: 42 },
                 'S4': { start: 44, end: 62 },
                 'S5': { start: 65, end: 83 },
-                'S6': { start: 85, end: 103 }
+                'S6': { start: 85, end: 103 },
+                'S7': { start: 105, end: 122 }
             };
 
             if (season === 'ALL') {
