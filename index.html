@@ -655,12 +655,18 @@
         <div id="hanchan-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📊 AI分析ダッシュボード</h2>
-            <p style="text-align:center; font-size:12px; color:#666;">※<span id="hanchan-season-range-label">S5-S8</span>の半荘データを元に計算されています</p>
-            <select id="hanchan-mode-select" class="season-select" style="margin-bottom: 10px; border-color: #8e44ad;" onchange="if(cachedHanchanRows.length>0) renderHanchanTableAndChart(cachedHanchanRows)">
-                <option value="ALL">🔥 三麻＋四麻（全半荘 総合分析）</option>
-                <option value="3">🀄 三麻のみ分析</option>
-                <option value="4">🀄 四麻のみ分析</option>
-            </select>
+            <p style="text-align:center; font-size:12px; color:#666; margin-bottom:12px;">※<span id="hanchan-season-range-label">S5-S8</span>の半荘データを元に計算されています</p>
+
+            <!-- 三麻 / 四麻 切り替えタブ -->
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <button type="button" id="ai-tab-sanma" onclick="switchAiAnalysisMode('3')" style="flex:1; padding:12px; font-size:16px; font-weight:bold; border-radius:8px; border:2px solid #27ae60; background:#27ae60; color:#fff; cursor:pointer; transition:0.2s;">
+                    🀄 三麻 AI分析
+                </button>
+                <button type="button" id="ai-tab-yonma" onclick="switchAiAnalysisMode('4')" style="flex:1; padding:12px; font-size:16px; font-weight:bold; border-radius:8px; border:2px solid #8e44ad; background:#fff; color:#8e44ad; cursor:pointer; transition:0.2s;">
+                    🀄 四麻 AI分析
+                </button>
+            </div>
+
             <button class="btn btn-analysis" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadHanchanData()">🔄 最新のデータを読み込む</button>
             <div id="ai-commentary" class="ai-report"><p style="text-align:center;">☁️ データを読み込んでAIレポートを作成しています...</p></div>
             <div class="chart-title" style="margin-top: 30px;">🕸️ プレイスタイル（能力パラメーター）</div>
@@ -1552,6 +1558,29 @@
         }
 
         let cachedHanchanRows = [];
+        let currentAiAnalysisMode = '3'; // '3': 三麻, '4': 四麻
+
+        function switchAiAnalysisMode(mode) {
+            currentAiAnalysisMode = mode;
+            const btn3 = document.getElementById('ai-tab-sanma');
+            const btn4 = document.getElementById('ai-tab-yonma');
+            if (btn3 && btn4) {
+                if (mode === '3') {
+                    btn3.style.backgroundColor = '#27ae60';
+                    btn3.style.color = '#fff';
+                    btn4.style.backgroundColor = '#fff';
+                    btn4.style.color = '#8e44ad';
+                } else {
+                    btn3.style.backgroundColor = '#fff';
+                    btn3.style.color = '#27ae60';
+                    btn4.style.backgroundColor = '#8e44ad';
+                    btn4.style.color = '#fff';
+                }
+            }
+            if (cachedHanchanRows.length > 0) {
+                renderHanchanTableAndChart(cachedHanchanRows);
+            }
+        }
 
         function loadHanchanData() {
             document.getElementById('hanchan-table-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
@@ -1566,64 +1595,44 @@
         }
 
         function renderHanchanTableAndChart(data) {
-            const modeSel = document.getElementById('hanchan-mode-select');
-            const filterMode = modeSel ? modeSel.value : 'ALL';
-
-            let sanmaGames = [];
-            let yonmaGames = [];
-            let lastDate3 = "0000-00-00";
-            let lastDate4 = "0000-00-00";
+            const isYonma = (currentAiAnalysisMode === '4');
+            let targetGames = [];
 
             for (let i = 1; i < data.length; i++) {
                 let row = data[i];
-
-                // 三麻ブロック: A列(0)=日付, B列(1)=試合番号, C〜H列(2〜7)=得点
-                let colBStr = String(row[1] || "").trim();
-                if (colBStr !== "" && !isNaN(colBStr)) {
-                    let d3 = String(row[0] || "").trim();
-                    if (d3) lastDate3 = d3.replace(/\//g, '-');
-                    let scores3 = [];
-                    let hasAny3 = false;
-                    for (let p = 0; p < 6; p++) {
-                        let s = parseFloat(String(row[p + 2] || "").replace(/,/g, ''));
-                        if (!isNaN(s)) hasAny3 = true;
-                        scores3.push(isNaN(s) ? null : s);
+                if (!isYonma) {
+                    // 三麻ブロック: B列(1)=試合番号, C〜H列(2〜7)=得点
+                    let colBStr = String(row[1] || "").trim();
+                    if (colBStr !== "" && !isNaN(colBStr)) {
+                        let scores = [];
+                        let hasAny = false;
+                        for (let p = 0; p < 6; p++) {
+                            let s = parseFloat(String(row[p + 2] || "").replace(/,/g, ''));
+                            if (!isNaN(s)) hasAny = true;
+                            scores.push(isNaN(s) ? null : s);
+                        }
+                        if (hasAny) {
+                            targetGames.push({ num: Number(colBStr), scores: scores });
+                        }
                     }
-                    if (hasAny3) {
-                        sanmaGames.push({ mode: '3', date: lastDate3, seq: Number(colBStr), scores: scores3 });
+                } else {
+                    // 四麻ブロック: I列(8)=日付, J列(9)=試合番号, K〜P列(10〜15)=得点
+                    let colJStr = String(row[9] || "").trim();
+                    let d4Raw = String(row[8] || "").trim();
+                    let isSummaryRow = ['試合数', '試合率', '合計値', '金額合計値', '平均', '中央値', '最大値', '最小値', '標準偏差', '1位数', '1位率', '中位数', '中位率', '最下位数', '最下位率'].includes(colJStr);
+                    if (!isSummaryRow && ((colJStr !== "" && !isNaN(colJStr)) || d4Raw !== "")) {
+                        let scores = [];
+                        let hasAny = false;
+                        for (let p = 0; p < 6; p++) {
+                            let s = parseFloat(String(row[p + 10] || "").replace(/,/g, ''));
+                            if (!isNaN(s)) hasAny = true;
+                            scores.push(isNaN(s) ? null : s);
+                        }
+                        if (hasAny) {
+                            targetGames.push({ num: Number(colJStr) || (targetGames.length + 1), scores: scores });
+                        }
                     }
                 }
-
-                // 四麻ブロック: I列(8)=日付, J列(9)=試合番号, K〜P列(10〜15)=得点
-                let colJStr = String(row[9] || "").trim();
-                let d4Raw = String(row[8] || "").trim();
-                if (d4Raw) lastDate4 = d4Raw.replace(/\//g, '-');
-
-                let scores4 = [];
-                let hasAny4 = false;
-                for (let p = 0; p < 6; p++) {
-                    let s = parseFloat(String(row[p + 10] || "").replace(/,/g, ''));
-                    if (!isNaN(s)) hasAny4 = true;
-                    scores4.push(isNaN(s) ? null : s);
-                }
-                // 集計行（367行目以降）を除外するため、2〜365行目付近かつスコアあり（またはJ列が数値）を抽出
-                let isSummaryRow = ['試合数', '試合率', '合計値', '金額合計値', '平均', '中央値', '最大値', '最小値', '標準偏差', '1位数', '1位率', '中位数', '中位率', '最下位数', '最下位率'].includes(colJStr);
-                if (!isSummaryRow && hasAny4 && (colJStr !== "" && !isNaN(colJStr) || d4Raw !== "")) {
-                    yonmaGames.push({ mode: '4', date: lastDate4, seq: Number(colJStr) || (yonmaGames.length + 1), scores: scores4 });
-                }
-            }
-
-            let targetGames = [];
-            if (filterMode === '3') {
-                targetGames = sanmaGames;
-            } else if (filterMode === '4') {
-                targetGames = yonmaGames;
-            } else {
-                targetGames = [...sanmaGames, ...yonmaGames].sort((a, b) => {
-                    if (a.date !== b.date) return a.date.localeCompare(b.date);
-                    if (a.mode !== b.mode) return a.mode === '3' ? -1 : 1;
-                    return a.seq - b.seq;
-                });
             }
 
             let labels = [];
@@ -1634,12 +1643,15 @@
             let pNames = players.map(p => p.name);
 
             for (let i = 0; i < 6; i++) {
-                pStats.push({ scores: [], matches: 0, total: 0, r1: 0, r2: 0, r3: 0, vs: [0, 0, 0, 0, 0, 0], vsTot: [0, 0, 0, 0, 0, 0] });
+                pStats.push({
+                    scores: [], matches: 0, total: 0,
+                    r1: 0, r2: 0, r3: 0, r4: 0, rankSum: 0,
+                    vs: [0, 0, 0, 0, 0, 0], vsTot: [0, 0, 0, 0, 0, 0]
+                });
             }
 
             targetGames.forEach((g, idx) => {
-                let tag = (filterMode === 'ALL') ? (g.mode === '4' ? '[四]' : '[三]') : '';
-                labels.push(`第${idx + 1}戦${tag}`);
+                labels.push(`第${idx + 1}戦`);
                 let curScores = [];
 
                 for (let p = 0; p < 6; p++) {
@@ -1647,7 +1659,7 @@
                     if (score !== null && !isNaN(score)) {
                         pStats[p].scores.push(score);
                         pStats[p].matches++;
-                        pStats[p].total += score;
+                        pStats[p].total = Math.round((pStats[p].total + score) * 10) / 10;
                         runningTotals[p] = Math.round((runningTotals[p] + score) * 10) / 10;
                         curScores.push({ pIdx: p, score: score });
                     }
@@ -1655,11 +1667,15 @@
                 }
 
                 curScores.sort((a, b) => b.score - a.score);
-                curScores.forEach((cs, rank) => {
+                curScores.forEach((cs, rankIdx) => {
                     let p = cs.pIdx;
-                    if (rank === 0) pStats[p].r1++;
-                    else if (rank === curScores.length - 1) pStats[p].r3++;
-                    else pStats[p].r2++;
+                    let rankNum = rankIdx + 1;
+                    pStats[p].rankSum += rankNum;
+
+                    if (rankNum === 1) pStats[p].r1++;
+                    else if (rankNum === 2) pStats[p].r2++;
+                    else if (rankNum === 3) pStats[p].r3++;
+                    else if (rankNum === 4) pStats[p].r4++;
 
                     curScores.forEach(other => {
                         if (cs.pIdx !== other.pIdx) {
@@ -1670,26 +1686,44 @@
                 });
             });
 
+            // ラス回数ヘルパー（三麻は3位、四麻は4位）
+            const getLastCount = (s) => isYonma ? s.r4 : s.r3;
+
             let validStats = pStats.filter(s => s.matches > 0);
+            const commentaryEl = document.getElementById('ai-commentary');
+            if (isYonma) {
+                commentaryEl.style.background = '#f4ecf7';
+                commentaryEl.style.borderLeftColor = '#8e44ad';
+            } else {
+                commentaryEl.style.background = '#fff3cd';
+                commentaryEl.style.borderLeftColor = '#f1c40f';
+            }
+
             if (validStats.length > 0) {
-                let modeLabel = filterMode === '3' ? '【三麻】' : (filterMode === '4' ? '【四麻】' : '【三麻＋四麻 総合】');
-                let aiText = `<strong style='font-size:16px;'>🤖 AIアドバイザーによるプレイヤー分析レポート ${modeLabel}</strong><br><span style='font-size:12px; color:#666;'>集計対象: 三麻 ${sanmaGames.length}半荘 ／ 四麻 ${yonmaGames.length}半荘（表示中: ${targetGames.length}半荘）</span><br><br>`;
+                const modeTitle = isYonma ? '【🀄 四麻データ分析】' : '【🀄 三麻データ分析】';
+                let aiText = `<strong style='font-size:16px;'>🤖 AIアドバイザーによるプレイヤー分析レポート ${modeTitle}</strong><br><span style='font-size:12px; color:#555;'>集計対象：${targetGames.length}半荘</span><br><br>`;
+
                 let bestTop = [...validStats].sort((a, b) => (b.r1 / b.matches) - (a.r1 / a.matches))[0];
                 aiText += `🗡️ <strong>攻撃の要：</strong> トップ率No.1は「${players[pStats.indexOf(bestTop)].name}」さん（${(bestTop.r1 / bestTop.matches * 100).toFixed(1)}%）！<br>`;
-                let bestDef = [...validStats].sort((a, b) => (a.r3 / a.matches) - (b.r3 / b.matches))[0];
-                aiText += `🛡️ <strong>鉄壁の守備：</strong> ラス回避率トップは「${players[pStats.indexOf(bestDef)].name}」さん（ラス率${(bestDef.r3 / bestDef.matches * 100).toFixed(1)}%）！<br><br>`;
-                aiText += "<strong style='font-size:15px; color:#2980b9;'>📝 各プレイヤーのプレイスタイル診断</strong><br>";
+
+                let bestDef = [...validStats].sort((a, b) => (getLastCount(a) / a.matches) - (getLastCount(b) / b.matches))[0];
+                aiText += `🛡️ <strong>鉄壁の守備：</strong> ラス回避率トップは「${players[pStats.indexOf(bestDef)].name}」さん（ラス率${(getLastCount(bestDef) / bestDef.matches * 100).toFixed(1)}%）！<br><br>`;
+                aiText += `<strong style='font-size:15px; color:${isYonma ? '#8e44ad' : '#2980b9'};'>📝 各プレイヤーのプレイスタイル診断</strong><br>`;
 
                 let pData = [];
                 for (let i = 0; i < 6; i++) {
                     let s = pStats[i];
                     if (s.matches > 0) {
+                        let lastCnt = getLastCount(s);
+                        let midCnt = isYonma ? (s.r2 + s.r3) : s.r2;
                         pData.push({
                             idx: i,
                             topRate: s.r1 / s.matches,
-                            lastRate: s.r3 / s.matches,
-                            midRate: s.r2 / s.matches,
+                            lastRate: lastCnt / s.matches,
+                            midRate: midCnt / s.matches,
                             avgScore: s.total / s.matches,
+                            avgRank: s.rankSum / s.matches,
+                            rentaiRate: (s.r1 + s.r2) / s.matches,
                             maxScore: s.scores.length > 0 ? Math.max(...s.scores) : 0,
                             name: players[i].name,
                             color: colors[i],
@@ -1754,42 +1788,128 @@
                     let topRateStr = (p.topRate * 100).toFixed(1);
                     let lastAvoidRateStr = ((1 - p.lastRate) * 100).toFixed(1);
                     let avgStr = p.avgScore.toFixed(1);
+                    let avgRankStr = p.avgRank.toFixed(2);
+                    let subStats = isYonma
+                        ? `参加: ${p.s.matches}戦 / 平均着順: ${avgRankStr}位 / 連対率: ${(p.rentaiRate * 100).toFixed(1)}% / ラス回避: ${lastAvoidRateStr}% / 平均: ${avgStr}点`
+                        : `参加: ${p.s.matches}戦 / 平均着順: ${avgRankStr}位 / トップ率: ${topRateStr}% / ラス回避: ${lastAvoidRateStr}% / 平均: ${avgStr}点`;
 
                     aiText += `<div style="background:#fff; padding:10px; border-radius:5px; margin-top:10px; border-left:4px solid ${p.color}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                                 <span style="font-weight:bold; font-size:15px; color:${p.color}">👤 ${p.name}：【${p.styleObj.title}】</span><br>
-                                <span style="font-size:12px; color:#555; font-weight:bold;">参加: ${p.s.matches}戦 / トップ率: ${topRateStr}% / ラス回避: ${lastAvoidRateStr}% / 平均: ${avgStr}点</span><br>
+                                <span style="font-size:12px; color:#555; font-weight:bold;">${subStats}</span><br>
                                 <span style="font-size:13px; color:#333;">${p.styleObj.desc}</span>
                                </div>`;
                 });
 
-                document.getElementById('ai-commentary').innerHTML = aiText;
+                commentaryEl.innerHTML = aiText;
             } else {
-                document.getElementById('ai-commentary').innerHTML = "<p style='text-align:center; color:#666;'>該当モードの半荘データがまだありません。</p>";
+                commentaryEl.innerHTML = `<p style='text-align:center; color:#666;'>${isYonma ? '四麻' : '三麻'}の半荘データがまだありません。</p>`;
             }
 
+            // レーダーチャート（三麻・四麻それぞれの基準でスケーリング）
             if (radarChartObj) radarChartObj.destroy();
             let radarDatasets = [];
             for (let i = 0; i < 6; i++) {
                 let s = pStats[i]; if (s.matches === 0) continue;
-                radarDatasets.push({ label: players[i].name, data: [Math.round(Math.min(100, (s.r1 / s.matches) * 100 * 2.5)), Math.round(Math.min(100, (1 - (s.r3 / s.matches)) * 100 * 1.5)), Math.round(Math.min(100, (s.r2 / s.matches) * 100 * 2.5)), Math.round(Math.min(100, Math.max(0, (s.total / s.matches + 20) * 2.5))), Math.round(s.scores.length > 0 ? Math.min(100, Math.max(...s.scores) / 1.5) : 0)], borderColor: colors[i], backgroundColor: colors[i] + '33', borderWidth: 2, hidden: i > 2 });
+                let lastCnt = getLastCount(s);
+                let midCnt = isYonma ? (s.r2 + s.r3) : s.r2;
+                let atkScore = isYonma
+                    ? Math.round(Math.min(100, (s.r1 / s.matches) * 100 * 3.0))
+                    : Math.round(Math.min(100, (s.r1 / s.matches) * 100 * 2.5));
+                let defScore = isYonma
+                    ? Math.round(Math.min(100, (1 - (lastCnt / s.matches)) * 100 * 1.25))
+                    : Math.round(Math.min(100, (1 - (lastCnt / s.matches)) * 100 * 1.45));
+                let midScore = isYonma
+                    ? Math.round(Math.min(100, (midCnt / s.matches) * 100 * 1.6))
+                    : Math.round(Math.min(100, (midCnt / s.matches) * 100 * 2.4));
+                let avgPtsScore = Math.round(Math.min(100, Math.max(0, (s.total / s.matches + 20) * 2.5)));
+                let maxPtsScore = isYonma
+                    ? Math.round(s.scores.length > 0 ? Math.min(100, Math.max(...s.scores) * 1.2) : 0)
+                    : Math.round(s.scores.length > 0 ? Math.min(100, Math.max(...s.scores) / 1.4) : 0);
+
+                radarDatasets.push({
+                    label: players[i].name,
+                    data: [atkScore, defScore, midScore, avgPtsScore, maxPtsScore],
+                    borderColor: colors[i],
+                    backgroundColor: colors[i] + '33',
+                    borderWidth: 2,
+                    hidden: i > 2
+                });
             }
-            radarChartObj = new Chart(document.getElementById('radar-chart').getContext('2d'), { type: 'radar', data: { labels: ['攻撃(トップ率)', '守備(ラス回避)', '堅実さ(中位率)', '平均スコア', '爆発(最大得点)'], datasets: radarDatasets }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { position: 'bottom' } } } });
+            radarChartObj = new Chart(document.getElementById('radar-chart').getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: ['攻撃(トップ率)', '守備(ラス回避)', isYonma ? '安定(2・3位率)' : '堅実さ(2位率)', '平均スコア', '爆発(最大得点)'],
+                    datasets: radarDatasets
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { position: 'bottom' } } }
+            });
 
+            // ポイント推移グラフ
             if (hanchanChart) hanchanChart.destroy();
-            hanchanChart = new Chart(document.getElementById('hanchan-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: pNames.map((n, i) => ({ label: n, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 1 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+            hanchanChart = new Chart(document.getElementById('hanchan-chart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: pNames.map((n, i) => ({
+                        label: n,
+                        data: chartData[i],
+                        borderColor: colors[i],
+                        backgroundColor: colors[i],
+                        fill: false,
+                        tension: 0.1,
+                        borderWidth: 2,
+                        pointRadius: 1
+                    }))
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
 
+            // 順位獲得率の分布グラフ（三麻: 1〜3位 / 四麻: 1〜4位）
             if (rankChart) rankChart.destroy();
-            rankChart = new Chart(document.getElementById('rank-chart').getContext('2d'), { type: 'bar', data: { labels: pNames, datasets: [{ label: '1位率', data: pStats.map(s => s.matches ? (s.r1 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#f1c40f' }, { label: '中位率', data: pStats.map(s => s.matches ? (s.r2 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#2ecc71' }, { label: '最下位率', data: pStats.map(s => s.matches ? (s.r3 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#34495e' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, max: 100 } } } });
+            let rankDatasets = isYonma
+                ? [
+                    { label: '1位率', data: pStats.map(s => s.matches ? (s.r1 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#f1c40f' },
+                    { label: '2位率', data: pStats.map(s => s.matches ? (s.r2 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#2ecc71' },
+                    { label: '3位率', data: pStats.map(s => s.matches ? (s.r3 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#3498db' },
+                    { label: '4位率', data: pStats.map(s => s.matches ? (s.r4 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#34495e' }
+                ]
+                : [
+                    { label: '1位率', data: pStats.map(s => s.matches ? (s.r1 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#f1c40f' },
+                    { label: '2位率', data: pStats.map(s => s.matches ? (s.r2 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#2ecc71' },
+                    { label: '3位率', data: pStats.map(s => s.matches ? (s.r3 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#34495e' }
+                ];
 
-            let tbl = '<div class="table-responsive"><table class="ruikei-table">'; tbl += `<tr><th></th>${pNames.map(n => `<th>${n}</th>`).join('')}</tr>`;
-            let makeRow = (title, fn) => { tbl += `<tr><th style="background:#e8f4f8;">${title}</th>`; for (let i = 0; i < 6; i++) tbl += `<td>${fn(pStats[i], i)}</td>`; tbl += `</tr>`; };
+            rankChart = new Chart(document.getElementById('rank-chart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: pNames, datasets: rankDatasets },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, max: 100 } } }
+            });
+
+            // 詳細分析テーブル（三麻: 1〜3位 / 四麻: 1〜4位＋連対率）
+            let tbl = '<div class="table-responsive"><table class="ruikei-table">';
+            tbl += `<tr><th></th>${pNames.map(n => `<th>${n}</th>`).join('')}</tr>`;
+            let makeRow = (title, fn) => {
+                tbl += `<tr><th style="background:#e8f4f8;">${title}</th>`;
+                for (let i = 0; i < 6; i++) tbl += `<td>${fn(pStats[i], i)}</td>`;
+                tbl += `</tr>`;
+            };
             makeRow("試合数", s => s.matches);
             makeRow("合計点", s => s.total.toFixed(1));
             makeRow("平均点", s => s.matches ? (s.total / s.matches).toFixed(2) : "0.00");
-            makeRow("1位数", s => s.r1); makeRow("1位率", s => s.matches ? (s.r1 / s.matches * 100).toFixed(2) + "%" : "0%");
-            makeRow("中位数", s => s.r2); makeRow("中位率", s => s.matches ? (s.r2 / s.matches * 100).toFixed(2) + "%" : "0%");
-            makeRow("最下位数", s => s.r3); makeRow("最下位率", s => s.matches ? (s.r3 / s.matches * 100).toFixed(2) + "%" : "0%");
-            tbl += '</table></div>'; document.getElementById('hanchan-table-area').innerHTML = tbl;
+            makeRow("平均着順", s => s.matches ? (s.rankSum / s.matches).toFixed(2) : "-");
+            makeRow("1位数", s => s.r1);
+            makeRow("1位率", s => s.matches ? (s.r1 / s.matches * 100).toFixed(2) + "%" : "0%");
+            makeRow("2位数", s => s.r2);
+            makeRow("2位率", s => s.matches ? (s.r2 / s.matches * 100).toFixed(2) + "%" : "0%");
+            makeRow("3位数", s => s.r3);
+            makeRow("3位率", s => s.matches ? (s.r3 / s.matches * 100).toFixed(2) + "%" : "0%");
+            if (isYonma) {
+                makeRow("4位数", s => s.r4);
+                makeRow("4位率", s => s.matches ? (s.r4 / s.matches * 100).toFixed(2) + "%" : "0%");
+                makeRow("連対率", s => s.matches ? ((s.r1 + s.r2) / s.matches * 100).toFixed(2) + "%" : "0%");
+            }
+            tbl += '</table></div>';
+            document.getElementById('hanchan-table-area').innerHTML = tbl;
         }
 
         // ==========================================
