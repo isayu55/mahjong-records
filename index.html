@@ -1723,39 +1723,42 @@
             let labels = [];
             let chartData = [[], [], [], [], [], []];
             let runningTotals = [0, 0, 0, 0, 0, 0];
+            let chartDateMap = {};
 
             let hasAnyYonma = false;
             let hasAnySosie = false;
 
+            const formatSheetDate = (rawStr, rowIdx) => {
+                let s = String(rawStr || "").trim();
+                if (!s) return "";
+                let isDate = /^(?:20\d{2}[-\/])?\d{1,2}[-\/]\d{1,2}$/.test(s) || /^\d{1,2}月\d{1,2}日$/.test(s);
+                if (!isDate) return "";
+                if (/^\d{1,2}[-\/]\d{1,2}$/.test(s)) {
+                    let parts = s.replace("-", "/").split("/");
+                    return (rowIdx >= 65 ? "2026" : "2025") + "/" + parts[0].padStart(2, '0') + "/" + parts[1].padStart(2, '0');
+                }
+                let p = s.replace(/-/g, "/").split("/");
+                if (p.length === 3) return `${p[0]}/${p[1].padStart(2, '0')}/${p[2].padStart(2, '0')}`;
+                return s.replace(/-/g, "/");
+            };
+
             targetRows.forEach((row, idx) => {
-                // B1:AA... で取得しているため row[0]=B列, row[1]=C列, row[2..7]=D..I列(三麻), row[20..25]=V..AA列(四麻)
-                let colDate = String(row[1] || "").trim(); // C列
-                if (!colDate) return;
+                let colC = String(row[1] || "").trim();  // C列（三麻日付 or 集計ラベル）
+                let colU = String(row[19] || "").trim(); // U列（四麻日付）
 
-                let isDate = /^(?:20\d{2}[-\/])?\d{1,2}[-\/]\d{1,2}$/.test(colDate) || /^\d{1,2}月\d{1,2}日$/.test(colDate);
+                let sanmaDateLabel = formatSheetDate(colC, rowIndices[idx]);
+                let yonmaDateLabel = formatSheetDate(colU, rowIndices[idx]);
 
-                if (isDate) {
-                    let dateLabel = /^\d{1,2}[-\/]\d{1,2}$/.test(colDate) ? (rowIndices[idx] >= 65 ? "2026" : "2025") + "/" + colDate.replace("-", "/") : colDate.replace(/-/g, "/");
-                    labels.push(dateLabel);
-
-                    for (let i = 0; i < 6; i++) {
-                        let sanmaStr = String(row[i + 2] || "").replace(/[,¥￥]/g, '');
-                        let yonmaStr = String(row[i + 20] || "").replace(/[,¥￥]/g, '');
-
-                        let sVal = parseFloat(sanmaStr) || 0;
-                        let yVal = parseFloat(yonmaStr) || 0;
-
-                        runningTotals[i] += (sVal + yVal);
-                        chartData[i].push(runningTotals[i]);
-                    }
-
-                    // 三麻テーブル（D〜I列: row[2..7]）
-                    let sRowHtml = `<tr><td>${dateLabel}</td>`;
+                // ▼ 三麻データ行（C列が日付 かつ D〜I列に値あり）
+                if (sanmaDateLabel) {
+                    let sRowHtml = `<tr><td>${sanmaDateLabel}</td>`;
                     let hasSanmaData = false;
+                    let sScores = [0, 0, 0, 0, 0, 0];
                     for (let i = 0; i < 6; i++) {
                         let sStr = String(row[i + 2] || "").trim();
                         if (sStr !== "") hasSanmaData = true;
                         let sVal = parseFloat(sStr.replace(/[,¥￥]/g, ''));
+                        sScores[i] = isNaN(sVal) ? 0 : sVal;
                         let c1 = isNaN(sVal) ? '#333' : (sVal > 0 ? '#2980b9' : (sVal < 0 ? '#c0392b' : '#333'));
                         sRowHtml += `<td style="color:${c1}; font-weight:bold;">${sStr}</td>`;
                     }
@@ -1763,15 +1766,21 @@
 
                     if (hasSanmaData) {
                         sanmaHtml += sRowHtml;
+                        if (!chartDateMap[sanmaDateLabel]) chartDateMap[sanmaDateLabel] = [0, 0, 0, 0, 0, 0];
+                        for (let i = 0; i < 6; i++) chartDateMap[sanmaDateLabel][i] += sScores[i];
                     }
+                }
 
-                    // 四麻テーブル（V〜AA列: row[20..25]）
-                    let yRowHtml = `<tr><td>${dateLabel}</td>`;
+                // ▼ 四麻データ行（U列が日付 かつ V〜AA列に値あり）
+                if (yonmaDateLabel) {
+                    let yRowHtml = `<tr><td>${yonmaDateLabel}</td>`;
                     let hasYonmaData = false;
+                    let yScores = [0, 0, 0, 0, 0, 0];
                     for (let i = 0; i < 6; i++) {
                         let yStr = String(row[i + 20] || "").trim();
                         if (yStr !== "") hasYonmaData = true;
                         let yVal = parseFloat(yStr.replace(/[,¥￥]/g, ''));
+                        yScores[i] = isNaN(yVal) ? 0 : yVal;
                         let c2 = isNaN(yVal) ? '#333' : (yVal > 0 ? '#2980b9' : (yVal < 0 ? '#c0392b' : '#333'));
                         yRowHtml += `<td style="color:${c2}; font-weight:bold;">${yStr}</td>`;
                     }
@@ -1780,11 +1789,15 @@
                     if (hasYonmaData) {
                         yonmaHtml += yRowHtml;
                         hasAnyYonma = true;
+                        if (!chartDateMap[yonmaDateLabel]) chartDateMap[yonmaDateLabel] = [0, 0, 0, 0, 0, 0];
+                        for (let i = 0; i < 6; i++) chartDateMap[yonmaDateLabel][i] += yScores[i];
                     }
+                }
 
-                } else {
+                // ▼ 集計行の処理（C列が日付以外のラベルのとき）
+                if (colC && !sanmaDateLabel) {
                     let summaryKeywords = ["三麻得点計", "三麻ソシー計", "四麻得点計", "四麻ソシー計", "ソシー計"];
-                    let isUserSummary = summaryKeywords.some(kw => colDate.includes(kw));
+                    let isUserSummary = summaryKeywords.some(kw => colC.includes(kw));
 
                     if (season === 'ALL') {
                         if (!isUserSummary) return;
@@ -1793,11 +1806,11 @@
                     }
 
                     let bgColor = "#fff3cd";
-                    if (colDate.includes("ソシー")) bgColor = "#d4edda";
-                    if (colDate.includes("総ソシー")) bgColor = "#f1c40f";
+                    if (colC.includes("ソシー")) bgColor = "#d4edda";
+                    if (colC.includes("総ソシー")) bgColor = "#f1c40f";
 
-                    let trStyle = `style="background-color: ${bgColor}; font-weight: bold; ${colDate.includes('総ソシー') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}"`;
-                    let rowHtml = `<tr ${trStyle}><td>${colDate}</td>`;
+                    let trStyle = `style="background-color: ${bgColor}; font-weight: bold; ${colC.includes('総ソシー') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}"`;
+                    let rowHtml = `<tr ${trStyle}><td>${colC}</td>`;
 
                     for (let i = 0; i < 6; i++) {
                         let cell = String(row[i + 2] || "");
@@ -1807,15 +1820,24 @@
                     }
                     rowHtml += '</tr>';
 
-                    if (colDate.includes("四麻")) {
+                    if (colC.includes("四麻")) {
                         yonmaHtml += rowHtml;
                         hasAnyYonma = true;
-                    } else if (colDate.includes("三麻")) {
+                    } else if (colC.includes("三麻")) {
                         sanmaHtml += rowHtml;
                     } else {
                         sosieHtml += rowHtml;
                         hasAnySosie = true;
                     }
+                }
+            });
+
+            // チャート用の日付順累積データを生成
+            Object.keys(chartDateMap).sort().forEach(dLabel => {
+                labels.push(dLabel);
+                for (let i = 0; i < 6; i++) {
+                    runningTotals[i] += chartDateMap[dLabel][i];
+                    chartData[i].push(runningTotals[i]);
                 }
             });
 
@@ -2149,6 +2171,7 @@
                 action: "deleteRecord",
                 date: date,
                 timestamp: timestamp,
+                mode: rec.mode || "",
                 rawScores: rec.points,
                 secret: localStorage.getItem('mahjong_auth')
             };
