@@ -383,6 +383,7 @@
             <button class="btn btn-trivia" onclick="switchView('trivia-view')" style="margin-top: 20px;">💡 豆知識＆今日のラッキー役</button>
             <button class="btn" onclick="switchView('quiz-view')" style="margin-top: 20px; background-color: #e74c3c;">🧩 多面張タイムアタック</button>
             <button class="btn" onclick="switchView('nani-kiru-view')" style="margin-top: 20px; background-color: #9b59b6;">🤔 清一色 何切る？</button>
+            <button class="btn" onclick="switchView('sanma-drill-view')" style="margin-top: 20px; background-color: #16a085;">📚 サンマ牌効率 何切る問題集（全77問）</button>
         </div>
 
         <div id="nani-kiru-view" class="view-section">
@@ -394,7 +395,7 @@
                 <div style="background:#fff3cd; border-left:4px solid #f1c40f; padding:12px; text-align:left; margin-bottom:20px; font-size:14px; color:#333; border-radius:5px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
                     <strong style="color:#e67e22;">【状況設定】</strong><br>
                     🀄 三麻・東1局 1巡目<br>
-                    👤 親番（持ち点35,000点）　🎲 ドラ: 西
+                    👤 親番（持ち点35,000点） 🎲 ドラ: 西
                 </div>
 
                 <div id="nani-kiru-hand" style="display:flex; justify-content:center; align-items:center; margin-bottom: 20px; background:#fafafa; padding:15px 5px; border-radius:8px; border:2px dashed #ccc; min-height: 60px;">
@@ -414,6 +415,74 @@
                     <button class="btn" style="background-color:#9b59b6;" onclick="nextNaniKiru()">次の問題へ</button>
                 </div>
             </div>
+        </div>
+
+        <div id="sanma-drill-view" class="view-section">
+            <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
+            <h2>📚 サンマ牌効率 何切る問題集</h2>
+
+            <div style="background:#e8f8f5; border:1px solid #16a085; border-radius:8px; padding:12px; margin-bottom:15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span id="sanma-drill-progress" style="font-weight:bold; color:#117864; font-size:14px;">達成状況: 0 / 77問 クリア</span>
+                    <button onclick="resetSanmaDrillProgress()" style="background:transparent; border:1px solid #95a5a6; color:#666; border-radius:4px; font-size:11px; padding:2px 6px; cursor:pointer;">進捗リセット</button>
+                </div>
+                <select id="sanma-drill-category" class="season-select" style="margin-bottom:8px; border-color:#16a085;" onchange="resetSanmaDrillOrder()">
+                    <option value="ALL">🀄 すべて出題（全77問）</option>
+                    <option value="tenpai">🎯 テンパイ・リーチ判断（22問）</option>
+                    <option value="shanten">🧩 イーシャンテン・2シャンテン等（35問）</option>
+                    <option value="stereo">🎲 立体何切る（20問）</option>
+                </select>
+                <div style="display:flex; gap:8px;">
+                    <select id="sanma-drill-mode" class="season-select" style="margin-bottom:0; border-color:#16a085; font-size:14px;" onchange="resetSanmaDrillOrder()">
+                        <option value="random">🔀 ランダム出題</option>
+                        <option value="seq">🔢 1番から順番に解く</option>
+                        <option value="unsolved">📌 未クリアのみ（ランダム）</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="sanma-drill-card" style="background:#fff; border:1px solid #ddd; border-radius:8px; padding:15px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span id="sanma-drill-badge" style="background:#16a085; color:#fff; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:bold;">読込中...</span>
+                    <span id="sanma-drill-counter" style="font-size:13px; font-weight:bold; color:#666;">- / -</span>
+                </div>
+
+                <div id="sanma-drill-meta" style="background:#fff3cd; border-left:4px solid #f1c40f; padding:10px; font-size:14px; color:#333; border-radius:5px; margin-bottom:15px; line-height:1.5;"></div>
+
+                <div style="text-align:center; background:#fafafa; padding:10px; border-radius:8px; border:2px dashed #ccc; margin-bottom:15px;">
+                    <img id="sanma-drill-img" src="" alt="問題画像" onclick="openDrillImgZoom()" style="width:100%; height:auto; border-radius:4px; cursor:zoom-in; display:block; margin:0 auto;">
+                    <div id="sanma-drill-zoom-hint" style="display:none; font-size:11px; color:#666; margin-top:6px;">🔍 画像をタップすると大きく拡大できます</div>
+                </div>
+
+                <div id="sanma-drill-before-ans">
+                    <button class="btn" style="background-color:#16a085; font-size:18px; padding:14px;" onclick="revealSanmaDrillAnswer()">👀 答えと解説を見る</button>
+                </div>
+
+                <div id="sanma-drill-after-ans" style="display:none; animation: fadeIn 0.3s;">
+                    <div style="background:#fdf2e9; border:2px solid #e67e22; border-radius:8px; padding:15px; margin-bottom:15px;">
+                        <div style="font-size:12px; font-weight:bold; color:#d35400; margin-bottom:4px;">【正解】</div>
+                        <div id="sanma-drill-answer" style="font-size:22px; font-weight:bold; color:#c0392b; line-height:1.4;"></div>
+                        <hr style="border:none; border-top:1px dashed #e67e22; margin:12px 0;">
+                        <div style="font-size:12px; font-weight:bold; color:#2c3e50; margin-bottom:4px;">【解説】</div>
+                        <div id="sanma-drill-explanation" style="font-size:14px; color:#333; line-height:1.6;"></div>
+                    </div>
+
+                    <div style="display:flex; gap:10px; margin-bottom:10px;">
+                        <button class="btn" style="background-color:#27ae60; font-size:15px; padding:12px; margin-top:0;" onclick="markSanmaDrillSolved(true)">⭕ 正解！（クリア記録）</button>
+                        <button class="btn" style="background-color:#e74c3c; font-size:15px; padding:12px; margin-top:0;" onclick="markSanmaDrillSolved(false)">❌ 間違えた（次へ）</button>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; gap:10px; margin-top:10px;">
+                    <button class="btn btn-cancel" style="margin-bottom:0; font-size:14px; padding:10px;" onclick="stepSanmaDrill(-1)">← 前の問題</button>
+                    <button class="btn btn-sync" style="margin-top:0; font-size:14px; padding:10px;" onclick="stepSanmaDrill(1)">次の問題 →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="drill-img-zoom-modal" onclick="closeDrillImgZoom()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:20000; justify-content:center; align-items:center; flex-direction:column; padding:10px; box-sizing:border-box;">
+            <img id="drill-img-zoom-target" src="" style="max-width:100%; max-height:85vh; border-radius:6px; box-shadow:0 4px 15px rgba(0,0,0,0.5);">
+            <p style="color:#fff; font-size:13px; margin-top:12px;">画面をタップすると閉じます</p>
         </div>
 
         <div id="quiz-view" class="view-section">
@@ -534,14 +603,10 @@
         <div id="data-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📅 シーズンごとの成績</h2>
-            <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData(); loadS5DailyData();">🔄 最新のデータを読み込む</button>
+            <button class="btn btn-sync" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadRuikeiData(); loadCurrentDailyData();">🔄 最新のデータを読み込む</button>
             <select id="season-selector" class="season-select" onchange="renderRuikeiTableAndChart()">
-                <option value="S5">🟢 S5 (今シーズン - 2026年)</option>
-                <option value="S4">⚪ S4 (2025年)</option>
-                <option value="S3">⚪ S3 (2025年)</option>
-                <option value="S2">⚪ S2 (2025年)</option>
-                <option value="S1">⚪ S1 (2025年)</option>
-                <option value="ALL">🔥 全シーズン（S1〜S5累積）</option>
+                <option value="S8">🟢 S8 (今シーズン - 2026年)</option>
+                <option value="ALL">🔥 全シーズン累積</option>
             </select>
             <div class="chart-container"><canvas id="ruikei-chart"></canvas></div>
             <h3 style="margin-top: 20px;">📊 成績表</h3>
@@ -549,7 +614,7 @@
 
             <hr style="border: 1px dashed #ccc; margin: 30px 0;">
 
-            <h2>📅 日別詳細成績（S5）</h2>
+            <h2>📅 日別詳細成績（<span id="daily-season-label">S8</span>）</h2>
             <div style="margin-bottom:15px; background:#e8f4f8; padding:15px; border-radius:10px; text-align:center;">
                 <div id="daily-date-display" style="font-size:32px; font-weight:bold; color:#2980b9; margin-bottom:15px;">読み込み中...</div>
 
@@ -563,12 +628,22 @@
 
             <h3 style="margin-top: 20px;">📊 その日の対局履歴</h3>
             <div id="daily-games-area"></div>
+
+            <hr style="border: 1px dashed #ccc; margin: 40px 0 20px 0;">
+            <div style="background:#f8f9fa; border:1px solid #ddd; border-radius:8px; padding:15px; text-align:center;">
+                <p style="font-size:13px; color:#666; margin-top:0; margin-bottom:10px;">
+                    ⚙️ 管理者メニュー（シーズン切り替え時に1回だけ押してください）
+                </p>
+                <button class="btn" style="background-color:#e67e22; font-size:15px; padding:12px;" onclick="openSeasonRolloverModal()">
+                    🔄 次シーズンへ更新（<span id="rollover-btn-label">S8 → S9</span>）
+                </button>
+            </div>
         </div>
 
         <div id="hanchan-view" class="view-section">
             <button class="btn btn-cancel" onclick="switchView('menu-view')">🏠 メニューに戻る</button>
             <h2>📊 AI分析ダッシュボード</h2>
-            <p style="text-align:center; font-size:12px; color:#666;">※S4+S5の半荘データを元に計算されています</p>
+            <p style="text-align:center; font-size:12px; color:#666;">※<span id="hanchan-season-range-label">S5-S8</span>の半荘データを元に計算されています</p>
             <button class="btn btn-analysis" style="font-size: 14px; padding: 10px; margin-bottom: 15px;" onclick="loadHanchanData()">🔄 最新のデータを読み込む</button>
             <div id="ai-commentary" class="ai-report"><p style="text-align:center;">☁️ データを読み込んでAIレポートを作成しています...</p></div>
             <div class="chart-title" style="margin-top: 30px;">🕸️ プレイスタイル（能力パラメーター）</div>
@@ -594,12 +669,22 @@
         </div>
 
     </div>
+
     <div id="custom-confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
         <div style="background:#fff; padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.2s;">
             <p style="font-size:20px; font-weight:bold; color:#e74c3c; margin-top:0; margin-bottom:15px;">本当に削除しても<br>よろしいですか？</p>
-            <p style="font-size:12px; color:#666; margin-bottom:25px;">（S5分析・累計シートからも自動的に削除・修復されます）</p>
+            <p style="font-size:12px; color:#666; margin-bottom:25px;">（<span id="delete-modal-season-label">S8</span>分析・累計シートからも自動的に削除・修復されます）</p>
             <button onclick="executeDelete()" style="background:#e74c3c; color:#fff; border:none; padding:18px; border-radius:8px; width:100%; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:15px; box-shadow:0 4px 0 #c0392b; transition:0.1s;">よろしくお願いしまぁぁぁぁぁぁぁぁぁぁぁす！</button>
             <button onclick="closeConfirmModal()" style="background:#95a5a6; color:#fff; border:none; padding:12px; border-radius:8px; width:100%; font-size:15px; font-weight:bold; cursor:pointer;">やっぱりやめる</button>
+        </div>
+    </div>
+
+    <div id="season-rollover-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10001; justify-content:center; align-items:center;">
+        <div style="background:#fff; padding:25px; border-radius:10px; width:90%; max-width:420px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.2s;">
+            <p style="font-size:20px; font-weight:bold; color:#e67e22; margin-top:0; margin-bottom:10px;">🔄 シーズン更新の確認</p>
+            <p id="rollover-modal-desc" style="font-size:14px; color:#333; line-height:1.6; text-align:left; background:#fff3cd; padding:12px; border-radius:6px; margin-bottom:20px;"></p>
+            <button id="rollover-exec-btn" onclick="executeSeasonRollover()" style="background:#e67e22; color:#fff; border:none; padding:15px; border-radius:8px; width:100%; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:10px;">実行する（スプレッドシート自動更新）</button>
+            <button onclick="closeSeasonRolloverModal()" style="background:#95a5a6; color:#fff; border:none; padding:12px; border-radius:8px; width:100%; font-size:15px; font-weight:bold; cursor:pointer;">キャンセル</button>
         </div>
     </div>
 
@@ -653,7 +738,6 @@
         let quizStartTime = 0;
         let penaltyTime = 0;
         let currentQuizMode = 7;
-        // 💡 追加：現在の1位のタイムを記憶しておく変数（最初は適当な遅いタイムを入れておく）
         let bestTime7 = 9999;
         let bestTime10 = 9999;
 
@@ -671,13 +755,68 @@
 
         let records = [];
         let cachedRuikeiData = [];
+        let detectedSeasonRanges = {};
+        let activeSeasonName = "S8";
+        let activeMultiSeasonName = "S5-S8";
         let ruikeiChart = null;
         let hanchanChart = null;
         let rankChart = null;
         let radarChartObj = null;
 
-        let s5DailyData = [];
+        let currentDailyData = [];
         let currentDailyIndex = 0;
+        let analysisDateSet = new Set();
+        let ruikeiDateSet = new Set();
+
+        function normalizeDateKey(raw, fallbackYear) {
+            let s = String(raw || "").trim().split('T')[0].replace(/\//g, '-');
+            if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)) {
+                let p = s.split('-');
+                return `${p[0]}-${p[1].padStart(2, '0')}-${p[2].padStart(2, '0')}`;
+            }
+            if (/^\d{1,2}-\d{1,2}$/.test(s)) {
+                let p = s.split('-');
+                let yr = fallbackYear || new Date().getFullYear();
+                return `${yr}-${p[0].padStart(2, '0')}-${p[1].padStart(2, '0')}`;
+            }
+            return "";
+        }
+
+        function mergeAndRenderDailyDates() {
+            let merged = new Set([...analysisDateSet, ...ruikeiDateSet]);
+            let sortedDates = Array.from(merged).filter(d => d !== "").sort();
+            currentDailyData = sortedDates.map(d => ({ date: d }));
+
+            if (currentDailyData.length > 0) {
+                currentDailyIndex = currentDailyData.length - 1;
+                renderDailyView();
+            } else {
+                document.getElementById('daily-date-display').innerText = "データなし";
+                document.getElementById('daily-summary-area').innerHTML = "";
+                document.getElementById('daily-games-area').innerHTML = "";
+            }
+        }
+
+        function updateSeasonLabels(sName, multiName) {
+            if (sName) {
+                activeSeasonName = sName;
+                const dLabel = document.getElementById('daily-season-label');
+                if (dLabel) dLabel.innerText = sName;
+                const delLabel = document.getElementById('delete-modal-season-label');
+                if (delLabel) delLabel.innerText = sName;
+
+                const num = parseInt(sName.replace('S', ''), 10);
+                if (!isNaN(num)) {
+                    const rbLabel = document.getElementById('rollover-btn-label');
+                    if (rbLabel) rbLabel.innerText = `S${num} → S${num + 1}`;
+                }
+            }
+            if (multiName) {
+                activeMultiSeasonName = multiName;
+                const hLabel = document.getElementById('hanchan-season-range-label');
+                if (hLabel) hLabel.innerText = multiName;
+            }
+        }
 
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -702,8 +841,6 @@
             }
 
             let today = new Date();
-
-            // 💡 追加：もし今の時間が「朝の6時より前」だったら、前日の日付にする
             if (today.getHours() < 8) {
                 today.setDate(today.getDate() - 1);
             }
@@ -717,11 +854,12 @@
             initTriviaView();
             initQuizView();
             loadNaniKiruData();
+            loadSanmaDrillData();
         };
 
         function checkPassword() {
             let input = document.getElementById('secret-word-input').value;
-            if (input === "tsudoi") { // 💡 正しい合言葉じゃないと入れないようにする
+            if (input === "tsudoi") {
                 try { localStorage.setItem('mahjong_auth', input); } catch (e) { }
                 document.getElementById('login-view').classList.remove('active-view');
                 document.getElementById('menu-view').classList.add('active-view');
@@ -738,7 +876,7 @@
             if (viewId === 'input-view') loadFromCloud();
             else if (viewId === 'data-view') {
                 loadRuikeiData();
-                loadS5DailyData();
+                loadCurrentDailyData();
             }
             else if (viewId === 'hanchan-view') loadHanchanData();
             else if (viewId === 'quiz-view') loadQuizRanking();
@@ -753,6 +891,17 @@
                     nextNaniKiru();
                 }
             }
+            else if (viewId === 'sanma-drill-view') {
+                if (sanmaDrillPool.length === 0) {
+                    document.getElementById('sanma-drill-meta').innerHTML = "☁️ 問題データを読み込み中...";
+                    setTimeout(() => {
+                        if (sanmaDrillPool.length > 0) resetSanmaDrillOrder();
+                        else document.getElementById('sanma-drill-meta').innerHTML = "<span style='color:red;'>データの読み込みに失敗しました。sanma_nanikiru_data.json がGitHubにあるか確認してください。</span>";
+                    }, 1000);
+                } else if (sanmaDrillFiltered.length === 0) {
+                    resetSanmaDrillOrder();
+                }
+            }
         }
 
         // ==========================================
@@ -763,7 +912,6 @@
                 .then(res => res.json())
                 .then(data => {
                     naniKiruPool = data;
-                    console.log("何切るデータ読み込み完了: " + data.length + "問");
                 })
                 .catch(err => {
                     console.error("何切るデータの読み込みに失敗しました。", err);
@@ -861,9 +1009,9 @@
                 let waitImgs = "";
                 opt.waits.forEach(w => {
                     waitImgs += `<div style="display:inline-block; margin-right:8px; text-align:center;">
-                                        <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
-                                        <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
-                                    </div>`;
+                                    <img src="${w.tile}${currentProblem.type}.png" style="width:30px; vertical-align:middle; border-radius:3px; box-shadow:1px 1px 3px rgba(0,0,0,0.2);"><br>
+                                    <span style="font-size:13px; font-weight:bold; color:#e74c3c;">${w.count}枚</span>
+                                </div>`;
                 });
 
                 let prob = (opt.win_prob * 100).toFixed(1);
@@ -878,27 +1026,27 @@
                 if (isUserChoice) badge += '<span style="color:#3498db; font-weight:bold; font-size:13px;">👉 あなたの選択</span> ';
 
                 detailsHtml += `
-                                    <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                                        <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
-                                            ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
-                                        </div>
-                                        <div style="margin-bottom:10px;">${waitImgs}</div>
-                                        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
-                                            <tr style="background:#ecf0f1;">
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
-                                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
-                                                <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
-                                                <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
-                                                <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                `;
+                    <div style="margin-bottom:15px; text-align:left; background:${bgCol}; padding:15px; border-radius:8px; border-left:5px solid ${borderCol}; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="font-size:18px; font-weight:bold; margin-bottom:10px; color:#2c3e50;">
+                            ${badge}打 ${opt.discard}${currentProblem.type === 'p' ? '筒' : '索'}
+                        </div>
+                        <div style="margin-bottom:10px;">${waitImgs}</div>
+                        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                            <tr style="background:#ecf0f1;">
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">待ち数</th>
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">和了確率</th>
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">平均打点</th>
+                                <th style="padding:5px; border:1px solid #bdc3c7; width:25%;">期待値 (EV)</th>
+                            </tr>
+                            <tr>
+                                <td style="padding:5px; border:1px solid #bdc3c7;"><strong>${opt.types}種 ${opt.total_count}枚</strong></td>
+                                <td style="padding:5px; border:1px solid #bdc3c7; color:#e74c3c;"><strong>${prob}%</strong></td>
+                                <td style="padding:5px; border:1px solid #bdc3c7;">${score}点</td>
+                                <td style="padding:5px; border:1px solid #bdc3c7; color:#2980b9; font-size:16px;"><strong>${ev}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
             });
 
             infoEl.innerHTML = detailsHtml;
@@ -906,22 +1054,18 @@
         }
 
         // ==========================================
-        // ▼ 日別成績（S5分析＆チップ逆算）処理 ▼
+        // ▼ 日別成績（今シーズン分析シート自動取得） ▼
         // ==========================================
-        function loadS5DailyData() {
+        function loadCurrentDailyData() {
             document.getElementById('daily-date-display').innerText = "☁️ 読込中...";
-            fetch(GAS_URL + "?action=getS5Analysis&t=" + new Date().getTime())
+            fetch(GAS_URL + "?action=getCurrentAnalysis&t=" + new Date().getTime())
                 .then(res => res.json())
-                .then(data => {
-                    parseS5Data(data);
-                    if (s5DailyData.length > 0) {
-                        currentDailyIndex = s5DailyData.length - 1;
-                        renderDailyView();
-                    } else {
-                        document.getElementById('daily-date-display').innerText = "データなし";
-                        document.getElementById('daily-summary-area').innerHTML = "";
-                        document.getElementById('daily-games-area').innerHTML = "";
-                    }
+                .then(resObj => {
+                    let rows = Array.isArray(resObj) ? resObj : (resObj.rows || []);
+                    if (resObj.seasonName) updateSeasonLabels(resObj.seasonName, resObj.multiSeasonName);
+
+                    parseDailyData(rows);
+                    mergeAndRenderDailyDates();
                 })
                 .catch(err => {
                     document.getElementById('daily-date-display').innerText = "エラー";
@@ -929,41 +1073,22 @@
                 });
         }
 
-        function parseS5Data(data) {
-            s5DailyData = [];
-            let currentDayObj = null;
-
+        function parseDailyData(data) {
+            analysisDateSet.clear();
             for (let i = 1; i < data.length; i++) {
                 let row = data[i];
                 let dateVal = row[0];
                 let matchNum = row[1];
-
                 if (!dateVal || dateVal === "" || isNaN(matchNum) || matchNum === "") continue;
 
-                let dateStr = String(dateVal).split('T')[0];
-
-                if (!currentDayObj || currentDayObj.date !== dateStr) {
-                    currentDayObj = { date: dateStr, games: [], totals: [0, 0, 0, 0, 0, 0] };
-                    s5DailyData.push(currentDayObj);
-                }
-
-                let scores = [];
-                for (let p = 0; p < 6; p++) {
-                    let s = parseFloat(row[2 + p]);
-                    if (isNaN(s)) s = 0;
-                    scores.push(s);
-                    currentDayObj.totals[p] += s;
-                }
-                currentDayObj.games.push({ matchNum: matchNum, scores: scores });
+                let key = normalizeDateKey(dateVal);
+                if (key) analysisDateSet.add(key);
             }
         }
 
-        // ==========================================
-        // ▼ 日別成績（S5）の描画ロジック
-        // ==========================================
         function renderDailyView() {
-            if (s5DailyData.length === 0) return;
-            let dayData = s5DailyData[currentDailyIndex];
+            if (currentDailyData.length === 0) return;
+            let dayData = currentDailyData[currentDailyIndex];
             document.getElementById('daily-date-display').innerText = dayData.date;
 
             document.getElementById('daily-summary-area').innerHTML = "<p style='text-align:center; font-weight:bold; color:#2980b9;'>☁️ 日別詳細データを取得中...</p>";
@@ -986,45 +1111,41 @@
                     }
 
                     let totals = {};
-                    // 💡 追加：トップとラスの回数をカウントするための箱を用意
-                    players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0, top: 0, last: 0 });
+                    players.forEach(p => totals[p.id] = { sanmaPt: 0, yonmaPt: 0, chipRaw: 0, top: 0, last: 0 });
 
                     let gamesHtml = "";
                     let hanchanCount = 1;
 
                     records.forEach(rec => {
-                        let details = "";
-                        let title = "";
-                        let hasS = Object.keys(rec.points).length > 0;
-                        let hasC = Object.keys(rec.chips).length > 0;
-                        if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
-                        if (hasC && !hasS) { title = "チップのみ"; }
+                        let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
 
-                        // 💡 追加：トップとラスの回数を計算
+                        let ptsSum = 0;
+                        players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
+                        let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
+
                         if (hasS) {
+                            let modeBadge = isYonma
+                                ? '<span style="background:#8e44ad; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">四麻</span>'
+                                : '<span style="background:#27ae60; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">三麻</span>';
+                            title += `${modeBadge}第${hanchanCount}半荘 `;
+                            hanchanCount++;
+
                             let gameScores = [];
-                            players.forEach(p => {
-                                if (rec.points[p.id] !== undefined) {
-                                    gameScores.push({ id: p.id, score: rec.points[p.id] });
-                                }
-                            });
+                            players.forEach(p => { if (rec.points[p.id] !== undefined) gameScores.push({ id: p.id, score: rec.points[p.id] }); });
                             if (gameScores.length > 0) {
                                 gameScores.sort((a, b) => b.score - a.score);
-                                totals[gameScores[0].id].top++; // 1位
-                                totals[gameScores[gameScores.length - 1].id].last++; // 最下位
+                                totals[gameScores[0].id].top++;
+                                totals[gameScores[gameScores.length - 1].id].last++;
                             }
                         }
+                        if (hasC && !hasS) { title = "チップのみ"; }
 
                         let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
                         sortedPlayers.sort((a, b) => {
                             if (hasS) {
-                                let ptA = rec.points[a.id] !== undefined ? rec.points[a.id] : -99999;
-                                let ptB = rec.points[b.id] !== undefined ? rec.points[b.id] : -99999;
-                                return ptB - ptA;
+                                return (rec.points[b.id] !== undefined ? rec.points[b.id] : -99999) - (rec.points[a.id] !== undefined ? rec.points[a.id] : -99999);
                             } else {
-                                let cA = rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999;
-                                let cB = rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999;
-                                return cB - cA;
+                                return (rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999) - (rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999);
                             }
                         });
 
@@ -1032,44 +1153,34 @@
                             let text = [];
                             let gameRawPt = rec.points[p.id];
                             let gameChipRaw = rec.chips[p.id] || 0;
-                            let gameChipPt = gameChipRaw * 2;
 
                             if (gameRawPt !== undefined) {
-                                totals[p.id].rawPt += gameRawPt;
+                                if (isYonma) totals[p.id].yonmaPt += gameRawPt;
+                                else totals[p.id].sanmaPt += gameRawPt;
                                 text.push(`<span class="${gameRawPt > 0 ? 'plus' : (gameRawPt < 0 ? 'minus' : '')}">得点${gameRawPt > 0 ? '+' : ''}${gameRawPt.toFixed(1)}</span>`);
                             }
                             if (gameChipRaw !== 0) {
                                 totals[p.id].chipRaw += gameChipRaw;
+                                let gameChipPt = gameChipRaw * 2;
                                 text.push(`<span class="${gameChipPt > 0 ? 'plus' : (gameChipPt < 0 ? 'minus' : '')}">チップ${gameChipPt > 0 ? '+' : ''}${gameChipPt.toFixed(1)}</span>`);
                             }
                             if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
                         });
-
-                        let timeStr = "";
-                        if (rec.timestamp) {
-                            let m = String(rec.timestamp).match(/\d{2}:\d{2}/);
-                            timeStr = m ? m[0] : String(rec.timestamp).substring(11, 16);
-                        }
-
-                        gamesHtml += `<div class="history-card">
-                                                <div class="history-header">
-                                                    <span>${title} <span style="font-size:10px; color:#999;">(${timeStr})</span></span>
-                                                </div>
-                                                ${details}
-                                              </div>`;
+                        gamesHtml += `<div class="history-card"><div class="history-header"><span style="display:flex; align-items:center;">${title} <span style="font-size:10px; color:#999; margin-left:5px;">(${rec.timestamp})</span></span><div>${String(rec.id).startsWith('cloud_') ? '<span style="color:#27ae60;">☁️ 同期済</span>' : '<span style="color:#e74c3c;">⏳ 送信中...</span>'}<button id="delete-btn-${rec.id}" onclick="deleteRecord('${rec.timestamp}', '${rec.id}')" style="margin-left:10px; padding:3px 8px; font-size:12px; background:#e74c3c; color:#fff; border:none; border-radius:3px; cursor:pointer;">🗑️ 削除</button></div></div>${details}</div>`;
                     });
 
-                    // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
                     let summaryData = [];
                     players.forEach(p => {
-                        let rawPt = totals[p.id].rawPt;
+                        let sanma = totals[p.id].sanmaPt;
+                        let yonma = totals[p.id].yonmaPt;
                         let chipPt = totals[p.id].chipRaw * 2;
-                        let finalPt = rawPt + chipPt;
+                        let finalPt = sanma + yonma + chipPt;
 
-                        if (rawPt !== 0 || totals[p.id].chipRaw !== 0) {
+                        if (sanma !== 0 || yonma !== 0 || totals[p.id].chipRaw !== 0) {
                             summaryData.push({
                                 name: p.name,
-                                rawPt: rawPt,
+                                sanma: sanma,
+                                yonma: yonma,
                                 chipPt: chipPt,
                                 finalPt: finalPt,
                                 top: totals[p.id].top,
@@ -1078,22 +1189,27 @@
                         }
                     });
 
-                    // 最終Pの大きい順にソート
                     summaryData.sort((a, b) => b.finalPt - a.finalPt);
 
-                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>';
+                    let summaryHtml = '<div class="table-responsive"><table class="result-table"><tr><th>名前</th><th>三麻得点</th><th>四麻得点</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>';
+
                     summaryData.forEach(d => {
-                        let sCol = d.rawPt > 0 ? 'plus' : (d.rawPt < 0 ? 'minus' : '');
+                        let sCol = d.sanma > 0 ? 'plus' : (d.sanma < 0 ? 'minus' : '');
+                        let yCol = d.yonma > 0 ? 'plus' : (d.yonma < 0 ? 'minus' : '');
                         let cCol = d.chipPt > 0 ? 'plus' : (d.chipPt < 0 ? 'minus' : '');
                         let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
+                        let sStr = d.sanma > 0 ? '+' + d.sanma.toFixed(1) : d.sanma.toFixed(1);
+                        let yStr = d.yonma > 0 ? '+' + d.yonma.toFixed(1) : d.yonma.toFixed(1);
+
                         summaryHtml += `<tr>
-                                                <td style="font-weight:bold;">${d.name}</td>
-                                                <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
-                                                <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
-                                                <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                                <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
-                                            </tr>`;
+                            <td style="font-weight:bold;">${d.name}</td>
+                            <td class="${sCol}">${sStr}</td>
+                            <td class="${yCol}">${yStr}</td>
+                            <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                            <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                            <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                        </tr>`;
                     });
                     summaryHtml += '</table></div>';
 
@@ -1108,7 +1224,7 @@
         function changeDailyDate(dir) {
             currentDailyIndex += dir;
             if (currentDailyIndex < 0) currentDailyIndex = 0;
-            if (currentDailyIndex >= s5DailyData.length) currentDailyIndex = s5DailyData.length - 1;
+            if (currentDailyIndex >= currentDailyData.length) currentDailyIndex = currentDailyData.length - 1;
             renderDailyView();
         }
 
@@ -1130,27 +1246,23 @@
             }
             kb.innerHTML = kbHtml;
 
-            // 💡 7枚形(19種)の一覧表示を生成（画像を大きくし、待ちを改行）
             let list7Html = "";
             machi19.forEach(item => {
-                // widthを20px → 28pxに拡大
                 let imgs = item.q.map(n => `<img src="${n}p.png" style="width:28px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list7Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                                <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                                <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                            </div>`;
+                                    <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:2px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                                    <div style="color:#e74c3c; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                                </div>`;
             });
             document.getElementById('quiz-list-7').innerHTML = list7Html;
 
-            // 💡 10枚形(抜粋15種)の一覧表示を生成（画像を大きくし、待ちを改行）
             let list10Html = "";
             machi10.forEach(item => {
-                // widthを18px → 24pxに拡大（10枚並ぶので少しだけ小さめ）
                 let imgs = item.q.map(n => `<img src="${n}s.png" style="width:24px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3); vertical-align:middle;">`).join('');
                 list10Html += `<div style="margin-bottom:12px; border-bottom:1px dashed #eee; padding-bottom:8px; text-align:center;">
-                                <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
-                                <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
-                            </div>`;
+                                    <div style="display:flex; justify-content:center; flex-wrap:nowrap; gap:1px; margin-bottom:5px; overflow-x:auto;">${imgs}</div>
+                                    <div style="color:#27ae60; font-weight:bold; font-size:14px;">待: ${item.a.join(', ')}</div>
+                                </div>`;
             });
             document.getElementById('quiz-list-10').innerHTML = list10Html;
         }
@@ -1162,17 +1274,14 @@
             fetch(GAS_URL + "?action=getQuizRanking&t=" + new Date().getTime())
                 .then(res => res.json())
                 .then(data => {
-                    // 名前に含まれるタグでデータを2つに振り分ける
                     let data7 = data.filter(d => d.name && d.name.includes('(7枚)'));
                     let data10 = data.filter(d => d.name && d.name.includes('(10枚)'));
 
-                    // 💡 追加：現在の1位のタイムを保存しておく
                     if (data7.length > 0) bestTime7 = data7[0].time;
                     if (data10.length > 0) bestTime10 = data10[0].time;
 
                     const medals = ["🥇", "🥈", "🥉"];
 
-                    // 表の描画用共通関数
                     const renderList = (listData, elementId) => {
                         let html = "";
                         if (listData.length === 0) {
@@ -1180,17 +1289,16 @@
                         } else {
                             for (let i = 0; i < 3; i++) {
                                 if (listData[i]) {
-                                    // 表示をスッキリさせるため「(7枚)」などのタグを消す
                                     let cleanName = listData[i].name.replace(" (7枚)", "").replace(" (10枚)", "");
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; font-weight:bold; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                            <span>${medals[i]} ${cleanName}</span>
-                                                            <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
-                                                         </div>`;
+                                                <span>${medals[i]} ${cleanName}</span>
+                                                <span style="color:#e74c3c;">${listData[i].time.toFixed(1)}s</span>
+                                             </div>`;
                                 } else {
                                     html += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px; color:#ccc; border-bottom:1px dashed #eee; padding-bottom:3px;">
-                                                            <span>${medals[i]} ---</span>
-                                                            <span>--.-s</span>
-                                                         </div>`;
+                                                <span>${medals[i]} ---</span>
+                                                <span>--.-s</span>
+                                             </div>`;
                                 }
                             }
                         }
@@ -1294,12 +1402,10 @@
         }
 
         function finishQuiz() {
-            // タイム計算
             let finalTime = (Date.now() - quizStartTime) / 1000 + penaltyTime;
             let pName = document.getElementById('quiz-player-select').value;
             let recordName = pName + (currentQuizMode === 7 ? " (7枚)" : " (10枚)");
 
-            // 💡 修正：プレイ画面は消すが、ここではまだ「結果画面（タイム）」を表示しない！
             document.getElementById('quiz-play-area').style.display = 'none';
 
             let isNewRecord = false;
@@ -1315,7 +1421,6 @@
                 isNearMiss = true;
             }
 
-            // 結果画面の準備（裏側でテキストだけセットしておく）
             document.getElementById('quiz-final-time').innerText = finalTime.toFixed(1);
             document.getElementById('quiz-penalty-text').innerText = penaltyTime > 0 ? `(うちペナルティ ${penaltyTime}秒)` : "✨ノーミス・パーフェクト！✨";
 
@@ -1328,23 +1433,19 @@
                 newRecordMsg.style.display = 'block';
                 nearMissMsg.style.display = 'none';
                 secondVideoSrc = 'success_video.mp4';
-                // 💡 修正：すぐに動画再生（暗転）スタート！結果画面はまだ見せない。
                 playVideoSequence(secondVideoSrc);
             } else if (isNearMiss) {
                 newRecordMsg.style.display = 'none';
                 nearMissMsg.style.display = 'block';
                 document.getElementById('quiz-diff-time').innerText = (finalTime - bestTime).toFixed(1);
                 secondVideoSrc = 'near_miss_video.mp4';
-                // 💡 修正：すぐに動画再生（暗転）スタート！
                 playVideoSequence(secondVideoSrc);
             } else {
                 newRecordMsg.style.display = 'none';
                 nearMissMsg.style.display = 'none';
-                // 💡 修正：動画がない（普通のタイムの）場合だけ、すぐに結果画面を出す
                 document.getElementById('quiz-result-area').style.display = 'block';
             }
 
-            // 裏側でGAS（クラウド）へ記録を送信しておく
             let saveStatus = document.getElementById('quiz-saving-status');
             saveStatus.innerText = "☁️ 記録をクラウドに送信中...";
             saveStatus.style.color = "#f39c12";
@@ -1367,10 +1468,6 @@
                 .catch(err => { saveStatus.innerText = "⚠️ 通信エラーが発生しました"; saveStatus.style.color = "red"; });
         }
 
-
-        // ==========================================
-        // ▼ タイムアタック動画連続再生ロジック ▼
-        // ==========================================
         function playVideoSequence(secondVideoSrc) {
             let overlay = document.getElementById('new-record-overlay');
             let vid = document.getElementById('congrats-video');
@@ -1380,7 +1477,6 @@
             vid.style.display = 'none';
             skipBtn.style.display = 'none';
 
-            // 暗転から2秒のタメの後に動画再生開始
             setTimeout(() => {
                 vid.style.display = 'block';
                 vid.src = 'intro_video.mp4';
@@ -1406,14 +1502,11 @@
             closeNewRecordVideo();
         }
 
-        // 💡 修正：動画が終わった（またはスキップした）瞬間に、結果画面をバーン！と表示する
         function closeNewRecordVideo() {
             let overlay = document.getElementById('new-record-overlay');
             let vid = document.getElementById('congrats-video');
             vid.pause();
             overlay.style.display = 'none';
-
-            // 動画演出が終わったここで初めてタイムとおめでとうの文字をお披露目！
             document.getElementById('quiz-result-area').style.display = 'block';
         }
 
@@ -1444,9 +1537,11 @@
         function loadHanchanData() {
             document.getElementById('hanchan-table-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
             document.getElementById('ai-commentary').innerHTML = "<p style='text-align:center;'>☁️ 分析レポートを作成中...</p>";
-            fetch(GAS_URL + "?action=getHanchans&t=" + new Date().getTime()).then(res => res.json()).then(data => {
-                if (data.error) { document.getElementById('hanchan-table-area').innerHTML = `<p style="color:red;">エラー: ${data.error}</p>`; return; }
-                renderHanchanTableAndChart(data);
+            fetch(GAS_URL + "?action=getHanchans&t=" + new Date().getTime()).then(res => res.json()).then(resObj => {
+                if (resObj.error) { document.getElementById('hanchan-table-area').innerHTML = `<p style="color:red;">エラー: ${resObj.error}</p>`; return; }
+                let rows = Array.isArray(resObj) ? resObj : (resObj.rows || []);
+                if (resObj.seasonName) updateSeasonLabels(resObj.seasonName, resObj.multiSeasonName);
+                renderHanchanTableAndChart(rows);
             }).catch(err => { document.getElementById('hanchan-table-area').innerHTML = `<p style="color:red;">通信エラーが発生しました。</p>`; });
         }
 
@@ -1472,6 +1567,7 @@
                     sheetStats[colBStr] = [row[2], row[3], row[4], row[5], row[6], row[7]];
                 }
             }
+
             let validStats = pStats.filter(s => s.matches > 0);
             if (validStats.length > 0) {
                 let aiText = "<strong style='font-size:16px;'>🤖 AIアドバイザーによるプレイヤー分析レポート</strong><br><br>";
@@ -1480,19 +1576,92 @@
                 let bestDef = [...validStats].sort((a, b) => (a.r3 / a.matches) - (b.r3 / b.matches))[0];
                 aiText += `🛡️ <strong>鉄壁の守備：</strong> ラス回避率トップは「${players[pStats.indexOf(bestDef)].name}」さん（ラス率${(bestDef.r3 / bestDef.matches * 100).toFixed(1)}%）！<br><br>`;
                 aiText += "<strong style='font-size:15px; color:#2980b9;'>📝 各プレイヤーのプレイスタイル診断</strong><br>";
+
+                let pData = [];
                 for (let i = 0; i < 6; i++) {
-                    let s = pStats[i]; if (s.matches === 0) continue;
-                    let topRate = s.r1 / s.matches; let lastRate = s.r3 / s.matches; let avg = s.total / s.matches; let styleTitle = ""; let styleDesc = "";
-                    if (topRate >= 0.35 && lastRate >= 0.30) { styleTitle = "超攻撃・爆発型 🌋"; styleDesc = "トップかラスかのスリリングな麻雀が特徴。"; }
-                    else if (topRate >= 0.35 && lastRate <= 0.25) { styleTitle = "パーフェクト無双型 👑"; styleDesc = "トップを量産しつつラスも引かない最強のステータス。"; }
-                    else if (topRate >= 0.30 && lastRate <= 0.30) { styleTitle = "バランス・攻撃寄り型 ⚔️"; styleDesc = "攻めと守りのバランスが良く、安定して上位に食い込める。"; }
-                    else if (lastRate <= 0.25) { styleTitle = "鉄壁の守備・安定型 🛡️"; styleDesc = "絶対にラスを引かない手堅さが最大の武器。"; }
-                    else if (topRate <= 0.25 && lastRate >= 0.35) { styleTitle = "大穴・逆襲待ち型 🌪️"; styleDesc = "大逆転劇に期待がかかります。"; }
-                    else { styleTitle = "堅実・オールラウンダー型 ⚖️"; styleDesc = "柔軟な対応が得意なバランス派。"; }
-                    aiText += `<div style="background:#fff; padding:10px; border-radius:5px; margin-top:10px; border-left:4px solid ${colors[i]}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"><span style="font-weight:bold; font-size:15px; color:${colors[i]}">👤 ${players[i].name}：【${styleTitle}】</span><br><span style="font-size:12px; color:#555; font-weight:bold;">トップ率: ${(topRate * 100).toFixed(1)}% / ラス回避: ${((1 - lastRate) * 100).toFixed(1)}% / 平均: ${avg.toFixed(1)}点</span><br><span style="font-size:13px; color:#333;">${styleDesc}</span></div>`;
+                    let s = pStats[i];
+                    if (s.matches > 0) {
+                        pData.push({
+                            idx: i,
+                            topRate: s.r1 / s.matches,
+                            lastRate: s.r3 / s.matches,
+                            midRate: s.r2 / s.matches,
+                            avgScore: s.total / s.matches,
+                            maxScore: s.scores.length > 0 ? Math.max(...s.scores) : 0,
+                            name: players[i].name,
+                            color: colors[i],
+                            s: s
+                        });
+                    }
                 }
+
+                const getRank = (arr, key) => {
+                    let sorted = [...arr].sort((a, b) => b[key] - a[key]);
+                    arr.forEach(p => p[key + 'Rank'] = sorted.findIndex(x => x.idx === p.idx) + 1);
+                };
+
+                getRank(pData, 'topRate');
+                getRank(pData, 'lastRate');
+                getRank(pData, 'midRate');
+                getRank(pData, 'avgScore');
+                getRank(pData, 'maxScore');
+
+                let stylesPool = [
+                    { id: 'kamikaze', title: "特攻・カミカゼ型 🛩️", desc: "トップかラスか。生きるか死ぬかのヒリつく勝負を好む、生粋のギャンブラー。", cond: p => p.topRateRank <= 2 && p.lastRateRank <= 2 },
+                    { id: 'sniper', title: "一撃必殺・スナイパー型 🎯", desc: "普段は息を潜め、特大トップの一撃で全てをひっくり返す恐るべき伏兵。", cond: p => p.maxScoreRank === 1 && p.topRateRank >= 3 },
+                    { id: 'jizo', title: "平和主義・お地蔵様型 🗿", desc: "トップも取らないがラスも引かない。争いを避けて卓上の平和を守る守護神。", cond: p => p.topRateRank >= 4 && p.lastRateRank >= 4 },
+                    { id: 'assassin', title: "静かなるアサシン 🗡️", desc: "目立たないように着実にポイントを削り取る、いぶし銀のテクニックの持ち主。", cond: p => p.avgScoreRank <= 4 && p.topRateRank >= 4 },
+                    { id: 'zombie', title: "不屈・ゾンビ型 🧟", desc: "何度ラスを引いてもマイナスを抑え込む。驚異的なメンタルと粘り強さ。", cond: p => p.lastRateRank <= 2 && p.avgScoreRank <= 3 },
+                    { id: 'bulldozer', title: "猪突猛進・ブルドーザー 🚜", desc: "ブレーキの壊れたダンプカー。ひたすら前に出続けるその姿勢は清々しい。", cond: p => p.topRateRank <= 3 && p.lastRateRank <= 2 },
+                    { id: 'berserker', title: "超攻撃・狂戦士型 🪓", desc: "トップをもぎ取る破壊力は随一。スリリングで攻撃的な麻雀が持ち味。", cond: p => p.topRateRank === 1 },
+                    { id: 'guardian', title: "鉄壁・ガーディアン型 🛡️", desc: "絶対にラスを引かない手堅さが最大の武器。圧倒的な守備力の高さが光る。", cond: p => p.lastRateRank === pData.length },
+                    { id: 'balancer', title: "堅実・バランサー型 ⚖️", desc: "状況に応じた柔軟な立ち回りが得意。大崩れしない安定感が魅力。", cond: p => p.midRateRank === 1 },
+                    { id: 'roman', title: "ロマン追及・豪腕型 💪", desc: "ツボにはまった時の爆発力は脅威。打点の高さと夢を追い求める。", cond: p => p.maxScoreRank <= 2 },
+                    { id: 'magician', title: "技巧派・マジシャン型 🎩", desc: "多彩な技で場をコントロールし、気付けば上位に食い込んでいる実力者。", cond: p => p.avgScoreRank <= 3 },
+                    { id: 'trickster', title: "嵐を呼ぶトリックスター 🃏", desc: "場をかき乱し、誰も予想できない結末を生み出す起爆剤。", cond: p => true },
+                    { id: 'entertainer', title: "孤高のエンターテイナー 🎭", desc: "勝敗よりも卓を盛り上げることに命を懸ける、愛すべき雀士。", cond: p => true },
+                    { id: 'mood', title: "気分屋・お天気丸型 🌤️", desc: "日によって強さが乱高下。乗っている時は誰にも止められない。", cond: p => true },
+                    { id: 'gambler', title: "勝負師・ギャンブラー型 🎲", desc: "直感と度胸で勝負を切り開く。ここぞという時の勝負強さに期待。", cond: p => true }
+                ];
+
+                let assignedIds = new Set();
+
+                stylesPool.forEach(style => {
+                    if (assignedIds.size >= pData.length) return;
+                    let candidates = pData.filter(p => !p.styleObj && style.cond(p));
+                    if (candidates.length > 0) {
+                        let selected = candidates[Math.floor(Math.random() * candidates.length)];
+                        selected.styleObj = style;
+                        assignedIds.add(style.id);
+                    }
+                });
+
+                pData.forEach(p => {
+                    if (!p.styleObj) {
+                        let available = stylesPool.filter(s => s.cond(p) && !assignedIds.has(s.id));
+                        let fallback = available.length > 0 ? available[Math.floor(Math.random() * available.length)] : stylesPool[11];
+                        p.styleObj = fallback;
+                        assignedIds.add(fallback.id);
+                    }
+                });
+
+                pData.sort((a, b) => a.idx - b.idx);
+
+                pData.forEach(p => {
+                    let topRateStr = (p.topRate * 100).toFixed(1);
+                    let lastAvoidRateStr = ((1 - p.lastRate) * 100).toFixed(1);
+                    let avgStr = p.avgScore.toFixed(1);
+
+                    aiText += `<div style="background:#fff; padding:10px; border-radius:5px; margin-top:10px; border-left:4px solid ${p.color}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <span style="font-weight:bold; font-size:15px; color:${p.color}">👤 ${p.name}：【${p.styleObj.title}】</span><br>
+                                <span style="font-size:12px; color:#555; font-weight:bold;">トップ率: ${topRateStr}% / ラス回避: ${lastAvoidRateStr}% / 平均: ${avgStr}点</span><br>
+                                <span style="font-size:13px; color:#333;">${p.styleObj.desc}</span>
+                               </div>`;
+                });
+
                 document.getElementById('ai-commentary').innerHTML = aiText;
             }
+
             if (radarChartObj) radarChartObj.destroy();
             let radarDatasets = [];
             for (let i = 0; i < 6; i++) {
@@ -1500,10 +1669,13 @@
                 radarDatasets.push({ label: players[i].name, data: [Math.round(Math.min(100, (s.r1 / s.matches) * 100 * 2.5)), Math.round(Math.min(100, (1 - (s.r3 / s.matches)) * 100 * 1.5)), Math.round(Math.min(100, (s.r2 / s.matches) * 100 * 2.5)), Math.round(Math.min(100, Math.max(0, (s.total / s.matches + 20) * 2.5))), Math.round(s.scores.length > 0 ? Math.min(100, Math.max(...s.scores) / 1.5) : 0)], borderColor: colors[i], backgroundColor: colors[i] + '33', borderWidth: 2, hidden: i > 2 });
             }
             radarChartObj = new Chart(document.getElementById('radar-chart').getContext('2d'), { type: 'radar', data: { labels: ['攻撃(トップ率)', '守備(ラス回避)', '堅実さ(中位率)', '平均スコア', '爆発(最大得点)'], datasets: radarDatasets }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { position: 'bottom' } } } });
+
             if (hanchanChart) hanchanChart.destroy();
             hanchanChart = new Chart(document.getElementById('hanchan-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: pNames.map((n, i) => ({ label: n, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 1 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+
             if (rankChart) rankChart.destroy();
             rankChart = new Chart(document.getElementById('rank-chart').getContext('2d'), { type: 'bar', data: { labels: pNames, datasets: [{ label: '1位率', data: pStats.map(s => s.matches ? (s.r1 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#f1c40f' }, { label: '中位率', data: pStats.map(s => s.matches ? (s.r2 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#2ecc71' }, { label: '最下位率', data: pStats.map(s => s.matches ? (s.r3 / s.matches * 100).toFixed(1) : 0), backgroundColor: '#34495e' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, max: 100 } } } });
+
             let tbl = '<div class="table-responsive"><table class="ruikei-table">'; tbl += `<tr><th></th>${pNames.map(n => `<th>${n}</th>`).join('')}</tr>`;
             let makeRow = (title, fn) => { tbl += `<tr><th style="background:#e8f4f8;">${title}</th>`; for (let i = 0; i < 6; i++) tbl += `<td>${fn(pStats[i], i)}</td>`; tbl += `</tr>`; };
             makeRow("1位数", s => s.r1); makeRow("1位率", s => s.matches ? (s.r1 / s.matches * 100).toFixed(2) + "%" : "0%");
@@ -1512,41 +1684,333 @@
             tbl += '</table></div>'; document.getElementById('hanchan-table-area').innerHTML = tbl;
         }
 
+        // ==========================================
+        // ▼ 累計データ取得＆シーズン自動検出・描画 ▼
+        // ==========================================
         function loadRuikeiData() {
             document.getElementById('ruikei-area').innerHTML = "<p style='text-align:center;'>☁️ スプレッドシートからデータを取得中...</p>";
-            fetch(GAS_URL + "?action=getRuikei&t=" + new Date().getTime()).then(res => res.json()).then(data => {
-                if (data.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー</p>`; return; }
-                cachedRuikeiData = data;
+            fetch(GAS_URL + "?action=getRuikei&t=" + new Date().getTime()).then(res => res.json()).then(resObj => {
+                if (resObj.error) { document.getElementById('ruikei-area').innerHTML = `<p style="color:red;">エラー</p>`; return; }
+                let rows = Array.isArray(resObj) ? resObj : (resObj.rows || []);
+                cachedRuikeiData = rows;
+                buildSeasonSelectorFromRuikei(rows, resObj.seasonName, resObj.multiSeasonName);
                 renderRuikeiTableAndChart();
 
-                if (s5DailyData.length > 0) renderDailyView();
+                if (currentDailyData.length > 0) renderDailyView();
             });
+        }
+
+        // 💡 累計シート（B列〜AA列）から全シーズンブロック（S1〜最新）を自動検出してプルダウンを構築
+        function buildSeasonSelectorFromRuikei(rows, serverSeasonName, serverMultiName) {
+            let blocks = [];
+            let currentBlock = null;
+
+            for (let r = 0; r < rows.length; r++) {
+                let colB = String(rows[r][0] || "").trim(); // B列
+                let colC = String(rows[r][1] || "").trim(); // C列
+
+                let m = colB.match(/^S(\d+)$/);
+                if (m) {
+                    currentBlock = {
+                        name: colB,
+                        num: parseInt(m[1], 10),
+                        start: r,
+                        end: r,
+                        period: ""
+                    };
+                    if (r + 1 < rows.length) {
+                        let nextB = String(rows[r + 1][0] || "").trim();
+                        if (nextB && !/^S\d+$/.test(nextB) && nextB !== "合計") {
+                            currentBlock.period = nextB;
+                        }
+                    }
+                    blocks.push(currentBlock);
+                } else if (currentBlock) {
+                    currentBlock.end = r;
+                    if (colC === "ソシー") {
+                        currentBlock = null;
+                    }
+                }
+            }
+
+            detectedSeasonRanges = {};
+            blocks.forEach(b => {
+                detectedSeasonRanges[b.name] = { start: b.start, end: b.end };
+            });
+
+            if (blocks.length > 0) {
+                let latest = blocks[blocks.length - 1];
+                updateSeasonLabels(serverSeasonName || latest.name, serverMultiName);
+
+                ruikeiDateSet.clear();
+                let yearMatch = latest.period.match(/^(\d{4})/);
+                let fallbackYear = yearMatch ? yearMatch[1] : new Date().getFullYear();
+                for (let r = latest.start; r <= latest.end; r++) {
+                    if (!rows[r]) continue;
+                    let d3 = normalizeDateKey(rows[r][1], fallbackYear);
+                    let d4 = normalizeDateKey(rows[r][19], fallbackYear);
+                    if (d3) ruikeiDateSet.add(d3);
+                    if (d4) ruikeiDateSet.add(d4);
+                }
+                mergeAndRenderDailyDates();
+
+                let sel = document.getElementById('season-selector');
+                let prevVal = sel.value;
+                let optsHtml = "";
+
+                // 最新シーズンから降順に追加
+                for (let i = blocks.length - 1; i >= 0; i--) {
+                    let b = blocks[i];
+                    let isLatest = (i === blocks.length - 1);
+                    let icon = isLatest ? "🟢" : "⚪";
+                    let tag = isLatest ? "今シーズン" : "";
+                    let periodStr = b.period ? (tag ? `${tag} - ${b.period}` : b.period) : tag;
+                    let label = periodStr ? `${icon} ${b.name} (${periodStr})` : `${icon} ${b.name}`;
+                    optsHtml += `<option value="${b.name}">${label}</option>`;
+                }
+                optsHtml += `<option value="ALL">🔥 全シーズン（S1〜${latest.name}累積）</option>`;
+                sel.innerHTML = optsHtml;
+
+                if (prevVal && (prevVal === "ALL" || detectedSeasonRanges[prevVal])) {
+                    sel.value = prevVal;
+                } else {
+                    sel.value = latest.name;
+                }
+            }
         }
 
         function renderRuikeiTableAndChart() {
             if (!cachedRuikeiData || cachedRuikeiData.length === 0) return;
-            let season = document.getElementById('season-selector').value; let targetRows = []; let rowIndices = [];
-            const ranges = { 'S1': { start: 1, end: 7 }, 'S2': { start: 10, end: 22 }, 'S3': { start: 27, end: 40 }, 'S4': { start: 46, end: 59 }, 'S5': { start: 70, end: cachedRuikeiData.length - 1 } };
-            if (season === 'ALL') { cachedRuikeiData.forEach((row, i) => { targetRows.push(row); rowIndices.push(i); }); } else { for (let i = ranges[season].start; i <= ranges[season].end; i++) if (cachedRuikeiData[i]) { targetRows.push(cachedRuikeiData[i]); rowIndices.push(i); } }
-            let html = '<div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
-            let labels = []; let chartData = [[], [], [], [], [], []]; let runningTotals = [0, 0, 0, 0, 0, 0];
+            let season = document.getElementById('season-selector').value;
+            let targetRows = [];
+            let rowIndices = [];
+
+            if (season === 'ALL') {
+                cachedRuikeiData.forEach((row, i) => { targetRows.push(row); rowIndices.push(i); });
+            } else if (detectedSeasonRanges[season]) {
+                let rng = detectedSeasonRanges[season];
+                for (let i = rng.start; i <= rng.end; i++) {
+                    if (cachedRuikeiData[i]) {
+                        targetRows.push(cachedRuikeiData[i]);
+                        rowIndices.push(i);
+                    }
+                }
+            }
+
+            let sanmaHtml = '<h3 style="margin-top:10px; color:#27ae60;">🀄 三麻 成績表</h3><div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
+            let yonmaHtml = '<h3 style="margin-top:40px; color:#8e44ad;">🀄 四麻 成績表</h3><div class="table-responsive"><table class="ruikei-table"><tr><th>日付</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
+            let sosieHtml = '<h3 style="margin-top:40px; color:#2c3e50;">🏆 総合（ソシー）</h3><div class="table-responsive"><table class="ruikei-table"><tr><th>項目</th><th>高井</th><th>山口</th><th>山下</th><th>ダイナ</th><th>徳田</th><th>たすく</th></tr>';
+
+            let labels = [];
+            let chartData = [[], [], [], [], [], []];
+            let runningTotals = [0, 0, 0, 0, 0, 0];
+            let chartDateMap = {};
+
+            let hasAnyYonma = false;
+            let hasAnySosie = false;
+
+            const formatSheetDate = (rawStr, rowIdx) => {
+                let s = String(rawStr || "").trim();
+                if (!s) return "";
+                let isDate = /^(?:20\d{2}[-\/])?\d{1,2}[-\/]\d{1,2}$/.test(s) || /^\d{1,2}月\d{1,2}日$/.test(s);
+                if (!isDate) return "";
+                if (/^\d{1,2}[-\/]\d{1,2}$/.test(s)) {
+                    let parts = s.replace("-", "/").split("/");
+                    return (rowIdx >= 65 ? "2026" : "2025") + "/" + parts[0].padStart(2, '0') + "/" + parts[1].padStart(2, '0');
+                }
+                let p = s.replace(/-/g, "/").split("/");
+                if (p.length === 3) return `${p[0]}/${p[1].padStart(2, '0')}/${p[2].padStart(2, '0')}`;
+                return s.replace(/-/g, "/");
+            };
+
             targetRows.forEach((row, idx) => {
-                let colK = String(row[0]).trim(); if (!colK) return;
-                let isDate = /^(?:20\d{2}[-/])?\d{1,2}[-/]\d{1,2}$/.test(colK) || /^\d{1,2}月\d{1,2}日$/.test(colK);
-                if (isDate) {
-                    let dateLabel = /^\d{1,2}[-/]\d{1,2}$/.test(colK) ? (rowIndices[idx] >= 70 ? "2026" : "2025") + "/" + colK.replace("-", "/") : colK.replace(/-/g, "/");
-                    labels.push(dateLabel); html += `<tr><td>${dateLabel}</td>`;
-                    for (let i = 0; i < 6; i++) { let val = parseFloat(String(row[i + 1]).replace(/,/g, '')) || 0; runningTotals[i] += val; chartData[i].push(runningTotals[i]); }
-                    for (let i = 1; i <= 6; i++) { let cell = row[i]; let val = parseFloat(String(cell).replace(/,/g, '')); html += (!isNaN(val) && cell !== "") ? `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')}; font-weight:bold;">${cell}</td>` : `<td>${cell || ""}</td>`; }
-                    html += '</tr>';
-                } else { html += `<tr style="background-color: ${colK.includes("金額") ? "#d4edda" : "#fff3cd"}; font-weight: bold;">`; for (let i = 0; i <= 6; i++) html += `<td>${row[i] || ""}</td>`; html += '</tr>'; }
+                let colC = String(row[1] || "").trim();  // C列（三麻日付 or 集計ラベル）
+                let colU = String(row[19] || "").trim(); // U列（四麻日付）
+
+                let sanmaDateLabel = formatSheetDate(colC, rowIndices[idx]);
+                let yonmaDateLabel = formatSheetDate(colU, rowIndices[idx]);
+
+                // ▼ 三麻データ行（C列が日付 かつ D〜I列に値あり）
+                if (sanmaDateLabel) {
+                    let sRowHtml = `<tr><td>${sanmaDateLabel}</td>`;
+                    let hasSanmaData = false;
+                    let sScores = [0, 0, 0, 0, 0, 0];
+                    for (let i = 0; i < 6; i++) {
+                        let sStr = String(row[i + 2] || "").trim();
+                        if (sStr !== "") hasSanmaData = true;
+                        let sVal = parseFloat(sStr.replace(/[,¥￥]/g, ''));
+                        sScores[i] = isNaN(sVal) ? 0 : sVal;
+                        let c1 = isNaN(sVal) ? '#333' : (sVal > 0 ? '#2980b9' : (sVal < 0 ? '#c0392b' : '#333'));
+                        sRowHtml += `<td style="color:${c1}; font-weight:bold;">${sStr}</td>`;
+                    }
+                    sRowHtml += '</tr>';
+
+                    if (hasSanmaData) {
+                        sanmaHtml += sRowHtml;
+                        if (!chartDateMap[sanmaDateLabel]) chartDateMap[sanmaDateLabel] = [0, 0, 0, 0, 0, 0];
+                        for (let i = 0; i < 6; i++) chartDateMap[sanmaDateLabel][i] += sScores[i];
+                    }
+                }
+
+                // ▼ 四麻データ行（U列が日付 かつ V〜AA列に値あり）
+                if (yonmaDateLabel) {
+                    let yRowHtml = `<tr><td>${yonmaDateLabel}</td>`;
+                    let hasYonmaData = false;
+                    let yScores = [0, 0, 0, 0, 0, 0];
+                    for (let i = 0; i < 6; i++) {
+                        let yStr = String(row[i + 20] || "").trim();
+                        if (yStr !== "") hasYonmaData = true;
+                        let yVal = parseFloat(yStr.replace(/[,¥￥]/g, ''));
+                        yScores[i] = isNaN(yVal) ? 0 : yVal;
+                        let c2 = isNaN(yVal) ? '#333' : (yVal > 0 ? '#2980b9' : (yVal < 0 ? '#c0392b' : '#333'));
+                        yRowHtml += `<td style="color:${c2}; font-weight:bold;">${yStr}</td>`;
+                    }
+                    yRowHtml += '</tr>';
+
+                    if (hasYonmaData) {
+                        yonmaHtml += yRowHtml;
+                        hasAnyYonma = true;
+                        if (!chartDateMap[yonmaDateLabel]) chartDateMap[yonmaDateLabel] = [0, 0, 0, 0, 0, 0];
+                        for (let i = 0; i < 6; i++) chartDateMap[yonmaDateLabel][i] += yScores[i];
+                    }
+                }
+
+                // ▼ 集計行の処理（C列が日付以外のラベルのとき）
+                if (colC && !sanmaDateLabel) {
+                    let summaryKeywords = ["三麻得点計", "三麻ソシー計", "四麻得点計", "四麻ソシー計", "ソシー計"];
+                    let isUserSummary = summaryKeywords.some(kw => colC.includes(kw));
+
+                    if (season === 'ALL') {
+                        if (!isUserSummary) return;
+                    } else {
+                        if (isUserSummary) return;
+                    }
+
+                    let bgColor = "#fff3cd";
+                    if (colC.includes("ソシー")) bgColor = "#d4edda";
+                    if (colC.includes("総ソシー")) bgColor = "#f1c40f";
+
+                    let trStyle = `style="background-color: ${bgColor}; font-weight: bold; ${colC.includes('総ソシー') ? 'font-size:16px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);' : ''}"`;
+                    let rowHtml = `<tr ${trStyle}><td>${colC}</td>`;
+
+                    for (let i = 0; i < 6; i++) {
+                        let cell = String(row[i + 2] || "");
+                        let val = parseFloat(cell.replace(/[,¥￥]/g, ''));
+                        if (!isNaN(val) && cell !== "") rowHtml += `<td style="color:${val > 0 ? '#2980b9' : (val < 0 ? '#c0392b' : '#333')};">${cell}</td>`;
+                        else rowHtml += `<td>${cell || ""}</td>`;
+                    }
+                    rowHtml += '</tr>';
+
+                    if (colC.includes("四麻")) {
+                        yonmaHtml += rowHtml;
+                        hasAnyYonma = true;
+                    } else if (colC.includes("三麻")) {
+                        sanmaHtml += rowHtml;
+                    } else {
+                        sosieHtml += rowHtml;
+                        hasAnySosie = true;
+                    }
+                }
             });
-            html += '</table></div>'; document.getElementById('ruikei-area').innerHTML = html;
+
+            // チャート用の日付順累積データを生成
+            Object.keys(chartDateMap).sort().forEach(dLabel => {
+                labels.push(dLabel);
+                for (let i = 0; i < 6; i++) {
+                    runningTotals[i] += chartDateMap[dLabel][i];
+                    chartData[i].push(runningTotals[i]);
+                }
+            });
+
+            sanmaHtml += '</table></div>';
+            yonmaHtml += '</table></div>';
+            sosieHtml += '</table></div>';
+
+            let finalHtml = sanmaHtml;
+            if (hasAnyYonma) finalHtml += yonmaHtml;
+            if (hasAnySosie) finalHtml += sosieHtml;
+
+            document.getElementById('ruikei-area').innerHTML = finalHtml;
+
             if (ruikeiChart) ruikeiChart.destroy();
             const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#34495e'];
-            ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: players.map((p, i) => ({ label: p.name, data: chartData[i], borderColor: colors[i], backgroundColor: colors[i], fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+            ruikeiChart = new Chart(document.getElementById('ruikei-chart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: players.map((p, i) => ({
+                        label: p.name,
+                        data: chartData[i],
+                        borderColor: colors[i],
+                        backgroundColor: colors[i],
+                        fill: false, tension: 0.1, borderWidth: 2, pointRadius: 2
+                    }))
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
         }
 
+        // ==========================================
+        // ▼ ワンクリック シーズン更新 モーダル＆通信 ▼
+        // ==========================================
+        function openSeasonRolloverModal() {
+            const curNum = parseInt(activeSeasonName.replace('S', ''), 10) || 8;
+            const nextNum = curNum + 1;
+            const mParts = activeMultiSeasonName.match(/^S(\d+)-S(\d+)$/);
+            const nextMulti = mParts ? `S${parseInt(mParts[1], 10) + 1}-S${nextNum}` : `S${curNum - 2}-S${nextNum}`;
+
+            document.getElementById('rollover-modal-desc').innerHTML =
+                `現在（<strong>S${curNum}</strong>）から次シーズン（<strong>S${nextNum}</strong>）へ移行します。<br><br>` +
+                `✅ <strong>累計シート</strong>：S${nextNum}テーブルを追加＆累計数式を自動更新<br>` +
+                `✅ <strong>分析シート</strong>：「S${curNum}分析」→「<strong>S${nextNum}分析</strong>」にリネーム＆初期化<br>` +
+                `✅ <strong>半荘シート</strong>：「${activeMultiSeasonName}」→「<strong>${nextMulti}</strong>」にリネーム＆最古シーズンを削除`;
+
+            document.getElementById('season-rollover-modal').style.display = 'flex';
+        }
+
+        function closeSeasonRolloverModal() {
+            document.getElementById('season-rollover-modal').style.display = 'none';
+        }
+
+        function executeSeasonRollover() {
+            const btn = document.getElementById('rollover-exec-btn');
+            btn.disabled = true;
+            btn.innerText = "⏳ スプレッドシートを更新中...";
+
+            const postData = {
+                action: "advanceSeason",
+                secret: localStorage.getItem('mahjong_auth')
+            };
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: "data=" + encodeURIComponent(JSON.stringify(postData))
+            })
+                .then(res => res.text())
+                .then(text => {
+                    btn.disabled = false;
+                    btn.innerText = "実行する（スプレッドシート自動更新）";
+                    closeSeasonRolloverModal();
+
+                    if (text.includes("GAS_ERROR")) {
+                        alert("⚠️ エラーが発生しました:\n" + text);
+                    } else {
+                        alert("🎉 " + text);
+                        loadRuikeiData();
+                        loadCurrentDailyData();
+                    }
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                    btn.innerText = "実行する（スプレッドシート自動更新）";
+                    alert("⚠️ 通信エラーが発生しました");
+                });
+        }
+
+        // ==========================================
+        // ▼ 成績入力＆クラウド同期 ▼
+        // ==========================================
         function loadFromCloud() {
             let selectedDate = document.getElementById('play-date').value; if (!selectedDate) return;
             document.getElementById('history-area').innerHTML = "<p style='text-align:center;'>☁️ 通信中...</p>";
@@ -1645,6 +2109,8 @@
             let finalPoints = {}; players.forEach(p => { finalPoints[p.id] = totals[p.id].point + (totals[p.id].chip * 2.0); });
 
             let postData = {
+                action: "saveRecord",
+                mode: mode,
                 date: document.getElementById('play-date').value || new Date().toISOString().split('T')[0], timestamp: recordData.timestamp,
                 takai_score: recordData.points['takai'] !== undefined ? recordData.points['takai'] : "", takai_chip: recordData.chips['takai'] || "", yamaguchi_score: recordData.points['yamaguchi'] !== undefined ? recordData.points['yamaguchi'] : "", yamaguchi_chip: recordData.chips['yamaguchi'] || "", yamashita_score: recordData.points['yamashita'] !== undefined ? recordData.points['yamashita'] : "", yamashita_chip: recordData.chips['yamashita'] || "", dyna_score: recordData.points['dyna'] !== undefined ? recordData.points['dyna'] : "", dyna_chip: recordData.chips['dyna'] || "", tokuda_score: recordData.points['tokuda'] !== undefined ? recordData.points['tokuda'] : "", tokuda_chip: recordData.chips['tokuda'] || "", tasuku_score: recordData.points['tasuku'] !== undefined ? recordData.points['tasuku'] : "", tasuku_chip: recordData.chips['tasuku'] || "",
                 total_takai: finalPoints['takai'], total_yamaguchi: finalPoints['yamaguchi'], total_yamashita: finalPoints['yamashita'], total_dyna: finalPoints['dyna'], total_tokuda: finalPoints['tokuda'], total_tasuku: finalPoints['tasuku'], secret: localStorage.getItem('mahjong_auth')
@@ -1659,45 +2125,41 @@
             updateUI(); setTimeout(() => { window.scrollBy({ top: 300, behavior: 'smooth' }); }, 100);
         }
 
-        // ==========================================
-        // ▼ 記録入力画面の更新（こちらも表示を統一）
-        // ==========================================
         function updateUI() {
             let totals = {};
-            // 💡 追加：トップとラスの回数をカウントするための箱を用意
-            players.forEach(p => totals[p.id] = { rawPt: 0, chipRaw: 0, top: 0, last: 0 });
+            players.forEach(p => totals[p.id] = { sanmaPt: 0, yonmaPt: 0, chipRaw: 0, top: 0, last: 0 });
             let historyHtml = ""; let hanchanCount = 1;
 
             records.forEach(rec => {
                 let title = ""; let details = ""; let hasS = Object.keys(rec.points).length > 0; let hasC = Object.keys(rec.chips).length > 0;
-                if (hasS) { title += `第${hanchanCount}半荘 `; hanchanCount++; }
-                if (hasC && !hasS) { title = "チップのみ"; }
 
-                // 💡 追加：トップとラスの回数を計算
+                let ptsSum = 0;
+                players.forEach(p => { if (rec.points[p.id] !== undefined) ptsSum += rec.points[p.id]; });
+                let isYonma = (rec.mode === "4" || (!rec.mode && hasS && Math.abs(ptsSum) < 0.1));
+
                 if (hasS) {
+                    let modeBadge = isYonma
+                        ? '<span style="background:#8e44ad; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">四麻</span>'
+                        : '<span style="background:#27ae60; color:#fff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:5px; font-weight:bold;">三麻</span>';
+                    title += `${modeBadge}第${hanchanCount}半荘 `;
+                    hanchanCount++;
+
                     let gameScores = [];
-                    players.forEach(p => {
-                        if (rec.points[p.id] !== undefined) {
-                            gameScores.push({ id: p.id, score: rec.points[p.id] });
-                        }
-                    });
+                    players.forEach(p => { if (rec.points[p.id] !== undefined) gameScores.push({ id: p.id, score: rec.points[p.id] }); });
                     if (gameScores.length > 0) {
                         gameScores.sort((a, b) => b.score - a.score);
                         totals[gameScores[0].id].top++;
                         totals[gameScores[gameScores.length - 1].id].last++;
                     }
                 }
+                if (hasC && !hasS) { title = "チップのみ"; }
 
                 let sortedPlayers = players.filter(p => rec.points[p.id] !== undefined || (rec.chips[p.id] !== undefined && rec.chips[p.id] !== 0));
                 sortedPlayers.sort((a, b) => {
                     if (hasS) {
-                        let ptA = rec.points[a.id] !== undefined ? rec.points[a.id] : -99999;
-                        let ptB = rec.points[b.id] !== undefined ? rec.points[b.id] : -99999;
-                        return ptB - ptA;
+                        return (rec.points[b.id] !== undefined ? rec.points[b.id] : -99999) - (rec.points[a.id] !== undefined ? rec.points[a.id] : -99999);
                     } else {
-                        let cA = rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999;
-                        let cB = rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999;
-                        return cB - cA;
+                        return (rec.chips[b.id] !== undefined ? rec.chips[b.id] : -99999) - (rec.chips[a.id] !== undefined ? rec.chips[a.id] : -99999);
                     }
                 });
 
@@ -1705,14 +2167,15 @@
                     let text = [];
                     let gameRawPt = rec.points[p.id];
                     let gameChipRaw = rec.chips[p.id] || 0;
-                    let gameChipPt = gameChipRaw * 2;
 
                     if (gameRawPt !== undefined) {
-                        totals[p.id].rawPt += gameRawPt;
+                        if (isYonma) totals[p.id].yonmaPt += gameRawPt;
+                        else totals[p.id].sanmaPt += gameRawPt;
                         text.push(`<span class="${gameRawPt > 0 ? 'plus' : (gameRawPt < 0 ? 'minus' : '')}">得点${gameRawPt > 0 ? '+' : ''}${gameRawPt.toFixed(1)}</span>`);
                     }
                     if (gameChipRaw !== 0) {
                         totals[p.id].chipRaw += gameChipRaw;
+                        let gameChipPt = gameChipRaw * 2;
                         text.push(`<span class="${gameChipPt > 0 ? 'plus' : (gameChipPt < 0 ? 'minus' : '')}">チップ${gameChipPt > 0 ? '+' : ''}${gameChipPt.toFixed(1)}</span>`);
                     }
                     if (text.length > 0) details += `<div>${p.name}: ${text.join(" / ")}</div>`;
@@ -1721,43 +2184,37 @@
             });
             document.getElementById('history-area').innerHTML = records.length === 0 ? "<p style='text-align:center; color:#999;'>まだ記録がありません</p>" : historyHtml;
 
-            // 💡 修正：プレイヤーを配列にまとめて、最終Pの大きい順にソートする
             let summaryData = [];
             players.forEach(p => {
-                let rawPt = totals[p.id].rawPt;
+                let sanma = totals[p.id].sanmaPt;
+                let yonma = totals[p.id].yonmaPt;
                 let chipPt = totals[p.id].chipRaw * 2;
-                let finalPt = rawPt + chipPt;
+                let finalPt = sanma + yonma + chipPt;
 
-                if (rawPt !== 0 || totals[p.id].chipRaw !== 0) {
-                    summaryData.push({
-                        name: p.name,
-                        rawPt: rawPt,
-                        chipPt: chipPt,
-                        finalPt: finalPt,
-                        top: totals[p.id].top,
-                        last: totals[p.id].last
-                    });
+                if (sanma !== 0 || yonma !== 0 || totals[p.id].chipRaw !== 0) {
+                    summaryData.push({ name: p.name, sanma: sanma, yonma: yonma, chipPt: chipPt, finalPt: finalPt, top: totals[p.id].top, last: totals[p.id].last });
                 }
             });
 
-            // 最終Pの大きい順にソート
             summaryData.sort((a, b) => b.finalPt - a.finalPt);
 
-            let totalHtml = `<tr><th>名前</th><th>得点合計</th><th>チップ計</th><th>トップ/ラス</th><th>最終P</th></tr>`;
+            let totalHtml = `<tr><th style="min-width:60px;">名前</th><th>三麻得点</th><th>四麻得点</th><th>チップ計</th><th style="font-size:12px;">トップ/ラス</th><th>最終P</th></tr>`;
             summaryData.forEach(d => {
-                let sCol = d.rawPt > 0 ? 'plus' : (d.rawPt < 0 ? 'minus' : '');
+                let sCol = d.sanma > 0 ? 'plus' : (d.sanma < 0 ? 'minus' : '');
+                let yCol = d.yonma > 0 ? 'plus' : (d.yonma < 0 ? 'minus' : '');
                 let cCol = d.chipPt > 0 ? 'plus' : (d.chipPt < 0 ? 'minus' : '');
                 let fCol = d.finalPt > 0 ? 'plus' : (d.finalPt < 0 ? 'minus' : '');
 
                 totalHtml += `<tr>
-                                        <td style="font-weight:bold;">${d.name}</td>
-                                        <td class="${sCol}">${d.rawPt > 0 ? '+' : ''}${d.rawPt.toFixed(1)}</td>
-                                        <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
-                                        <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
-                                        <td class="${fCol}" style="font-size:18px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
-                                    </tr>`;
+                    <td style="font-weight:bold;">${d.name}</td>
+                    <td class="${sCol}">${d.sanma > 0 ? '+' : ''}${d.sanma.toFixed(1)}</td>
+                    <td class="${yCol}">${d.yonma > 0 ? '+' : ''}${d.yonma.toFixed(1)}</td>
+                    <td class="${cCol}">${d.chipPt > 0 ? '+' : ''}${d.chipPt.toFixed(1)}</td>
+                    <td style="font-size:12px; color:#555; white-space:nowrap;">${d.top}回 / ${d.last}回</td>
+                    <td class="${fCol}" style="font-size:16px; font-weight:bold;">${d.finalPt > 0 ? '+' : ''}${d.finalPt.toFixed(1)}</td>
+                </tr>`;
             });
-            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="5" style="color:#999;">データがありません</td></tr>` : totalHtml;
+            document.getElementById('total-table').innerHTML = records.length === 0 ? `<tr><td colspan="6" style="color:#999;">データがありません</td></tr>` : totalHtml;
         }
 
         // ==========================================
@@ -1766,30 +2223,25 @@
         let lastDeletedRecord = null;
         let lastDeletedDate = null;
         let undoTimeout = null;
-        let recordToDelete = null; // 削除対象を一時保存する変数
+        let recordToDelete = null;
 
-        // 1. 削除ボタンが押されたらポップアップを表示する
         function deleteRecord(timestamp, id) {
             recordToDelete = { timestamp: timestamp, id: id };
             document.getElementById('custom-confirm-modal').style.display = 'flex';
         }
 
-        // 2. ポップアップを閉じる（キャンセル）
         function closeConfirmModal() {
             document.getElementById('custom-confirm-modal').style.display = 'none';
-            // 💡 修正：ここで recordToDelete を消さないようにしました！
         }
 
-        // 3. 「よろしくお願いしまぁぁぁぁぁぁぁぁぁぁぁす！」が押された時の本処理
         function executeDelete() {
             if (!recordToDelete) return;
 
-            // 💡 修正：ポップアップを閉じる「前」に、削除するデータを安全な場所に移す！
             let timestamp = recordToDelete.timestamp;
             let id = recordToDelete.id;
 
-            closeConfirmModal(); // ポップアップを閉じる
-            recordToDelete = null; // 使い終わったのでここでリセット
+            closeConfirmModal();
+            recordToDelete = null;
 
             let rec = records.find(r => r.timestamp === timestamp);
             if (!rec) return;
@@ -1800,6 +2252,7 @@
                 action: "deleteRecord",
                 date: date,
                 timestamp: timestamp,
+                mode: rec.mode || "",
                 rawScores: rec.points,
                 secret: localStorage.getItem('mahjong_auth')
             };
@@ -1830,7 +2283,6 @@
                 });
         }
 
-        // ▼ 下からポップアップする「元に戻す」ボタンの表示
         function showUndoButton() {
             let undoArea = document.getElementById('undo-area');
             if (!undoArea) {
@@ -1840,15 +2292,14 @@
                 document.body.appendChild(undoArea);
             }
             undoArea.innerHTML = `
-                        <span>🗑️ 記録を削除しました</span>
-                        <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
-                        <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
-                    `;
+                <span>🗑️ 記録を削除しました</span>
+                <button onclick="restoreRecord()" style="background:#f1c40f; color:#333; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);">↩️ 元に戻す</button>
+                <button onclick="closeUndo()" style="background:transparent; color:#ccc; border:none; font-size:16px; cursor:pointer; padding:0;">✖</button>
+            `;
             undoArea.style.display = 'flex';
             undoArea.style.opacity = '1';
 
             if (undoTimeout) clearTimeout(undoTimeout);
-            // 15秒経過すると自動で消える
             undoTimeout = setTimeout(() => { closeUndo(); }, 15000);
         }
 
@@ -1860,7 +2311,6 @@
             }
         }
 
-        // ▼ 「元に戻す」が押された時の復元処理
         function restoreRecord() {
             if (!lastDeletedRecord) return;
 
@@ -1874,11 +2324,11 @@
                 finalPoints[p.id] = pt + (ch * 2);
             });
 
-            // 保持していたデータから「復元用のデータ」を再構築
             let postData = {
                 action: "restoreRecord",
                 date: lastDeletedDate,
                 timestamp: lastDeletedRecord.timestamp,
+                mode: lastDeletedRecord.mode || "3",
                 takai_score: lastDeletedRecord.points['takai'] !== undefined ? lastDeletedRecord.points['takai'] : "",
                 takai_chip: lastDeletedRecord.chips['takai'] || "",
                 yamaguchi_score: lastDeletedRecord.points['yamaguchi'] !== undefined ? lastDeletedRecord.points['yamaguchi'] : "",
@@ -1904,12 +2354,164 @@
             })
                 .then(res => res.text()).then(text => {
                     if (text.includes("GAS_ERROR")) { alert("⚠️ 復元エラー:\n" + text); }
-                    loadFromCloud(); // 復元できたら画面を更新
+                    loadFromCloud();
                 })
                 .catch(err => {
                     alert("通信エラーが発生しました");
                     loadFromCloud();
                 });
+        }
+
+        // ==========================================
+        // ▼ サンマ牌効率 何切る問題集（全77問）ロジック ▼
+        // ==========================================
+        let sanmaDrillPool = [];
+        let sanmaDrillFiltered = [];
+        let sanmaDrillIndex = 0;
+
+        function getSolvedDrillIds() {
+            try {
+                return JSON.parse(localStorage.getItem('sanma_drill_solved') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveSolvedDrillIds(ids) {
+            try {
+                localStorage.setItem('sanma_drill_solved', JSON.stringify(ids));
+            } catch (e) { }
+        }
+
+        function updateSanmaDrillProgressUI() {
+            const solved = getSolvedDrillIds();
+            const total = sanmaDrillPool.length || 77;
+            const el = document.getElementById('sanma-drill-progress');
+            if (el) el.innerText = `達成状況: ${solved.length} / ${total}問 クリア`;
+        }
+
+        function resetSanmaDrillProgress() {
+            if (!confirm("クリア記録をリセットしますか？")) return;
+            saveSolvedDrillIds([]);
+            updateSanmaDrillProgressUI();
+            resetSanmaDrillOrder();
+        }
+
+        function loadSanmaDrillData() {
+            fetch('sanma_nanikiru_data.json?t=' + new Date().getTime())
+                .then(res => res.json())
+                .then(data => {
+                    sanmaDrillPool = data;
+                    updateSanmaDrillProgressUI();
+                })
+                .catch(err => {
+                    console.error("サンマ何切るデータの読み込みに失敗しました。", err);
+                });
+        }
+
+        function resetSanmaDrillOrder() {
+            if (sanmaDrillPool.length === 0) return;
+            const cat = document.getElementById('sanma-drill-category').value;
+            const mode = document.getElementById('sanma-drill-mode').value;
+            const solvedSet = new Set(getSolvedDrillIds());
+
+            let list = sanmaDrillPool.filter(item => cat === 'ALL' || item.category === cat);
+
+            if (mode === 'unsolved') {
+                const unsolvedList = list.filter(item => !solvedSet.has(item.id));
+                if (unsolvedList.length === 0) {
+                    alert("🎉 このカテゴリの問題はすべてクリア済みです！全問からランダム出題します。");
+                } else {
+                    list = unsolvedList;
+                }
+            }
+
+            if (mode === 'random' || mode === 'unsolved') {
+                list = [...list].sort(() => Math.random() - 0.5);
+            }
+
+            sanmaDrillFiltered = list;
+            sanmaDrillIndex = 0;
+            renderSanmaDrillProblem();
+        }
+
+        function escapeDrillHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\n/g, "<br>");
+        }
+
+        function renderSanmaDrillProblem() {
+            if (sanmaDrillFiltered.length === 0) return;
+            const q = sanmaDrillFiltered[sanmaDrillIndex];
+            const solvedSet = new Set(getSolvedDrillIds());
+            const isSolved = solvedSet.has(q.id);
+
+            document.getElementById('sanma-drill-badge').innerText =
+                `${q.categoryLabel} 問${q.num}${isSolved ? ' ✅クリア済' : ''}`;
+            document.getElementById('sanma-drill-badge').style.backgroundColor =
+                isSolved ? '#27ae60' : '#16a085';
+            document.getElementById('sanma-drill-counter').innerText =
+                `${sanmaDrillIndex + 1} / ${sanmaDrillFiltered.length}問`;
+
+            let metaHtml = "";
+            if (q.isStereo) {
+                metaHtml = `<strong>【状況】</strong> 分類：${escapeDrillHtml(q.meta.subCategory)} ／ 抜きドラ：<strong>${escapeDrillHtml(q.meta.nukiDora)}</strong>`;
+            } else {
+                metaHtml = `<strong>【状況】</strong> ${escapeDrillHtml(q.meta.kyoku)} ／ ${escapeDrillHtml(q.meta.seat)} ／ ${escapeDrillHtml(q.meta.turn)} ／ <strong>${escapeDrillHtml(q.meta.dora)}</strong>`;
+                if (q.meta.note) {
+                    metaHtml += `<br><span style="color:#c0392b; font-weight:bold;">※ ${escapeDrillHtml(q.meta.note)}</span>`;
+                }
+            }
+            document.getElementById('sanma-drill-meta').innerHTML = metaHtml;
+
+            const imgEl = document.getElementById('sanma-drill-img');
+            imgEl.src = q.img;
+            document.getElementById('sanma-drill-zoom-hint').style.display = q.isStereo ? 'block' : 'none';
+
+            document.getElementById('sanma-drill-answer').innerHTML = escapeDrillHtml(q.answer);
+            document.getElementById('sanma-drill-explanation').innerHTML = escapeDrillHtml(q.explanation);
+
+            document.getElementById('sanma-drill-before-ans').style.display = 'block';
+            document.getElementById('sanma-drill-after-ans').style.display = 'none';
+        }
+
+        function revealSanmaDrillAnswer() {
+            document.getElementById('sanma-drill-before-ans').style.display = 'none';
+            document.getElementById('sanma-drill-after-ans').style.display = 'block';
+        }
+
+        function markSanmaDrillSolved(isCorrect) {
+            const q = sanmaDrillFiltered[sanmaDrillIndex];
+            if (isCorrect && q) {
+                const solved = getSolvedDrillIds();
+                if (!solved.includes(q.id)) {
+                    solved.push(q.id);
+                    saveSolvedDrillIds(solved);
+                    updateSanmaDrillProgressUI();
+                }
+            }
+            stepSanmaDrill(1);
+        }
+
+        function stepSanmaDrill(dir) {
+            if (sanmaDrillFiltered.length === 0) return;
+            sanmaDrillIndex = (sanmaDrillIndex + dir + sanmaDrillFiltered.length) % sanmaDrillFiltered.length;
+            renderSanmaDrillProblem();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openDrillImgZoom() {
+            const src = document.getElementById('sanma-drill-img').src;
+            if (!src) return;
+            document.getElementById('drill-img-zoom-target').src = src;
+            document.getElementById('drill-img-zoom-modal').style.display = 'flex';
+        }
+
+        function closeDrillImgZoom() {
+            document.getElementById('drill-img-zoom-modal').style.display = 'none';
         }
     </script>
 </body>
