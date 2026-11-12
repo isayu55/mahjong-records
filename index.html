@@ -455,21 +455,33 @@
                 </div>
 
                 <div id="sanma-drill-before-ans">
-                    <button class="btn" style="background-color:#16a085; font-size:18px; padding:14px;" onclick="revealSanmaDrillAnswer()">👀 答えと解説を見る</button>
+                    <p id="sanma-drill-prompt-text" style="font-weight:bold; color:#2c3e50; text-align:center; margin-bottom:10px;">切る牌を選んでください</p>
+
+                    <div id="sanma-drill-tile-choices" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:15px;"></div>
+
+                    <div id="sanma-drill-riichi-area" style="display:none; background:#f4f9f9; padding:10px; border-radius:8px; border:1px solid #bdc3c7; margin-bottom:15px;">
+                        <p style="font-size:13px; font-weight:bold; color:#2c3e50; text-align:center; margin:0 0 8px 0;">リーチ宣言を選択してください</p>
+                        <div style="display:flex; gap:10px; justify-content:center;">
+                            <button type="button" id="drill-decl-riichi" onclick="selectDrillDeclaration('リーチ')" style="flex:1; padding:10px; font-size:15px; font-weight:bold; border-radius:6px; border:2px solid #e74c3c; background:#fff; color:#e74c3c; cursor:pointer;">🔥 リーチ</button>
+                            <button type="button" id="drill-decl-dama" onclick="selectDrillDeclaration('ダマ')" style="flex:1; padding:10px; font-size:15px; font-weight:bold; border-radius:6px; border:2px solid #3498db; background:#fff; color:#3498db; cursor:pointer;">🤫 ダマ / そのまま</button>
+                        </div>
+                    </div>
+
+                    <div id="sanma-drill-stereo-choices" style="display:none; flex-direction:column; gap:8px; margin-bottom:15px;"></div>
+
+                    <button class="btn" style="background-color:#16a085; font-size:18px; padding:14px;" onclick="submitSanmaDrillAnswer()">✅ 解答する</button>
                 </div>
 
                 <div id="sanma-drill-after-ans" style="display:none; animation: fadeIn 0.3s;">
+                    <div id="sanma-drill-judge-banner" style="text-align:center; padding:12px; border-radius:8px; font-size:20px; font-weight:bold; margin-bottom:12px;"></div>
+                    <div id="sanma-drill-user-choice-text" style="text-align:center; font-size:14px; font-weight:bold; color:#555; margin-bottom:12px;"></div>
+
                     <div style="background:#fdf2e9; border:2px solid #e67e22; border-radius:8px; padding:15px; margin-bottom:15px;">
                         <div style="font-size:12px; font-weight:bold; color:#d35400; margin-bottom:4px;">【正解】</div>
                         <div id="sanma-drill-answer" style="font-size:22px; font-weight:bold; color:#c0392b; line-height:1.4;"></div>
                         <hr style="border:none; border-top:1px dashed #e67e22; margin:12px 0;">
                         <div style="font-size:12px; font-weight:bold; color:#2c3e50; margin-bottom:4px;">【解説】</div>
                         <div id="sanma-drill-explanation" style="font-size:14px; color:#333; line-height:1.6;"></div>
-                    </div>
-
-                    <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <button class="btn" style="background-color:#27ae60; font-size:15px; padding:12px; margin-top:0;" onclick="markSanmaDrillSolved(true)">⭕ 正解！（クリア記録）</button>
-                        <button class="btn" style="background-color:#e74c3c; font-size:15px; padding:12px; margin-top:0;" onclick="markSanmaDrillSolved(false)">❌ 間違えた（次へ）</button>
                     </div>
                 </div>
 
@@ -2368,6 +2380,21 @@
         let sanmaDrillPool = [];
         let sanmaDrillFiltered = [];
         let sanmaDrillIndex = 0;
+        let selectedDrillTile = null;
+        let selectedDrillDecl = null;
+        let selectedStereoChoice = null;
+
+        const DRILL_TILE_IMG_MAP = {
+            "1m": "sanma_img/tile_1m.png", "9m": "sanma_img/tile_9m.png",
+            "1p": "sanma_img/tile_1p.png", "2p": "sanma_img/tile_2p.png", "3p": "sanma_img/tile_3p.png",
+            "4p": "sanma_img/tile_4p.png", "5p": "sanma_img/tile_5p.png", "赤5p": "sanma_img/tile_0p.png",
+            "6p": "sanma_img/tile_6p.png", "7p": "sanma_img/tile_7p.png", "8p": "sanma_img/tile_8p.png", "9p": "sanma_img/tile_9p.png",
+            "1s": "sanma_img/tile_1s.png", "2s": "sanma_img/tile_2s.png", "3s": "sanma_img/tile_3s.png",
+            "4s": "sanma_img/tile_4s.png", "5s": "sanma_img/tile_5s.png", "赤5s": "sanma_img/tile_0s.png",
+            "6s": "sanma_img/tile_6s.png", "7s": "sanma_img/tile_7s.png", "8s": "sanma_img/tile_8s.png", "9s": "sanma_img/tile_9s.png",
+            "東": "sanma_img/tile_ton.png", "南": "sanma_img/tile_nan.png", "西": "sanma_img/tile_sha.png", "北": "sanma_img/tile_pei.png",
+            "白": "sanma_img/tile_haku.png", "發": "sanma_img/tile_hatsu.png", "中": "sanma_img/tile_chun.png"
+        };
 
         function getSolvedDrillIds() {
             try {
@@ -2449,6 +2476,10 @@
             const solvedSet = new Set(getSolvedDrillIds());
             const isSolved = solvedSet.has(q.id);
 
+            selectedDrillTile = null;
+            selectedDrillDecl = null;
+            selectedStereoChoice = null;
+
             document.getElementById('sanma-drill-badge').innerText =
                 `${q.categoryLabel} 問${q.num}${isSolved ? ' ✅クリア済' : ''}`;
             document.getElementById('sanma-drill-badge').style.backgroundColor =
@@ -2471,6 +2502,64 @@
             imgEl.src = q.img;
             document.getElementById('sanma-drill-zoom-hint').style.display = q.isStereo ? 'block' : 'none';
 
+            const tileChoicesEl = document.getElementById('sanma-drill-tile-choices');
+            const riichiAreaEl = document.getElementById('sanma-drill-riichi-area');
+            const stereoChoicesEl = document.getElementById('sanma-drill-stereo-choices');
+            const promptTextEl = document.getElementById('sanma-drill-prompt-text');
+
+            tileChoicesEl.innerHTML = "";
+            stereoChoicesEl.innerHTML = "";
+
+            if (q.isStereo) {
+                promptTextEl.innerText = "最も適切な選択を選んでください";
+                tileChoicesEl.style.display = 'none';
+                riichiAreaEl.style.display = 'none';
+                stereoChoicesEl.style.display = 'flex';
+
+                const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
+                shuffledChoices.forEach((ch, idx) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'stereo-choice-btn';
+                    btn.dataset.label = ch.label;
+                    btn.style.cssText = "display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 14px; font-size:16px; font-weight:bold; border:2px solid #bdc3c7; border-radius:8px; background:#fff; color:#2c3e50; cursor:pointer; transition:0.15s;";
+                    const tImg = DRILL_TILE_IMG_MAP[ch.tile] || "";
+                    btn.innerHTML = (tImg ? `<img src="${tImg}" style="width:26px; height:auto; border-radius:2px; box-shadow:1px 1px 2px rgba(0,0,0,0.3);">` : "") + `<span>${escapeDrillHtml(ch.label)}</span>`;
+                    btn.onclick = () => selectStereoOption(ch.label, btn);
+                    stereoChoicesEl.appendChild(btn);
+                });
+            } else {
+                promptTextEl.innerText = q.needRiichiChoice ? "切る牌とリーチ有無を選んでください" : "切る牌を選んでください";
+                tileChoicesEl.style.display = 'flex';
+                stereoChoicesEl.style.display = 'none';
+                riichiAreaEl.style.display = q.needRiichiChoice ? 'block' : 'none';
+                updateDrillDeclButtons();
+
+                const uniqueTiles = [...new Set(q.hand)];
+                // 北抜き問題の場合は選択肢に「北抜き」を追加
+                if (q.validAnswers.includes("北抜き") && !uniqueTiles.includes("北抜き")) {
+                    uniqueTiles.push("北抜き");
+                }
+
+                uniqueTiles.forEach(tCode => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'drill-tile-btn';
+                    btn.dataset.tile = tCode;
+                    btn.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6px 8px; min-width:48px; border:2px solid #bdc3c7; border-radius:8px; background:#fff; color:#2c3e50; cursor:pointer; transition:0.15s;";
+
+                    if (tCode === "北抜き") {
+                        const peiImg = DRILL_TILE_IMG_MAP["北"];
+                        btn.innerHTML = `<img src="${peiImg}" style="width:30px; height:auto;"><span style="font-size:11px; font-weight:bold; margin-top:3px; color:#e67e22;">北抜き</span>`;
+                    } else {
+                        const tImg = DRILL_TILE_IMG_MAP[tCode] || "";
+                        btn.innerHTML = `<img src="${tImg}" style="width:30px; height:auto;"><span style="font-size:11px; font-weight:bold; margin-top:3px;">${tCode}</span>`;
+                    }
+                    btn.onclick = () => selectDrillTileOption(tCode, btn);
+                    tileChoicesEl.appendChild(btn);
+                });
+            }
+
             document.getElementById('sanma-drill-answer').innerHTML = escapeDrillHtml(q.answer);
             document.getElementById('sanma-drill-explanation').innerHTML = escapeDrillHtml(q.explanation);
 
@@ -2478,22 +2567,101 @@
             document.getElementById('sanma-drill-after-ans').style.display = 'none';
         }
 
-        function revealSanmaDrillAnswer() {
-            document.getElementById('sanma-drill-before-ans').style.display = 'none';
-            document.getElementById('sanma-drill-after-ans').style.display = 'block';
+        function selectDrillTileOption(tCode, clickedBtn) {
+            selectedDrillTile = tCode;
+            document.querySelectorAll('.drill-tile-btn').forEach(b => {
+                b.style.borderColor = '#bdc3c7';
+                b.style.backgroundColor = '#fff';
+                b.style.transform = 'none';
+            });
+            clickedBtn.style.borderColor = '#16a085';
+            clickedBtn.style.backgroundColor = '#e8f8f5';
+            clickedBtn.style.transform = 'translateY(-4px)';
         }
 
-        function markSanmaDrillSolved(isCorrect) {
+        function selectDrillDeclaration(decl) {
+            selectedDrillDecl = decl;
+            updateDrillDeclButtons();
+        }
+
+        function updateDrillDeclButtons() {
+            const rBtn = document.getElementById('drill-decl-riichi');
+            const dBtn = document.getElementById('drill-decl-dama');
+            if (!rBtn || !dBtn) return;
+
+            rBtn.style.backgroundColor = (selectedDrillDecl === 'リーチ') ? '#e74c3c' : '#fff';
+            rBtn.style.color = (selectedDrillDecl === 'リーチ') ? '#fff' : '#e74c3c';
+
+            dBtn.style.backgroundColor = (selectedDrillDecl === 'ダマ') ? '#3498db' : '#fff';
+            dBtn.style.color = (selectedDrillDecl === 'ダマ') ? '#fff' : '#3498db';
+        }
+
+        function selectStereoOption(label, clickedBtn) {
+            selectedStereoChoice = label;
+            document.querySelectorAll('.stereo-choice-btn').forEach(b => {
+                b.style.borderColor = '#bdc3c7';
+                b.style.backgroundColor = '#fff';
+            });
+            clickedBtn.style.borderColor = '#16a085';
+            clickedBtn.style.backgroundColor = '#e8f8f5';
+        }
+
+        function submitSanmaDrillAnswer() {
             const q = sanmaDrillFiltered[sanmaDrillIndex];
-            if (isCorrect && q) {
+            if (!q) return;
+
+            let userAnswerStr = "";
+            if (q.isStereo) {
+                if (!selectedStereoChoice) {
+                    alert("選択肢を1つ選んでください！");
+                    return;
+                }
+                userAnswerStr = selectedStereoChoice;
+            } else {
+                if (!selectedDrillTile) {
+                    alert("切る牌を選んでください！");
+                    return;
+                }
+                if (selectedDrillTile === "北抜き") {
+                    userAnswerStr = "北抜き";
+                } else if (q.needRiichiChoice) {
+                    if (!selectedDrillDecl) {
+                        alert("「リーチ」か「ダマ / そのまま」を選んでください！");
+                        return;
+                    }
+                    userAnswerStr = `${selectedDrillTile}切り${selectedDrillDecl}`;
+                } else {
+                    userAnswerStr = `${selectedDrillTile}切り`;
+                }
+            }
+
+            const isCorrect = q.validAnswers.includes(userAnswerStr);
+
+            const bannerEl = document.getElementById('sanma-drill-judge-banner');
+            if (isCorrect) {
+                bannerEl.innerText = "🎉 正解！ナイス判断！ 🎉";
+                bannerEl.style.backgroundColor = "#d4edda";
+                bannerEl.style.color = "#155724";
+                bannerEl.style.border = "2px solid #28a745";
+
                 const solved = getSolvedDrillIds();
                 if (!solved.includes(q.id)) {
                     solved.push(q.id);
                     saveSolvedDrillIds(solved);
                     updateSanmaDrillProgressUI();
                 }
+            } else {
+                bannerEl.innerText = "❌ 不正解… 解説をチェック！";
+                bannerEl.style.backgroundColor = "#f8d7da";
+                bannerEl.style.color = "#721c24";
+                bannerEl.style.border = "2px solid #dc3545";
             }
-            stepSanmaDrill(1);
+
+            document.getElementById('sanma-drill-user-choice-text').innerText =
+                `あなたの選択：【 ${userAnswerStr} 】`;
+
+            document.getElementById('sanma-drill-before-ans').style.display = 'none';
+            document.getElementById('sanma-drill-after-ans').style.display = 'block';
         }
 
         function stepSanmaDrill(dir) {
